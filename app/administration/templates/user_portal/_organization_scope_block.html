@@ -1,0 +1,80 @@
+{# Assigned rows + add form with org-only vs org+groups actions. Expects: section_id, assigned_items, available_items, field_name, empty_assigned_msg #}
+<div class="mb-5" id="{{ section_id }}-scope-block">
+  <h4 class="title is-6">Current organizations</h4>
+  {% if assigned_items %}
+  <table class="table is-fullwidth is-size-7 mb-4">
+    <tbody>
+      {% for item in assigned_items %}
+      <tr>
+        <td>
+          {{ item.name }}{% if item.division %} — {{ item.division.name }}{% endif %}
+        </td>
+        <td class="has-text-right is-narrow">
+          <div class="columns is-mobile is-variable is-1 mb-0 is-flex is-justify-content-flex-end">
+            <div class="column is-two-thirds py-1">
+              <form method="post" class="mb-0">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="disable_organization_with_groups">
+                <input type="hidden" name="{{ field_name }}" value="{{ item.pk }}">
+                <button type="submit" class="button is-small is-danger is-light is-fullwidth" aria-label="Remove organization and all groups linked only to it">
+                  <span class="icon"><span class="material-icons" aria-hidden="true">delete_sweep</span></span>
+                </button>
+              </form>
+            </div>
+            <div class="column is-one-third py-1">
+              <form method="post" class="mb-0">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="disable_organizations">
+                <input type="hidden" name="{{ field_name }}" value="{{ item.pk }}">
+                <button type="submit" class="button is-small is-danger is-light is-fullwidth" aria-label="Remove organization only">
+                  <span class="icon"><span class="material-icons" aria-hidden="true">delete</span></span>
+                </button>
+              </form>
+            </div>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="is-size-7 has-text-grey mb-4">{{ empty_assigned_msg }}</p>
+  {% endif %}
+
+  <h4 class="title is-6">Add an organization</h4>
+  <p class="is-size-7 has-text-grey mb-3">
+    <strong>+ all groups</strong> assigns every ownership group linked to that organization in the catalog.
+    Groups already assigned are left as a single row (no duplicates).
+    <strong>Remove org + all groups</strong> drops groups linked only to that organization; if another assigned organization shares a group, that assignment stays.
+  </p>
+  <form method="post" class="mb-0">
+    {% csrf_token %}
+    <div class="field mb-3">
+      <div class="select is-fullwidth">
+        <select name="{{ field_name }}"{% if available_items %} required{% endif %}{% if not available_items %} disabled{% endif %}>
+          <option value="">Select…</option>
+          {% for item in available_items %}
+          <option value="{{ item.pk }}">{{ item.name }}{% if item.division %} — {{ item.division.name }}{% endif %}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="columns is-mobile is-variable is-2 mb-0">
+      <div class="column is-two-thirds">
+        <button type="submit" name="action" value="assign_organization_with_groups" class="button is-link is-light is-fullwidth"{% if not available_items %} disabled{% endif %}>
+          <span class="icon"><span class="material-icons" aria-hidden="true">add</span></span>
+          <span>Add organization + all groups</span>
+        </button>
+      </div>
+      <div class="column is-one-third">
+        <button type="submit" name="action" value="assign_organizations" class="button is-link is-light is-fullwidth"{% if not available_items %} disabled{% endif %}>
+          <span class="icon"><span class="material-icons" aria-hidden="true">add</span></span>
+          <span>Add org only</span>
+        </button>
+      </div>
+    </div>
+  </form>
+  {% if not available_items %}
+  <p class="is-size-7 has-text-grey mt-2 mb-0">Nothing left to assign (all are already assigned or the catalog is empty).</p>
+  {% endif %}
+</div>

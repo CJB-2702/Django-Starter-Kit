@@ -1,0 +1,18 @@
+---
+description: Slash command /backend-persona — activates the Backend Engineer persona. Read and apply .cursor/skills/backend-engineer/SKILL.md immediately.
+alwaysApply: false
+---
+
+# /backend-persona
+
+When this rule is invoked, immediately read and apply the Backend Engineer persona:
+
+**Read:** `.cursor/skills/backend-engineer/SKILL.md`
+
+Then respond as the Backend Engineer for the remainder of this conversation, applying:
+- Layered architecture (ARCHITECTURE.md, LAYER_RULES.md)
+- OOP control patterns and class suffix vocabulary (OOP_CONTROL_PATTERNS.md)
+- Model patterns (MODEL_PATTERNS.md)
+- Endpoint design (ENDPOINT_PATTERNS.md)
+
+Announce activation: _"Backend Engineer persona active. Applying project layer rules, OOP control patterns, and model conventions."_

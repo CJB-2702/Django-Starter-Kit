@@ -1,0 +1,89 @@
+{% extends "adm_base.html" %}
+{% block title %}{{ division.name }} — Division{% endblock %}
+{% block breadcrumb %}
+<li><a href="{% url 'data_ownership_index' %}">Data ownership</a></li>
+<li class="is-active"><a href="#" aria-current="page">{{ division.name }}</a></li>
+{% endblock %}
+{% block content %}
+<h1 class="title">{{ division.name }}</h1>
+<p class="subtitle is-6 has-text-grey">Division</p>
+
+<div class="card mb-5">
+  <header class="card-header">
+    <p class="card-header-title">Organizations</p>
+  </header>
+  <div class="card-content">
+    <ul class="ml-4">
+      {% for o in organizations %}
+      <li><a href="{% url 'organization_portal' o.pk %}">{{ o.name }}</a></li>
+      {% empty %}
+      <li class="has-text-grey">None linked.</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <header class="card-header">
+    <p class="card-header-title">Users with this division</p>
+  </header>
+  <div class="card-content">
+    {% if can_assign_scope %}
+    <form method="post" class="mb-4">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="assign_user">
+      <div class="field is-grouped">
+        <div class="control is-expanded">
+          <div class="select is-fullwidth">
+            <select name="target_user_id" required>
+              <option value="">Add user to division…</option>
+              {% for u in users %}
+              <option value="{{ u.pk }}">{{ u.username }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="control">
+          <button class="button is-link is-light" type="submit">
+            <span class="icon"><span class="material-icons" aria-hidden="true">add</span></span>
+            <span>Add</span>
+          </button>
+        </div>
+      </div>
+    </form>
+    {% endif %}
+
+    <div class="table-container">
+      <table class="table is-fullwidth is-striped">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in user_rows %}
+          <tr>
+            <td><a href="{% url 'user_portal_detail' row.user_id %}">{{ row.user.username }}</a></td>
+            <td class="has-text-right">
+              {% if can_assign_scope %}
+              <form method="post" class="is-inline">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="disable_assignment">
+                <input type="hidden" name="user_division_id" value="{{ row.pk }}">
+                <button class="button is-warning is-light is-small" type="submit" aria-label="Disable">
+                  <span class="icon"><span class="material-icons" aria-hidden="true">block</span></span>
+                </button>
+              </form>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="2" class="has-text-grey">No active assignments.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,155 @@
+{# Reusable dual multiselect: requires section_id, titles, help text, actions, field_name, list_kind, left_items, right_items #}
+<div
+  class="box dual-listbox-section mb-5"
+  data-section-id="{{ section_id }}"
+  data-field-name="{{ field_name }}"
+>
+  <div class="columns is-multiline is-align-items-flex-start">
+    <div class="column is-5">
+      <h4 class="title is-6">{{ left_title }}</h4>
+      <p class="is-size-7 has-text-grey mb-2">{{ left_help }}</p>
+      <div class="field mb-2">
+        <label class="label is-size-7 mb-1" for="{{ section_id }}-filter-left">Filter</label>
+        <input
+          type="search"
+          class="input is-small dual-filter-left"
+          id="{{ section_id }}-filter-left"
+          data-dual-target="{{ section_id }}-left"
+          placeholder="Filter…"
+          autocomplete="off"
+        >
+      </div>
+      <select
+        multiple
+        class="dual-select-left"
+        id="{{ section_id }}-left"
+        {% if htmx_direct_perm_check_url %}name="{{ field_name }}"{% endif %}
+        size="14"
+        style="width:100%; min-height: 16rem;"
+        aria-label="{{ left_title }}"
+      >
+        {% for item in left_items %}
+          {% if list_kind == "group" %}
+            <option value="{{ item.pk }}">{{ item.name }}</option>
+          {% elif list_kind == "user" %}
+            <option value="{{ item.pk }}">{{ item.username }}</option>
+          {% elif list_kind == "permission" %}
+            <option
+              value="{{ item.pk }}"
+              {% if item.pk in inherited_permission_ids %}
+                class="up-perm-inherited-row"
+                title="Already granted through an assigned Django group"
+              {% endif %}
+            >{{ item.content_type.app_label }} | {{ item.content_type.model }} | {{ item.name }}</option>
+          {% elif list_kind == "division" %}
+            <option value="{{ item.pk }}">{{ item.name }}</option>
+          {% elif list_kind == "organization" %}
+            <option value="{{ item.pk }}">{{ item.name }}{% if item.division %} — {{ item.division.name }}{% endif %}</option>
+          {% elif list_kind == "ownership_group" %}
+            <option value="{{ item.pk }}">{{ item.name }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+      <p class="is-size-7 has-text-grey mt-2 mb-0">
+        Hold <kbd>Ctrl</kbd> or <kbd>⌘</kbd> to select more than one.
+      </p>
+      {% if htmx_direct_perm_check_url %}
+      <div id="{{ section_id }}-inherit-panel" class="mt-3"></div>
+      <form
+        id="{{ section_id }}-inherit-check-form"
+        style="display: none;"
+        aria-hidden="true"
+        hx-post="{{ htmx_direct_perm_check_url }}"
+        hx-trigger="change delay:200ms from:#{{ section_id }}-left"
+        hx-include="#{{ section_id }}-left"
+        hx-target="#{{ section_id }}-inherit-panel"
+        hx-swap="innerHTML"
+      >
+        {% csrf_token %}
+      </form>
+      {% endif %}
+    </div>
+
+    <div class="column is-2 has-text-centered">
+      <form method="post" id="{{ section_id }}-form-add" class="mb-3">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="{{ action_add }}">
+        <div class="dual-hidden-inputs" data-role="container"></div>
+        <button type="button" class="button is-small is-fullwidth dual-choose mb-2" aria-label="Move selected to assigned">
+          <span class="icon-text">
+            <span class="icon"><span class="material-icons" aria-hidden="true">arrow_forward</span></span>
+            <span>Assign</span>
+          </span>
+        </button>
+      </form>
+      <form method="post" id="{{ section_id }}-form-remove">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="{{ action_remove }}">
+        <div class="dual-hidden-inputs" data-role="container"></div>
+        <button type="button" class="button is-small is-fullwidth is-light dual-remove" aria-label="Remove selected from assigned">
+          <span class="icon-text">
+            <span class="icon"><span class="material-icons" aria-hidden="true">delete</span></span>
+            <span>Remove</span>
+          </span>
+        </button>
+      </form>
+      <div class="mt-3">
+        <button type="button" class="button is-small is-fullwidth is-white dual-choose-all mb-2" aria-label="Assign all items currently shown in the left list">
+          <span class="icon-text">
+            <span class="icon"><span class="material-icons" aria-hidden="true">select_all</span></span>
+            <span>Assign all</span>
+          </span>
+        </button>
+        <button type="button" class="button is-small is-fullwidth is-white dual-remove-all" aria-label="Remove all items currently shown in the right list">
+          <span class="icon-text">
+            <span class="icon"><span class="material-icons" aria-hidden="true">delete_sweep</span></span>
+            <span>Remove all</span>
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <div class="column is-5">
+      <h4 class="title is-6">{{ right_title }}</h4>
+      <p class="is-size-7 has-text-grey mb-2">{{ right_help }}</p>
+      <div class="field mb-2">
+        <label class="label is-size-7 mb-1" for="{{ section_id }}-filter-right">Filter</label>
+        <input
+          type="search"
+          class="input is-small dual-filter-right"
+          id="{{ section_id }}-filter-right"
+          data-dual-target="{{ section_id }}-right"
+          placeholder="Filter…"
+          autocomplete="off"
+        >
+      </div>
+      <select
+        multiple
+        class="dual-select-right"
+        id="{{ section_id }}-right"
+        size="14"
+        style="width:100%; min-height: 16rem;"
+        aria-label="{{ right_title }}"
+      >
+        {% for item in right_items %}
+          {% if list_kind == "group" %}
+            <option value="{{ item.pk }}">{{ item.name }}</option>
+          {% elif list_kind == "user" %}
+            <option value="{{ item.pk }}">{{ item.username }}</option>
+          {% elif list_kind == "permission" %}
+            <option value="{{ item.pk }}">{{ item.content_type.app_label }} | {{ item.content_type.model }} | {{ item.name }}</option>
+          {% elif list_kind == "division" %}
+            <option value="{{ item.pk }}">{{ item.name }}</option>
+          {% elif list_kind == "organization" %}
+            <option value="{{ item.pk }}">{{ item.name }}{% if item.division %} — {{ item.division.name }}{% endif %}</option>
+          {% elif list_kind == "ownership_group" %}
+            <option value="{{ item.pk }}">{{ item.name }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+      <p class="is-size-7 has-text-grey mt-2 mb-0">
+        <span class="dual-clear-filter is-clickable has-text-link" data-dual-clear="{{ section_id }}">(click to clear filters)</span>
+      </p>
+    </div>
+  </div>
+</div>

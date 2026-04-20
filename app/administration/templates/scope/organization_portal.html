@@ -1,0 +1,93 @@
+{% extends "adm_base.html" %}
+{% block title %}{{ organization.name }} — Organization{% endblock %}
+{% block breadcrumb %}
+<li><a href="{% url 'data_ownership_index' %}">Data ownership</a></li>
+{% if organization.division %}
+<li><a href="{% url 'division_portal' organization.division.pk %}">{{ organization.division.name }}</a></li>
+{% endif %}
+<li class="is-active"><a href="#" aria-current="page">{{ organization.name }}</a></li>
+{% endblock %}
+{% block content %}
+<h1 class="title">{{ organization.name }}</h1>
+<p class="subtitle is-6 has-text-grey">Organization{% if organization.division %} — {{ organization.division.name }}{% endif %}</p>
+
+<div class="card mb-5">
+  <header class="card-header">
+    <p class="card-header-title">Ownership groups</p>
+  </header>
+  <div class="card-content">
+    <ul class="ml-4">
+      {% for g in ownership_groups %}
+      <li><a href="{% url 'ownership_group_portal' g.pk %}">{{ g.name }}</a></li>
+      {% empty %}
+      <li class="has-text-grey">None linked.</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <header class="card-header">
+    <p class="card-header-title">Users with this organization</p>
+  </header>
+  <div class="card-content">
+    <p class="is-size-7 mb-3">Adding a user assigns the organization and all linked ownership groups above.</p>
+    {% if can_assign_scope %}
+    <form method="post" class="mb-4">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="assign_user">
+      <div class="field is-grouped">
+        <div class="control is-expanded">
+          <div class="select is-fullwidth">
+            <select name="target_user_id" required>
+              <option value="">Add user to organization…</option>
+              {% for u in users %}
+              <option value="{{ u.pk }}">{{ u.username }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="control">
+          <button class="button is-link is-light" type="submit">
+            <span class="icon"><span class="material-icons" aria-hidden="true">add</span></span>
+            <span>Add</span>
+          </button>
+        </div>
+      </div>
+    </form>
+    {% endif %}
+
+    <div class="table-container">
+      <table class="table is-fullwidth is-striped">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in user_rows %}
+          <tr>
+            <td><a href="{% url 'user_portal_detail' row.user_id %}">{{ row.user.username }}</a></td>
+            <td class="has-text-right">
+              {% if can_assign_scope %}
+              <form method="post" class="is-inline">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="disable_assignment">
+                <input type="hidden" name="user_organization_id" value="{{ row.pk }}">
+                <button class="button is-warning is-light is-small" type="submit" aria-label="Disable">
+                  <span class="icon"><span class="material-icons" aria-hidden="true">block</span></span>
+                </button>
+              </form>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="2" class="has-text-grey">No active assignments.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

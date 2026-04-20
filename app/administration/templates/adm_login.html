@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in</title>
+  <link rel="stylesheet" href="{% static 'css/bulma.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body>
+<section class="hero is-dark is-small">
+  <div class="hero-body py-4">
+    <div class="container is-fluid">
+      <p class="title is-5">Django administration</p>
+      <p class="subtitle is-7">Site administration</p>
+    </div>
+  </div>
+</section>
+<section class="section">
+  <div class="container" style="max-width: 420px;">
+    <h1 class="title is-4">Log in</h1>
+    {% if form.errors %}
+      <div class="notification is-danger">Invalid username or password.</div>
+    {% endif %}
+    <form method="post" action="{% url 'login' %}">
+      {% csrf_token %}
+      <div class="field">
+        <label class="label" for="id_username">Username</label>
+        <div class="control">
+          <input class="input" type="text" name="username" id="id_username" required autofocus>
+        </div>
+      </div>
+      <div class="field">
+        <label class="label" for="id_password">Password</label>
+        <div class="control">
+          <input class="input" type="password" name="password" id="id_password" required>
+        </div>
+      </div>
+      <input type="hidden" name="next" value="{{ next }}">
+      <button class="button is-link" type="submit">
+        <span class="icon"><span class="material-icons" aria-hidden="true">login</span></span>
+        <span>Sign in</span>
+      </button>
+    </form>
+  </div>
+</section>
+</body>
+</html>

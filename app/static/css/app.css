@@ -1,0 +1,86 @@
+/* Project theme: square controls, larger buttons, IBM Plex Mono for form fields. Loads after Bulma. */
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/ibm-plex-mono/ibm-plex-mono-latin-400-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("../fonts/ibm-plex-mono/ibm-plex-mono-latin-500-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Material Icons";
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url("../fonts/material-icons/MaterialIcons-Regular.ttf") format("truetype");
+}
+
+.material-icons {
+  font-family: "Material Icons";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 1.25rem;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+}
+
+.button .icon .material-icons {
+  font-size: 1.125em;
+  width: 1em;
+  height: 1em;
+}
+
+.button.is-small .icon .material-icons {
+  font-size: 1.1em;
+}
+
+:root {
+  --bulma-radius-small: 0;
+  --bulma-radius: 0;
+  --bulma-radius-medium: 0;
+  --bulma-radius-large: 0;
+  --bulma-burger-border-radius: 0;
+  --bulma-card-radius: 0;
+  --bulma-box-radius: 0;
+  --app-font-mono-input: "IBM Plex Mono", var(--bulma-family-code);
+  --bulma-button-padding-vertical: 0.625em;
+  --bulma-button-padding-horizontal: 1.25em;
+}
+
+.select select,
+.input,
+.textarea,
+.file-name {
+  font-family: var(--app-font-mono-input);
+}
+
+.button,
+.pagination-previous,
+.pagination-next,
+.pagination-link,
+.file-cta {
+  font-size: calc(var(--bulma-control-size) * 1.25);
+}
+
+.button.is-rounded,
+.pagination-previous.is-rounded,
+.pagination-next.is-rounded,
+.pagination-link.is-rounded {
+  border-radius: var(--bulma-radius-rounded);
+}

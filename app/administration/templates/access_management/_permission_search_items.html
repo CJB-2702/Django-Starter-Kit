@@ -1,0 +1,8 @@
+{% for p in perm_page.object_list %}
+<li data-value="{{ p.pk }}" role="option" class="is-family-monospace">{{ p.content_type.app_label }}.{{ p.codename }}</li>
+{% empty %}
+<li role="option" class="is-size-7 has-text-grey" aria-disabled="true">No matching permissions.</li>
+{% endfor %}
+{% if perm_page.has_next %}
+<li class="is-size-7 has-text-grey" aria-disabled="true" role="presentation">Showing {{ perm_page.object_list|length }} matches — refine your search for more.</li>
+{% endif %}

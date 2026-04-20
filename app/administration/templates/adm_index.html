@@ -1,0 +1,54 @@
+{% extends "adm_base.html" %}
+{% block title %}Administration home{% endblock %}
+{% block breadcrumb %}
+<li class="is-active"><a href="#" aria-current="page">Dashboard</a></li>
+{% endblock %}
+{% block content %}
+<h1 class="title is-4">Site administration</h1>
+<p class="mb-4">Choose a portal below to manage users, access permissions, and ownership scope.</p>
+
+<div class="table-container">
+  <table class="table is-fullwidth">
+    <thead>
+      <tr>
+        <th>Application</th>
+        <th>Capabilities</th>
+        <th class="has-text-right">Open</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th>User portal</th>
+        <td>Search users, filter by staff/active status, and launch user-focused admin actions.</td>
+        <td class="has-text-right">
+          <a class="button is-small is-link is-light" href="{% url 'user_portal_index' %}">
+            <span class="icon"><span class="material-icons" aria-hidden="true">people</span></span>
+            <span>Manage users</span>
+          </a>
+        </td>
+      </tr>
+      <tr>
+        <th>Data ownership</th>
+        <td>Browse divisions, organizations, and ownership groups; open a portal per row to manage users and scope.</td>
+        <td class="has-text-right">
+          <a class="button is-small is-link is-light" href="{% url 'data_ownership_index' %}">
+            <span class="icon"><span class="material-icons" aria-hidden="true">account_tree</span></span>
+            <span>Browse data ownership</span>
+          </a>
+        </td>
+      </tr>
+      <tr>
+        <th>Access management</th>
+        <td>Browse permission groups (Django groups), open group portals, and filter permissions.</td>
+        <td class="has-text-right">
+          <a class="button is-small is-link is-light" href="{% url 'access_management_index' %}">
+            <span class="icon"><span class="material-icons" aria-hidden="true">admin_panel_settings</span></span>
+            <span>Open access management</span>
+          </a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<p class="mt-4 has-text-grey is-size-7">Grant actions require membership in the generic_manager or generic_admin group.</p>
+{% endblock %}

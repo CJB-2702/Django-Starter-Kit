@@ -1,0 +1,75 @@
+{% extends "adm_base.html" %}
+{% block title %}Data ownership{% endblock %}
+{% block breadcrumb %}
+<li class="is-active"><a href="#" aria-current="page">Data ownership</a></li>
+{% endblock %}
+{% block content %}
+<h1 class="title">Data ownership</h1>
+<p class="mb-4">Browse scope: each row opens a portal to view linked scope, manage users, and child records.</p>
+
+<div class="card mb-5">
+  <header class="card-header">
+    <p class="card-header-title">Divisions</p>
+  </header>
+  <div class="card-content">
+    {% for d in divisions %}
+    <div class="mb-5 {% if not forloop.last %}pb-5{% endif %}" style="{% if not forloop.last %}border-bottom: 1px solid var(--bulma-border);{% endif %}">
+      <p class="mb-2">
+        <a href="{% url 'division_portal' d.pk %}">{{ d.name }}</a>
+      </p>
+      <p class="is-size-7 has-text-grey mb-2">Organizations in this division</p>
+      <ul class="ml-4">
+        {% for o in d.organizations.all %}
+        <li><a href="{% url 'organization_portal' o.pk %}">{{ o.name }}</a></li>
+        {% empty %}
+        <li class="has-text-grey">No organizations</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% empty %}
+    <p class="has-text-grey">No divisions available.</p>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="card mb-5">
+  <header class="card-header">
+    <p class="card-header-title">Organizations</p>
+  </header>
+  <div class="card-content">
+    {% for o in organizations %}
+    <div class="mb-5 {% if not forloop.last %}pb-5{% endif %}" style="{% if not forloop.last %}border-bottom: 1px solid var(--bulma-border);{% endif %}">
+      <p class="mb-2">
+        <a href="{% url 'organization_portal' o.pk %}">{{ o.name }}</a>
+        {% if o.division %}<span class="is-size-7 has-text-grey"> — {{ o.division.name }}</span>{% endif %}
+      </p>
+      <p class="is-size-7 has-text-grey mb-2">Ownership groups linked to this organization</p>
+      <ul class="ml-4">
+        {% for g in o.ownership_groups.all %}
+        <li><a href="{% url 'ownership_group_portal' g.pk %}">{{ g.name }}</a></li>
+        {% empty %}
+        <li class="has-text-grey">No ownership groups</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% empty %}
+    <p class="has-text-grey">No organizations available.</p>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="card">
+  <header class="card-header">
+    <p class="card-header-title">Ownership groups</p>
+  </header>
+  <div class="card-content">
+    <ul class="ml-4">
+      {% for g in ownership_groups %}
+      <li><a href="{% url 'ownership_group_portal' g.pk %}">{{ g.name }}</a></li>
+      {% empty %}
+      <li class="has-text-grey">No ownership groups available.</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}

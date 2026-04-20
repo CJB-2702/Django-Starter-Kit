@@ -1,0 +1,85 @@
+{% extends "adm_base.html" %}
+{% block title %}Access management{% endblock %}
+{% block breadcrumb %}
+<li class="is-active"><a href="#" aria-current="page">Access management</a></li>
+{% endblock %}
+{% block content %}
+<h1 class="title">Access management</h1>
+<p class="mb-2">
+  Django’s built-in <code>auth_group</code> table is labeled <strong>{{ django_groups_ui_name }}</strong> in this application
+  (distinct from data <em>ownership groups</em> under Data ownership).
+</p>
+
+<div class="card mb-5">
+  <header class="card-header">
+    <p class="card-header-title">{{ django_groups_ui_name|capfirst }}</p>
+  </header>
+  <div class="card-content">
+    <div class="table-container">
+      <table class="table is-fullwidth is-striped is-hoverable">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th class="has-text-right">Portal</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for g in groups %}
+          <tr>
+            <td>{{ g.name }}</td>
+            <td class="has-text-right">
+              <a class="button is-link is-light is-small" href="{% url 'permission_group_portal' g.pk %}">
+                <span class="icon"><span class="material-icons" aria-hidden="true">settings</span></span>
+                <span>Manage group</span>
+              </a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="2" class="has-text-grey">No groups defined.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <header class="card-header">
+    <p class="card-header-title">Permissions</p>
+  </header>
+  <div class="card-content">
+    <div id="access-permissions-results">
+      <form
+        method="get"
+        class="mb-4"
+        hx-get="{% url 'access_management_index' %}"
+        hx-target="#access-permissions-results"
+        hx-select="#access-permissions-results"
+        hx-push-url="true"
+        hx-include="#access-permissions-filter"
+      >
+        <div id="access-permissions-filter" class="field is-grouped">
+          <div class="control is-expanded">
+            <input
+              class="input"
+              type="search"
+              name="perm_q"
+              value="{{ perm_q }}"
+              placeholder="Filter by app, model, codename, or label"
+              hx-trigger="keyup changed delay:350ms, search"
+            >
+          </div>
+          <div class="control">
+            <button class="button is-link is-light" type="submit">
+              <span class="icon"><span class="material-icons" aria-hidden="true">filter_list</span></span>
+              <span>Filter</span>
+            </button>
+          </div>
+        </div>
+      </form>
+      <p class="is-size-7 has-text-grey mb-3">Open a permission to see which {{ django_groups_ui_name }} include it, then jump to a group portal to manage members.</p>
+      {% include "access_management/_permissions_results.html" %}
+    </div>
+  </div>
+</div>
+{% endblock %}

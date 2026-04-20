@@ -1,0 +1,46 @@
+{% extends "adm_base.html" %}
+{% block title %}Permission — {{ permission.content_type.app_label }}.{{ permission.codename }}{% endblock %}
+{% block breadcrumb %}
+<li><a href="{% url 'access_management_index' %}">Access management</a></li>
+<li class="is-active"><a href="#" aria-current="page">Permission</a></li>
+{% endblock %}
+{% block content %}
+<h1 class="title is-4">Permission</h1>
+<p class="is-family-monospace mb-4">{{ permission.content_type.app_label }}.{{ permission.codename }}</p>
+{% if permission.name %}<p class="subtitle is-6">{{ permission.name }}</p>{% endif %}
+
+<p class="mb-4">
+  These <strong>{{ django_groups_ui_name }}</strong> (Django <code>Group</code>) include this permission.
+  Open a portal to add or remove users and adjust group permissions.
+</p>
+
+<div class="table-container">
+  <table class="table is-fullwidth is-striped">
+    <thead>
+      <tr>
+        <th>Group</th>
+        <th class="has-text-right">Manage</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for g in groups %}
+      <tr>
+        <td>{{ g.name }}</td>
+        <td class="has-text-right">
+          <a class="button is-link is-light is-small" href="{% url 'permission_group_portal' g.pk %}">
+            <span class="icon"><span class="material-icons" aria-hidden="true">open_in_new</span></span>
+            <span>Permission group portal</span>
+          </a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="2" class="has-text-grey">No group grants this permission directly.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<p class="mt-4">
+  <a href="{% url 'access_management_index' %}">← Back to access management</a>
+</p>
+{% endblock %}

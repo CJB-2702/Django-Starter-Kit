@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Administration{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/bulma.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  <script src="{% static 'js/htmx.min.js' %}" defer></script>
+</head>
+<body>
+<section class="hero is-dark is-small">
+  <div class="hero-body py-4">
+    <div class="container is-fluid">
+      <div class="is-flex is-justify-content-space-between is-align-items-center">
+        <div>
+          <p class="title is-5 mb-1">
+            <a href="{% url 'administration_index' %}" class="has-text-white">Django administration</a>
+          </p>
+          <p class="subtitle is-7 has-text-grey-light">Site administration</p>
+        </div>
+        <div class="is-flex is-align-items-center">
+          <p class="is-size-7 has-text-grey-light mr-4">
+            Welcome, <strong class="has-text-white">{{ request.user.username }}</strong>
+          </p>
+          <form method="post" action="{% url 'logout' %}" class="is-inline-block">
+            {% csrf_token %}
+            <button class="button is-small is-light" type="submit" aria-label="Log out">
+              <span class="icon"><span class="material-icons" aria-hidden="true">logout</span></span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section py-4">
+  <div class="container is-fluid">
+    <div class="columns">
+      <aside class="column is-3-tablet is-2-desktop">
+        <aside
+          class="menu"
+          hx-boost="true"
+          hx-target="#admin-main-content"
+          hx-select="#admin-main-content"
+          hx-push-url="true"
+        >
+          <p class="menu-label">Portal navigation</p>
+          <ul class="menu-list">
+            <li><a href="{% url 'administration_index' %}">Home</a></li>
+            <li><a href="{% url 'user_portal_index' %}">Users</a></li>
+            <li><a href="{% url 'data_ownership_index' %}">Data ownership</a></li>
+            <li><a href="{% url 'access_management_index' %}">Access management</a></li>
+          </ul>
+        </aside>
+      </aside>
+
+      <main id="admin-main-content" class="column">
+        <nav class="breadcrumb mb-4" aria-label="breadcrumbs">
+          <ul>
+            <li><a href="{% url 'administration_index' %}">Home</a></li>
+            {% block breadcrumb %}{% endblock %}
+          </ul>
+        </nav>
+
+        {% if messages %}
+          {% for message in messages %}
+            <div class="notification {% if message.tags == 'error' %}is-danger{% elif message.tags == 'warning' %}is-warning{% elif message.tags == 'success' %}is-success{% else %}is-info{% endif %} is-light">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+</section>
+{% include "csrf-htmx-required-snippet.html" %}
+{% block body_scripts %}{% endblock %}
+</body>
+</html>

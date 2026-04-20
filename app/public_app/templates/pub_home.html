@@ -1,0 +1,65 @@
+{% extends "pub_base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<h1 class="title is-4">Welcome</h1>
+
+<p class="content is-size-6 has-text-grey-dark mb-4">
+  <strong>Note:</strong> This is the public homepage. Sign in below to access the administration portal
+  from your account menu after you land.
+</p>
+
+{% if user.is_authenticated %}
+<p class="mb-4">Signed in as <strong>{{ user.username }}</strong>.</p>
+<div class="buttons mb-5">
+  <a class="button is-link" href="{% url 'administration_index' %}">
+    <span class="icon"><span class="material-icons" aria-hidden="true">dashboard</span></span>
+    <span>Administration portal</span>
+  </a>
+</div>
+
+<h2 class="subtitle is-6">Leave a note</h2>
+<p class="is-size-7 has-text-grey mb-3">Stored in your session for this browser only (not saved to the database).</p>
+<form method="post" action="{% url 'public_home' %}">
+  {% csrf_token %}
+  <input type="hidden" name="action" value="save_note">
+  <div class="field">
+    <div class="control">
+      <textarea class="textarea" name="note" rows="5" placeholder="Type a short note…">{{ session_note }}</textarea>
+    </div>
+  </div>
+  <button type="submit" class="button is-primary">
+    <span class="icon"><span class="material-icons" aria-hidden="true">save</span></span>
+    <span>Save note</span>
+  </button>
+</form>
+
+{% else %}
+
+<h2 class="subtitle is-6">Sign in</h2>
+<form method="post" action="{% url 'public_home' %}">
+  {% csrf_token %}
+  <input type="hidden" name="action" value="login">
+  {% if form.non_field_errors %}
+    <div class="notification is-danger is-light">{{ form.non_field_errors }}</div>
+  {% endif %}
+  <div class="field">
+    <label class="label" for="id_username">Username</label>
+    <div class="control">
+      {{ form.username }}
+    </div>
+    {% if form.username.errors %}<p class="help is-danger">{{ form.username.errors }}</p>{% endif %}
+  </div>
+  <div class="field">
+    <label class="label" for="id_password">Password</label>
+    <div class="control">
+      {{ form.password }}
+    </div>
+    {% if form.password.errors %}<p class="help is-danger">{{ form.password.errors }}</p>{% endif %}
+  </div>
+  <button type="submit" class="button is-link">
+    <span class="icon"><span class="material-icons" aria-hidden="true">login</span></span>
+    <span>Sign in</span>
+  </button>
+</form>
+{% endif %}
+{% endblock %}

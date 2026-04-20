@@ -1,0 +1,98 @@
+<div class="level mb-2">
+  <div class="level-left">
+    <div class="level-item">
+      <p class="is-size-7 has-text-grey">
+        {{ perm_page.paginator.count }} permission{{ perm_page.paginator.count|pluralize }}{% if perm_q %} matching filter{% endif %}
+        ({{ perm_page.paginator.per_page }} per page)
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="table-container">
+  <table class="table is-fullwidth is-striped is-hoverable">
+    <thead>
+      <tr>
+        <th>Permission</th>
+        <th class="has-text-right">Open</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in permissions %}
+      <tr>
+        <td>
+          <span class="is-family-monospace is-size-7">{{ p.content_type.app_label }}.{{ p.codename }}</span>
+          {% if p.name %}<br><span class="is-size-7 has-text-grey">{{ p.name }}</span>{% endif %}
+        </td>
+        <td class="has-text-right">
+          <a class="button is-link is-light is-small" href="{% url 'access_management_permission_detail' p.pk %}">
+            <span class="icon"><span class="material-icons" aria-hidden="true">visibility</span></span>
+            <span>View</span>
+          </a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="2" class="has-text-grey">No permissions match.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if perm_page.paginator.num_pages > 1 %}
+<nav class="pagination is-small is-centered is-rounded mt-4" role="navigation" aria-label="Pagination">
+  {% if perm_page.has_previous %}
+  <a
+    class="pagination-previous"
+    href="{% url 'access_management_index' %}?perm_q={{ perm_q|urlencode }}&page={{ perm_page.previous_page_number }}"
+    hx-get="{% url 'access_management_index' %}?perm_q={{ perm_q|urlencode }}&page={{ perm_page.previous_page_number }}"
+    hx-target="#access-permissions-results"
+    hx-select="#access-permissions-results"
+    hx-push-url="true"
+  >Previous</a>
+  {% else %}
+  <a class="pagination-previous is-disabled" tabindex="-1" aria-disabled="true">Previous</a>
+  {% endif %}
+
+  {% if perm_page.has_next %}
+  <a
+    class="pagination-next"
+    href="{% url 'access_management_index' %}?perm_q={{ perm_q|urlencode }}&page={{ perm_page.next_page_number }}"
+    hx-get="{% url 'access_management_index' %}?perm_q={{ perm_q|urlencode }}&page={{ perm_page.next_page_number }}"
+    hx-target="#access-permissions-results"
+    hx-select="#access-permissions-results"
+    hx-push-url="true"
+  >Next</a>
+  {% else %}
+  <a class="pagination-next is-disabled" tabindex="-1" aria-disabled="true">Next</a>
+  {% endif %}
+
+  <ul class="pagination-list">
+    {% for p in perm_elided %}
+    {% if p == perm_paginator.ELLIPSIS %}
+    <li><span class="pagination-ellipsis">&hellip;</span></li>
+    {% else %}
+    <li>
+      {% if p == perm_page.number %}
+      <a
+        class="pagination-link is-current"
+        href="{% url 'access_management_index' %}?perm_q={{ perm_q|urlencode }}&page={{ p }}"
+        aria-label="Page {{ p }}"
+        aria-current="page"
+      >{{ p }}</a>
+      {% else %}
+      <a
+        class="pagination-link"
+        href="{% url 'access_management_index' %}?perm_q={{ perm_q|urlencode }}&page={{ p }}"
+        hx-get="{% url 'access_management_index' %}?perm_q={{ perm_q|urlencode }}&page={{ p }}"
+        hx-target="#access-permissions-results"
+        hx-select="#access-permissions-results"
+        hx-push-url="true"
+        aria-label="Goto page {{ p }}"
+      >{{ p }}</a>
+      {% endif %}
+    </li>
+    {% endif %}
+    {% endfor %}
+  </ul>
+</nav>
+{% endif %}

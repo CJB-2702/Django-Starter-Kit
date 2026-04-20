@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Site{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/bulma.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body>
+<section class="section">
+  <div class="container" style="max-width: 720px;">
+    <nav class="level mb-5">
+      <div class="level-left">
+        <div class="level-item">
+          <a href="{% url 'public_home' %}" class="has-text-weight-semibold">Home</a>
+          <span class="mx-2">·</span>
+          <a href="{% url 'public_about' %}">About</a>
+        </div>
+      </div>
+      {% if user.is_authenticated %}
+      <div class="level-right">
+        <div class="level-item">
+          <form method="post" action="{% url 'public_logout' %}" class="is-inline">
+            {% csrf_token %}
+            <button type="submit" class="button is-small is-light" aria-label="Sign out">
+              <span class="icon"><span class="material-icons" aria-hidden="true">logout</span></span>
+            </button>
+          </form>
+        </div>
+      </div>
+      {% endif %}
+    </nav>
+    {% if messages %}
+      {% for message in messages %}
+        <div class="notification is-info is-light">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+    {% block content %}{% endblock %}
+  </div>
+</section>
+</body>
+</html>

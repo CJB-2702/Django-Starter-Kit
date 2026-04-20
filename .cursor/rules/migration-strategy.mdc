@@ -1,0 +1,28 @@
+---
+description: Django schema changes — wipe project migrations + DB, then makemigrations, migrate, seed_dev.
+alwaysApply: true
+---
+
+# Migration strategy (development)
+
+After **any change that adds/removes/renames a database column or table** (or otherwise alters schema: new model, field, `Meta.indexes`, constraints, etc.), use a **full reset**: clear **all** project-owned migration history, empty the database, regenerate migrations from the current models, apply them, then re-seed.
+
+Do **not** accumulate incremental migrations during active development for this workflow.
+
+## Agent behavior
+
+1. **Detect schema-affecting edits** — Model or migration-adjacent changes that would require a DB diff (fields, `Meta`, `db_table`, deletes, renames, through tables, etc.) trigger the full reset below—not only “new table” changes.
+
+2. **Full reset workflow** (run from the project root, with the app stopped):
+   - **Preferred:** run `python delete_database_rebuild_models.py` and add `--seed` when dev data should be reloaded. That script removes project migration files, clears the DB, runs `makemigrations` + `migrate`, and optionally `seed_dev`. See `.cursor/skills/delete-database-rebuild-models/SKILL.md`.
+   - **Manual equivalent:** **Remove project migration files** — For each `app/<application>/migrations/`, delete every file except `__init__.py` (and remove `__pycache__` if present). Do **not** delete Django’s own app migrations under `site-packages`. **Clear the database** — e.g. delete `db.sqlite3` when using default SQLite (`DATABASE_URL` unset), or drop/recreate / schema-reset when using PostgreSQL via `DATABASE_URL`. **Regenerate migrations** — `python manage.py makemigrations`. **Apply** — `python manage.py migrate`. **Re-seed** — `python manage.py seed_dev` if needed (see `docs/users_and_passwords.md` and `SEED_USER_PASSWORD`).
+
+3. **If multiple apps define models**, clear migrations in **every** app that had numbered migration files, then run `makemigrations` once so dependencies are resolved correctly.
+
+4. **ContentTypes / permissions** — A clean DB plus `migrate` rebuilds auth and contenttypes; `seed_dev` repopulates dev groups/users/sample rows as needed.
+
+5. **Seeding and “legacy” data** — Do **not** add helpers in seed commands (or elsewhere) that delete or migrate rows from older seed shapes (e.g. `_remove_legacy_*`, one-off cleanup for renamed slugs). Schema or seed-shape changes are handled by **wiping the database** and running the full reset workflow above, then `seed_dev` loads the current data model only. Idempotent `get_or_create` / upserts for the **current** seed are fine; one-off tombstone cleanup is not.
+
+## Rationale
+
+A single fresh migration set and empty database after each schema change avoids migration chain drift and matches “disposable dev DB + seed” expectations.
