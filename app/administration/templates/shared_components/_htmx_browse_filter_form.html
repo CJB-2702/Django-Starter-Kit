@@ -1,0 +1,35 @@
+{# HTMX browse toolbar: debounced search + Filter, swaps a named panel fragment (hx-select). #}
+{# Call from parent on one line: a multiline include-with-only can fail to parse and render as literal text in the browser. #}
+{# Set either ``hx_get_url`` (full GET URL including ``?format=…``) or ``hx_url_name`` + ``hx_format`` (``{% url %}``). #}
+{# Expects: hx_target_panel_id, hx_include_selectors, filter_fields_id, #}
+{#          search_input_id, search_input_name, search_input_value, search_input_placeholder #}
+{# Optional: hx_get_url, hx_url_name, hx_format, filter_button_label, form_method, form_classes, hx_push_url, hx_input_trigger, hx_select_panel_id #}
+<form
+  class="mb-4 {{ form_classes|default:'' }}"
+  method="{{ form_method|default:'get' }}"
+  {% if hx_get_url %}hx-get="{{ hx_get_url }}"{% else %}hx-get="{% url hx_url_name %}?format={{ hx_format }}"{% endif %}
+  hx-target="#{{ hx_target_panel_id }}"
+  hx-select="#{{ hx_select_panel_id|default:hx_target_panel_id }}"
+  hx-push-url="{{ hx_push_url|default:'true' }}"
+  hx-include="{{ hx_include_selectors }}"
+>
+  <div id="{{ filter_fields_id }}" class="field is-grouped">
+    <div class="control is-expanded">
+      <input
+        id="{{ search_input_id }}"
+        class="input"
+        type="search"
+        name="{{ search_input_name }}"
+        value="{{ search_input_value|default:'' }}"
+        placeholder="{{ search_input_placeholder }}"
+        hx-trigger="{{ hx_input_trigger|default:'keyup changed delay:350ms, search' }}"
+      >
+    </div>
+    <div class="control">
+      <button class="button is-link is-light" type="submit">
+        <span class="icon"><span class="material-icons" aria-hidden="true">filter_list</span></span>
+        <span>{{ filter_button_label|default:'Filter' }}</span>
+      </button>
+    </div>
+  </div>
+</form>

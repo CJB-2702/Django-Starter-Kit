@@ -16,7 +16,7 @@
   </header>
   <div class="card-content">
     {% if can_edit %}
-    {% include "user_portal/_dual_listbox.html" with section_id="pg-users" left_title="Available users" right_title="Users in this group" left_help="Select users to add to this group, then choose Assign." right_help="Select users to remove from this group, then choose Remove." action_add="add_users" action_remove="remove_users" field_name="user_ids" list_kind="user" left_items=users_available right_items=members_list %}
+    {% include "shared_components/_dual_listbox.html" with section_id="pg-users" left_title="Available users" right_title="Users in this group" left_help="Select users to add to this group, then choose Assign." right_help="Select users to remove from this group, then choose Remove." action_add="add_users" action_remove="remove_users" field_name="user_ids" list_kind="user" left_items=users_available right_items=members_list %}
     {% else %}
     <div class="table-container">
       <table class="table is-fullwidth is-striped">
@@ -46,7 +46,7 @@
   </header>
   <div class="card-content">
     {% if can_edit %}
-    {% include "user_portal/_dual_listbox.html" with section_id="pg-perms" left_title="Available permissions" right_title="Permissions on this group" left_help="Select permissions to attach to this group, then choose Assign." right_help="Select permissions to remove from this group, then choose Remove." action_add="add_permissions" action_remove="remove_permissions" field_name="permission_ids" list_kind="permission" left_items=permissions_available right_items=permissions_assigned %}
+    {% include "shared_components/_dual_listbox.html" with section_id="pg-perms" left_title="Available permissions" right_title="Permissions on this group" left_help="Select permissions to attach to this group, then choose Assign." right_help="Select permissions to remove from this group, then choose Remove." action_add="add_permissions" action_remove="remove_permissions" field_name="permission_ids" list_kind="permission" left_items=permissions_available right_items=permissions_assigned %}
     {% else %}
     <div class="table-container">
       <table class="table is-fullwidth is-striped">

@@ -15,31 +15,10 @@
     <p class="card-header-title">{{ django_groups_ui_name|capfirst }}</p>
   </header>
   <div class="card-content">
-    <div class="table-container">
-      <table class="table is-fullwidth is-striped is-hoverable">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th class="has-text-right">Portal</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for g in groups %}
-          <tr>
-            <td>{{ g.name }}</td>
-            <td class="has-text-right">
-              <a class="button is-link is-light is-small" href="{% url 'permission_group_portal' g.pk %}">
-                <span class="icon"><span class="material-icons" aria-hidden="true">settings</span></span>
-                <span>Manage group</span>
-              </a>
-            </td>
-          </tr>
-          {% empty %}
-          <tr><td colspan="2" class="has-text-grey">No groups defined.</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
+    {% with search_placeholder="Filter "|add:django_groups_ui_name|add:" by name" %}
+    {% include "shared_components/_htmx_browse_filter_form.html" with hx_url_name="access_management_index" hx_format="htmx-access-groups-panel" hx_target_panel_id="access-groups-panel" hx_include_selectors="#access-groups-filter, #access-perm-q-input" filter_fields_id="access-groups-filter" search_input_id="access-group-q-input" search_input_name="group_q" search_input_value=group_q search_input_placeholder=search_placeholder %}
+    {% endwith %}
+    {% include "access_management/_access_groups_panel.html" %}
   </div>
 </div>
 
@@ -49,36 +28,9 @@
   </header>
   <div class="card-content">
     <div id="access-permissions-results">
-      <form
-        method="get"
-        class="mb-4"
-        hx-get="{% url 'access_management_index' %}"
-        hx-target="#access-permissions-results"
-        hx-select="#access-permissions-results"
-        hx-push-url="true"
-        hx-include="#access-permissions-filter"
-      >
-        <div id="access-permissions-filter" class="field is-grouped">
-          <div class="control is-expanded">
-            <input
-              class="input"
-              type="search"
-              name="perm_q"
-              value="{{ perm_q }}"
-              placeholder="Filter by app, model, codename, or label"
-              hx-trigger="keyup changed delay:350ms, search"
-            >
-          </div>
-          <div class="control">
-            <button class="button is-link is-light" type="submit">
-              <span class="icon"><span class="material-icons" aria-hidden="true">filter_list</span></span>
-              <span>Filter</span>
-            </button>
-          </div>
-        </div>
-      </form>
+      {% include "shared_components/_htmx_browse_filter_form.html" with hx_url_name="access_management_index" hx_format="htmx-access-permissions-panel" hx_target_panel_id="access-permissions-panel" hx_include_selectors="#access-permissions-filter, #access-group-q-input" filter_fields_id="access-permissions-filter" search_input_id="access-perm-q-input" search_input_name="perm_q" search_input_value=perm_q search_input_placeholder="Filter by app, model, codename, or label" %}
       <p class="is-size-7 has-text-grey mb-3">Open a permission to see which {{ django_groups_ui_name }} include it, then jump to a group portal to manage members.</p>
-      {% include "access_management/_permissions_results.html" %}
+      {% include "access_management/_access_permissions_panel.html" %}
     </div>
   </div>
 </div>

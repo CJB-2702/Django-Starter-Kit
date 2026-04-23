@@ -12,23 +12,8 @@
     <p class="card-header-title">Divisions</p>
   </header>
   <div class="card-content">
-    {% for d in divisions %}
-    <div class="mb-5 {% if not forloop.last %}pb-5{% endif %}" style="{% if not forloop.last %}border-bottom: 1px solid var(--bulma-border);{% endif %}">
-      <p class="mb-2">
-        <a href="{% url 'division_portal' d.pk %}">{{ d.name }}</a>
-      </p>
-      <p class="is-size-7 has-text-grey mb-2">Organizations in this division</p>
-      <ul class="ml-4">
-        {% for o in d.organizations.all %}
-        <li><a href="{% url 'organization_portal' o.pk %}">{{ o.name }}</a></li>
-        {% empty %}
-        <li class="has-text-grey">No organizations</li>
-        {% endfor %}
-      </ul>
-    </div>
-    {% empty %}
-    <p class="has-text-grey">No divisions available.</p>
-    {% endfor %}
+    {% include "shared_components/_htmx_browse_filter_form.html" with hx_url_name="data_ownership_index" hx_format="htmx-data-divisions-panel" hx_target_panel_id="data-divisions-panel" hx_include_selectors="#data-divisions-filter, #data-organization-q-input, #data-ownership-group-q-input" filter_fields_id="data-divisions-filter" search_input_id="data-division-q-input" search_input_name="division_q" search_input_value=division_q search_input_placeholder="Filter divisions by name" %}
+    {% include "data_ownership/_data_divisions_panel.html" %}
   </div>
 </div>
 
@@ -37,24 +22,8 @@
     <p class="card-header-title">Organizations</p>
   </header>
   <div class="card-content">
-    {% for o in organizations %}
-    <div class="mb-5 {% if not forloop.last %}pb-5{% endif %}" style="{% if not forloop.last %}border-bottom: 1px solid var(--bulma-border);{% endif %}">
-      <p class="mb-2">
-        <a href="{% url 'organization_portal' o.pk %}">{{ o.name }}</a>
-        {% if o.division %}<span class="is-size-7 has-text-grey"> — {{ o.division.name }}</span>{% endif %}
-      </p>
-      <p class="is-size-7 has-text-grey mb-2">Ownership groups linked to this organization</p>
-      <ul class="ml-4">
-        {% for g in o.ownership_groups.all %}
-        <li><a href="{% url 'ownership_group_portal' g.pk %}">{{ g.name }}</a></li>
-        {% empty %}
-        <li class="has-text-grey">No ownership groups</li>
-        {% endfor %}
-      </ul>
-    </div>
-    {% empty %}
-    <p class="has-text-grey">No organizations available.</p>
-    {% endfor %}
+    {% include "shared_components/_htmx_browse_filter_form.html" with hx_url_name="data_ownership_index" hx_format="htmx-data-organizations-panel" hx_target_panel_id="data-organizations-panel" hx_include_selectors="#data-organizations-filter, #data-division-q-input, #data-ownership-group-q-input" filter_fields_id="data-organizations-filter" search_input_id="data-organization-q-input" search_input_name="organization_q" search_input_value=organization_q search_input_placeholder="Filter by organization or division name" %}
+    {% include "data_ownership/_data_organizations_panel.html" %}
   </div>
 </div>
 
@@ -63,13 +32,8 @@
     <p class="card-header-title">Ownership groups</p>
   </header>
   <div class="card-content">
-    <ul class="ml-4">
-      {% for g in ownership_groups %}
-      <li><a href="{% url 'ownership_group_portal' g.pk %}">{{ g.name }}</a></li>
-      {% empty %}
-      <li class="has-text-grey">No ownership groups available.</li>
-      {% endfor %}
-    </ul>
+    {% include "shared_components/_htmx_browse_filter_form.html" with hx_url_name="data_ownership_index" hx_format="htmx-data-ownership-groups-panel" hx_target_panel_id="data-ownership-groups-panel" hx_include_selectors="#data-ownership-groups-filter, #data-division-q-input, #data-organization-q-input" filter_fields_id="data-ownership-groups-filter" search_input_id="data-ownership-group-q-input" search_input_name="ownership_group_q" search_input_value=ownership_group_q search_input_placeholder="Filter ownership groups by name" %}
+    {% include "data_ownership/_data_ownership_groups_panel.html" %}
   </div>
 </div>
 {% endblock %}

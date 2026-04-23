@@ -168,6 +168,36 @@ def assert_actor_may_disable_user_division(
     assert_actor_may_assign_division(actor, division=row.division)
 
 
+def assert_actor_may_attach_organization_to_division(
+    actor: User,
+    *,
+    organization: Organization,
+    target_division: Division,
+) -> None:
+    """
+    Place (or move) an organization into ``target_division``.
+
+    Admins may always do this. Managers must belong to the target division and,
+    when moving from another division, must also belong to the source division.
+    """
+    assert_actor_may_assign_division(actor, division=target_division)
+    current = organization.division
+    if current is not None and current.pk != target_division.pk:
+        assert_actor_may_assign_division(actor, division=current)
+
+
+def assert_actor_may_detach_organization_from_division(
+    actor: User,
+    *,
+    organization: Organization,
+    division: Division,
+) -> None:
+    """Remove an organization's membership in ``division`` (org must be linked there)."""
+    if organization.division_id != division.pk:
+        raise GrantPermissionDenied("That organization is not linked to this division.")
+    assert_actor_may_assign_division(actor, division=division)
+
+
 def assert_actor_may_disable_user_organization(
     actor: User,
     *,

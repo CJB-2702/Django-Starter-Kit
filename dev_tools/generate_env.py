@@ -41,12 +41,18 @@ from pathlib import Path
 DEFAULT_DEV_MODE = False
 
 
+def _repo_root() -> Path:
+    """Parent of ``dev_tools/`` when this file lives under ``dev_tools/``."""
+    here = Path(__file__).resolve().parent
+    return here.parent if here.name == "dev_tools" else here
+
+
 class EnvGenerator:
     """Build a Django + nginx-oriented environment file."""
 
     def __init__(self, dev_mode: bool = False) -> None:
         self.dev_mode = dev_mode
-        self.project_root = Path(__file__).resolve().parent
+        self.project_root = _repo_root()
         self.env_file = self.project_root / ".env"
 
     def _timestamp(self) -> str:

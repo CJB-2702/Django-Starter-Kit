@@ -1,4 +1,5 @@
-
-document.body.addEventListener('js/htmx:configRequest', (event) => {
-    event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+<script>
+document.body.addEventListener('htmx:config:request', (event) => {
+    event.detail.ctx.request.headers['X-CSRFToken'] = '{{ csrf_token }}';
 });
+</script>

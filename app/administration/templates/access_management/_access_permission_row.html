@@ -1,0 +1,12 @@
+<tr>
+  <td>
+    <span class="is-family-monospace is-size-7">{{ p.content_type.app_label }}.{{ p.codename }}</span>
+    {% if p.name %}<br><span class="is-size-7 has-text-grey">{{ p.name }}</span>{% endif %}
+  </td>
+  <td class="has-text-right">
+    <a class="button is-link is-light is-small" href="{% url 'access_management_permission_detail' p.pk %}">
+      <span class="icon"><span class="material-icons" aria-hidden="true">visibility</span></span>
+      <span>View</span>
+    </a>
+  </td>
+</tr>

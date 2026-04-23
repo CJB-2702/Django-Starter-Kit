@@ -11,46 +11,165 @@ from django.views.decorators.http import require_http_methods
 from app.administration.constants import DJANGO_GROUPS_UI_NAME
 from app.administration.control_layer.permission_grant_policy import is_grant_actor
 
+ACCESS_LIST_CHUNK = 32
 
-@require_http_methods(["GET"])
-def access_management_index(request: HttpRequest) -> HttpResponse:
-    perm_q = request.GET.get("perm_q", "").strip()
-    page_size = 32
-    groups = Group.objects.order_by("name").all()
-    permissions_qs = Permission.objects.select_related("content_type").order_by(
+
+def _non_negative_offset(request: HttpRequest) -> int:
+    raw = request.GET.get("offset", "0").strip()
+    if not raw.isdigit():
+        return 0
+    return max(0, int(raw))
+
+
+def _permissions_queryset(perm_q: str):
+    qs = Permission.objects.select_related("content_type").order_by(
         "content_type__app_label",
         "codename",
     )
     if perm_q:
-        permissions_qs = permissions_qs.filter(
+        qs = qs.filter(
             Q(codename__icontains=perm_q)
             | Q(name__icontains=perm_q)
             | Q(content_type__app_label__icontains=perm_q)
             | Q(content_type__model__icontains=perm_q),
         )
-    perm_paginator = Paginator(permissions_qs, page_size)
-    perm_page = perm_paginator.get_page(request.GET.get("page"))
-    permissions = perm_page.object_list
-    perm_elided = list(
-        perm_paginator.get_elided_page_range(
-            perm_page.number,
-            on_each_side=1,
-            on_ends=1,
-        ),
-    )
+    return qs
 
+
+def _groups_queryset(group_q: str):
+    qs = Group.objects.order_by("name")
+    if group_q:
+        qs = qs.filter(name__icontains=group_q)
+    return qs
+
+
+def _access_management_index_context(request: HttpRequest) -> dict:
+    group_q = request.GET.get("group_q", "").strip()
+    perm_q = request.GET.get("perm_q", "").strip()
+
+    groups_qs = _groups_queryset(group_q)
+    groups_total = groups_qs.count()
+    groups = list(groups_qs[:ACCESS_LIST_CHUNK])
+    groups_loaded = len(groups)
+    groups_next_offset = groups_loaded
+    groups_has_more = groups_next_offset < groups_total
+
+    perms_qs = _permissions_queryset(perm_q)
+    perm_total = perms_qs.count()
+    permissions = list(perms_qs[:ACCESS_LIST_CHUNK])
+    perm_loaded = len(permissions)
+    perm_next_offset = perm_loaded
+    perm_has_more = perm_next_offset < perm_total
+
+    return {
+        "group_q": group_q,
+        "perm_q": perm_q,
+        "groups": groups,
+        "groups_total": groups_total,
+        "groups_next_offset": groups_next_offset,
+        "groups_has_more": groups_has_more,
+        "access_list_chunk": ACCESS_LIST_CHUNK,
+        "permissions": permissions,
+        "perm_total": perm_total,
+        "perm_next_offset": perm_next_offset,
+        "perm_has_more": perm_has_more,
+        "django_groups_ui_name": DJANGO_GROUPS_UI_NAME,
+    }
+
+
+@require_http_methods(["GET"])
+def access_management_index(request: HttpRequest) -> HttpResponse:
+    fmt = request.GET.get("format", "").strip()
+    group_q = request.GET.get("group_q", "").strip()
+    perm_q = request.GET.get("perm_q", "").strip()
+
+    if fmt == "htmx-access-groups-panel":
+        groups_qs = _groups_queryset(group_q)
+        groups_total = groups_qs.count()
+        groups = list(groups_qs[:ACCESS_LIST_CHUNK])
+        groups_next_offset = len(groups)
+        return render(
+            request,
+            "access_management/_access_groups_panel.html",
+            {
+                "group_q": group_q,
+                "groups": groups,
+                "groups_total": groups_total,
+                "groups_next_offset": groups_next_offset,
+                "groups_has_more": groups_next_offset < groups_total,
+                "access_list_chunk": ACCESS_LIST_CHUNK,
+                "django_groups_ui_name": DJANGO_GROUPS_UI_NAME,
+            },
+        )
+
+    if fmt == "htmx-access-groups-append":
+        offset = _non_negative_offset(request)
+        groups_qs = _groups_queryset(group_q)
+        groups_total = groups_qs.count()
+        groups = list(
+            groups_qs[offset : offset + ACCESS_LIST_CHUNK],
+        )
+        next_offset = offset + len(groups)
+        return render(
+            request,
+            "access_management/_access_groups_append.html",
+            {
+                "group_q": group_q,
+                "groups": groups,
+                "groups_total": groups_total,
+                "groups_next_offset": next_offset,
+                "groups_has_more": next_offset < groups_total,
+                "access_list_chunk": ACCESS_LIST_CHUNK,
+                "django_groups_ui_name": DJANGO_GROUPS_UI_NAME,
+            },
+        )
+
+    if fmt == "htmx-access-permissions-panel":
+        perms_qs = _permissions_queryset(perm_q)
+        perm_total = perms_qs.count()
+        permissions = list(perms_qs[:ACCESS_LIST_CHUNK])
+        perm_next_offset = len(permissions)
+        return render(
+            request,
+            "access_management/_access_permissions_panel.html",
+            {
+                "perm_q": perm_q,
+                "permissions": permissions,
+                "perm_total": perm_total,
+                "perm_next_offset": perm_next_offset,
+                "perm_has_more": perm_next_offset < perm_total,
+                "access_list_chunk": ACCESS_LIST_CHUNK,
+                "django_groups_ui_name": DJANGO_GROUPS_UI_NAME,
+            },
+        )
+
+    if fmt == "htmx-access-permissions-append":
+        offset = _non_negative_offset(request)
+        perms_qs = _permissions_queryset(perm_q)
+        perm_total = perms_qs.count()
+        permissions = list(
+            perms_qs[offset : offset + ACCESS_LIST_CHUNK],
+        )
+        next_offset = offset + len(permissions)
+        return render(
+            request,
+            "access_management/_access_permissions_append.html",
+            {
+                "perm_q": perm_q,
+                "permissions": permissions,
+                "perm_total": perm_total,
+                "perm_next_offset": next_offset,
+                "perm_has_more": next_offset < perm_total,
+                "access_list_chunk": ACCESS_LIST_CHUNK,
+                "django_groups_ui_name": DJANGO_GROUPS_UI_NAME,
+            },
+        )
+
+    ctx = _access_management_index_context(request)
     return render(
         request,
         "access_management/index.html",
-        {
-            "groups": groups,
-            "permissions": permissions,
-            "perm_q": perm_q,
-            "perm_paginator": perm_paginator,
-            "perm_page": perm_page,
-            "perm_elided": perm_elided,
-            "django_groups_ui_name": DJANGO_GROUPS_UI_NAME,
-        },
+        ctx,
     )
 
 

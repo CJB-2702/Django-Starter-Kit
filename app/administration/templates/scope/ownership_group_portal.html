@@ -13,13 +13,8 @@
     <p class="card-header-title">Organizations using this group</p>
   </header>
   <div class="card-content">
-    <ul class="ml-4">
-      {% for o in organizations %}
-      <li><a href="{% url 'organization_portal' o.pk %}">{{ o.name }}</a></li>
-      {% empty %}
-      <li class="has-text-grey">None linked.</li>
-      {% endfor %}
-    </ul>
+    {% include "shared_components/_htmx_browse_filter_form.html" with hx_get_url=og_org_filter_hx_get hx_target_panel_id="og-portal-orgs-panel" hx_include_selectors="#og-portal-orgs-filter, #og-portal-users-filter" filter_fields_id="og-portal-orgs-filter" search_input_id="og-portal-org-q-input" search_input_name="portal_org_q" search_input_value=portal_org_q search_input_placeholder="Filter organizations by name" %}
+    {% include "scope/_ownership_group_portal_orgs_panel.html" %}
   </div>
 </div>
 
@@ -53,37 +48,8 @@
     </form>
     {% endif %}
 
-    <div class="table-container">
-      <table class="table is-fullwidth is-striped">
-        <thead>
-          <tr>
-            <th>User</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for row in user_rows %}
-          <tr>
-            <td><a href="{% url 'user_portal_detail' row.user_id %}">{{ row.user.username }}</a></td>
-            <td class="has-text-right">
-              {% if can_assign_scope %}
-              <form method="post" class="is-inline">
-                {% csrf_token %}
-                <input type="hidden" name="action" value="disable_assignment">
-                <input type="hidden" name="user_ownership_group_id" value="{{ row.pk }}">
-                <button class="button is-warning is-light is-small" type="submit" aria-label="Disable">
-                  <span class="icon"><span class="material-icons" aria-hidden="true">block</span></span>
-                </button>
-              </form>
-              {% endif %}
-            </td>
-          </tr>
-          {% empty %}
-          <tr><td colspan="2" class="has-text-grey">No active assignments.</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
+    {% include "shared_components/_htmx_browse_filter_form.html" with hx_get_url=og_user_filter_hx_get hx_target_panel_id="og-portal-users-panel" hx_include_selectors="#og-portal-orgs-filter, #og-portal-users-filter" filter_fields_id="og-portal-users-filter" search_input_id="og-portal-user-q-input" search_input_name="portal_user_q" search_input_value=portal_user_q search_input_placeholder="Filter users by name or email" %}
+    {% include "scope/_ownership_group_portal_users_panel.html" %}
   </div>
 </div>
 {% endblock %}

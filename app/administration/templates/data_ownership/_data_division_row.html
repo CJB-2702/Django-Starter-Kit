@@ -1,0 +1,10 @@
+<tr>
+  <td>{{ d.name }}</td>
+  <td class="has-text-right">{{ d.organization_count }} organization{{ d.organization_count|pluralize }}</td>
+  <td class="has-text-right">
+    <a class="button is-link is-light is-small" href="{% url 'division_portal' d.pk %}">
+      <span class="icon"><span class="material-icons" aria-hidden="true">settings</span></span>
+      <span>Manage division</span>
+    </a>
+  </td>
+</tr>

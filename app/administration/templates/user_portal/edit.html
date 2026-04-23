@@ -140,7 +140,7 @@
       Choose groups on the left and use the <strong>forward-arrow</strong> button to assign them. Select on the right and use the <strong>trash</strong> button to unassign.
       Group permissions apply through Django’s group membership (no separate copy step).
     </p>
-    {% include "user_portal/_dual_listbox.html" with section_id="up-groups" left_title="Available groups" right_title="Assigned groups" left_help="Select groups to assign, then choose the arrow button." right_help="Select groups to remove, then choose the trash button." action_add="add_groups" action_remove="remove_groups" field_name="group_ids" list_kind="group" left_items=groups_available right_items=groups_assigned %}
+    {% include "shared_components/_dual_listbox.html" with section_id="up-groups" left_title="Available groups" right_title="Assigned groups" left_help="Select groups to assign, then choose the arrow button." right_help="Select groups to remove, then choose the trash button." action_add="add_groups" action_remove="remove_groups" field_name="group_ids" list_kind="group" left_items=groups_available right_items=groups_assigned %}
 
     <h3 class="title is-5 mb-3 mt-5">Direct permissions</h3>
     <p class="is-size-7 has-text-grey mb-3">
@@ -149,7 +149,7 @@
       Selecting in Available updates the note below that list (server-rendered via HTMX).
     </p>
     {% url 'check_direct_permissions_against_group' target_user.pk as direct_perm_htmx_check_url %}
-    {% include "user_portal/_dual_listbox.html" with section_id="up-perms" left_title="Available permissions" right_title="Direct permissions on this user" left_help="Select permissions to grant directly, then choose the arrow button." right_help="Select direct permissions to remove, then choose the trash button." action_add="add_permissions" action_remove="remove_permissions" field_name="permission_ids" list_kind="permission" left_items=permissions_available right_items=permissions_assigned htmx_direct_perm_check_url=direct_perm_htmx_check_url %}
+    {% include "shared_components/_dual_listbox.html" with section_id="up-perms" left_title="Available permissions" right_title="Direct permissions on this user" left_help="Select permissions to grant directly, then choose the arrow button." right_help="Select direct permissions to remove, then choose the trash button." action_add="add_permissions" action_remove="remove_permissions" field_name="permission_ids" list_kind="permission" left_items=permissions_available right_items=permissions_assigned htmx_direct_perm_check_url=direct_perm_htmx_check_url %}
   </div>
 </div>
 
@@ -169,7 +169,7 @@
     {% include "user_portal/_organization_scope_block.html" with section_id="up-orgs" assigned_items=organizations_assigned available_items=organizations_available field_name="organization_ids" empty_assigned_msg="No organizations assigned yet." %}
 
     <h3 class="title is-5 mb-3 mt-5">Ownership groups</h3>
-    {% include "user_portal/_dual_listbox.html" with section_id="up-ogs" left_title="Available ownership groups" right_title="Assigned ownership groups" left_help="Select ownership groups to assign, then choose the arrow button." right_help="Select ownership groups to remove, then choose the trash button." action_add="assign_ownership_groups" action_remove="disable_ownership_groups" field_name="ownership_group_ids" list_kind="ownership_group" left_items=ownership_groups_available right_items=ownership_groups_assigned %}
+    {% include "shared_components/_dual_listbox.html" with section_id="up-ogs" left_title="Available ownership groups" right_title="Assigned ownership groups" left_help="Select ownership groups to assign, then choose the arrow button." right_help="Select ownership groups to remove, then choose the trash button." action_add="assign_ownership_groups" action_remove="disable_ownership_groups" field_name="ownership_group_ids" list_kind="ownership_group" left_items=ownership_groups_available right_items=ownership_groups_assigned %}
   </div>
 </div>
 

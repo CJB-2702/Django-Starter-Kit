@@ -1,6 +1,6 @@
 ---
 name: delete-database-rebuild-models
-description: Runs the repo-root script that deletes project migration files, clears the database, runs makemigrations and migrate, and optionally seed_dev. Use after Django model/schema changes, when resetting dev data, or when the user mentions delete_database_rebuild_models.py, full DB rebuild, or migration reset workflow.
+description: Runs dev_tools/delete_database_rebuild_models.py — deletes project migration files, clears the database, runs makemigrations and migrate, and optionally seed_dev. Use after Django model/schema changes, when resetting dev data, or when the user mentions delete_database_rebuild_models.py, full DB rebuild, or migration reset workflow.
 ---
 
 # Delete database and rebuild models
@@ -10,8 +10,8 @@ description: Runs the repo-root script that deletes project migration files, cle
 From the **repository root**:
 
 ```bash
-python delete_database_rebuild_models.py
-python delete_database_rebuild_models.py --seed
+python dev_tools/delete_database_rebuild_models.py
+python dev_tools/delete_database_rebuild_models.py --seed
 ```
 
 - **`--seed`**: runs `python manage.py seed_dev` after migrations (dev users and sample division/org/ownership data; see `docs/users_and_passwords.md`).
@@ -22,6 +22,10 @@ python delete_database_rebuild_models.py --seed
 2. Clears the database (SQLite file removal, or PostgreSQL `DROP SCHEMA public CASCADE` + `CREATE SCHEMA public` when using `DATABASE_URL` with Postgres).
 3. Runs `makemigrations` then `migrate`.
 4. Optionally runs `seed_dev`.
+
+## Other `dev_tools/` scripts
+
+- **`generate_env.py`** — from the repository root: `python dev_tools/generate_env.py` (writes `.env` at the project root; see `app/config/settings.py`).
 
 ## Agent notes
 

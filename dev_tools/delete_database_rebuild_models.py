@@ -3,9 +3,9 @@
 
 Aligns with `.cursor/rules/migration-strategy.mdc`. Stop the dev server before running.
 
-Usage:
-  python delete_database_rebuild_models.py
-  python delete_database_rebuild_models.py --seed
+Usage (from repository root):
+  python dev_tools/delete_database_rebuild_models.py
+  python dev_tools/delete_database_rebuild_models.py --seed
 """
 
 from __future__ import annotations
@@ -17,8 +17,14 @@ import sys
 from pathlib import Path
 
 
+def _repo_root() -> Path:
+    """Parent of ``dev_tools/`` when this file lives under ``dev_tools/``."""
+    here = Path(__file__).resolve().parent
+    return here.parent if here.name == "dev_tools" else here
+
+
 def _bootstrap_django() -> None:
-    root = Path(__file__).resolve().parent
+    root = _repo_root()
     sys.path.insert(0, str(root / "app"))
     sys.path.insert(0, str(root))
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
@@ -99,7 +105,7 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    root = Path(__file__).resolve().parent
+    root = _repo_root()
 
     _bootstrap_django()
 

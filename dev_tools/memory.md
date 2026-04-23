@@ -38,3 +38,16 @@
 2026-04-19 — Added `search-dropdown` web component, `administration_permissions` fragment GET (`format=htmx-search-results`, `group_id`, `q`, `page`), permission-group add-permission form wired to it; documented in `COMMON_UI_COMPONENTS.md`.
 2026-04-19 — search-dropdown: default `hx-target` uses HTMX `global #…` so fragment swaps resolve from the document when the trigger is inside shadow DOM.
 2026-04-19 — Permission group portal: dual-listbox users/permissions + `list_kind="user"`; standard `card` layout (no `<details>`) to fix overlap; `_dual_listbox`: `is-multiline`, `is-align-items-flex-start`, `icon-text` labels (Assign, Remove, Assign all, Remove all) on user edit and permission group.
+2026-04-19 — Moved `delete_database_rebuild_models.py`, `generate_env.py`, and `memory.md` into `dev_tools/`; scripts resolve repo root via parent of `dev_tools/`; updated `.cursor` skills/rules, `settings.py`, and `docs/users_and_passwords.md`.
+2026-04-19 — Moved `_dual_listbox.html` to `administration/templates/shared_components/`; includes updated in user edit and permission group portal.
+2026-04-19 — User portal org scope block: labeled the two remove buttons (org+sweep groups vs org only) beside Material icons.
+2026-04-22 — Access management index: `group_q` filter, fixed-height scroll areas, chunked infinite scroll via `format=htmx-access-groups-panel|append` and `htmx-access-permissions-panel|append` (replaced paginated permissions list).
+2026-04-22 — Data ownership index: same card pattern (filter, scroll, `revealed` sentinel chunks) for divisions, organizations, and ownership groups via `format=htmx-data-*-panel|append` on `data_ownership_index`.
+2026-04-22 — Data ownership division/org tables: counts only (annotated), `Manage division` / `Manage organization` buttons aligned with access-management portal actions.
+2026-04-23 — Data ownership index queries moved to `presentation_layer/search/data_ownership_index_search.py` (scoped direct querysets, org division name via Subquery, no `reference_scope` list helpers or prefetch for that page).
+2026-04-23 — Added `shared_components/_htmx_browse_filter_form.html` (HTMX debounced search + Filter + panel swap) and wired access-management and data-ownership index cards to use it.
+2026-04-23 — Data ownership / access management: single-line `{% include %}` for `_htmx_browse_filter_form.html` (removed multiline `only`) so Django parses the tag instead of echoing it as HTML.
+2026-04-23 — Ownership group portal: HTMX browse filters + chunked org/user lists (`format=htmx-og-organizations-panel|append`, `htmx-og-users-panel|append`); `_htmx_browse_filter_form` supports optional `hx_get_url`.
+2026-04-22 — Division portal: dual-listbox for organizations (link/unlink via `division_structure` + policy) and for division users (`add_users` / `remove_users`); read-only card fallbacks when not grant actor.
+2026-04-22 — Organization portal: dual-listbox for ownership groups (link/unlink via `OrganizationOwnershipGroup`) and for users (`add_users` / `remove_users` via `OwnershipContext`); same template pattern and script as division portal.
+2026-04-22 — `csrf-htmx-required-snippet.html`: wrapped CSRF hook in `<script>`, fixed listener to `htmx:config:request` and `event.detail.ctx.request.headers` (HTMX 2).

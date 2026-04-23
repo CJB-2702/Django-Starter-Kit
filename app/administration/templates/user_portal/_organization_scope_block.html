@@ -9,25 +9,27 @@
         <td>
           {{ item.name }}{% if item.division %} — {{ item.division.name }}{% endif %}
         </td>
-        <td class="has-text-right is-narrow">
+        <td class="has-text-right">
           <div class="columns is-mobile is-variable is-1 mb-0 is-flex is-justify-content-flex-end">
-            <div class="column is-two-thirds py-1">
+            <div class="column is-half py-1">
               <form method="post" class="mb-0">
                 {% csrf_token %}
                 <input type="hidden" name="action" value="disable_organization_with_groups">
                 <input type="hidden" name="{{ field_name }}" value="{{ item.pk }}">
-                <button type="submit" class="button is-small is-danger is-light is-fullwidth" aria-label="Remove organization and all groups linked only to it">
+                <button type="submit" class="button is-small is-danger is-light is-fullwidth is-justify-content-flex-start">
                   <span class="icon"><span class="material-icons" aria-hidden="true">delete_sweep</span></span>
+                  <span>Remove organization and all groups linked only to it</span>
                 </button>
               </form>
             </div>
-            <div class="column is-one-third py-1">
+            <div class="column is-half py-1">
               <form method="post" class="mb-0">
                 {% csrf_token %}
                 <input type="hidden" name="action" value="disable_organizations">
                 <input type="hidden" name="{{ field_name }}" value="{{ item.pk }}">
-                <button type="submit" class="button is-small is-danger is-light is-fullwidth" aria-label="Remove organization only">
+                <button type="submit" class="button is-small is-danger is-light is-fullwidth is-justify-content-flex-start">
                   <span class="icon"><span class="material-icons" aria-hidden="true">delete</span></span>
+                  <span>Remove organization only</span>
                 </button>
               </form>
             </div>

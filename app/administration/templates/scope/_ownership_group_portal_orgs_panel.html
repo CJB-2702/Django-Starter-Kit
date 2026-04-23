@@ -1,0 +1,42 @@
+<div id="og-portal-orgs-panel">
+<div class="level mb-2">
+  <div class="level-left">
+    <div class="level-item">
+      <p class="is-size-7 has-text-grey">
+        {{ og_orgs_total }} organization{{ og_orgs_total|pluralize }} linked{% if portal_org_q %} (filter applied){% endif %}
+        {% if og_orgs_has_more %}
+        <span class="is-block">Scroll to load more ({{ og_portal_chunk }} at a time).</span>
+        {% endif %}
+      </p>
+    </div>
+  </div>
+</div>
+<div class="table-container" style="max-height: min(40vh, 24rem); overflow-y: auto;">
+  <table class="table is-fullwidth is-striped is-hoverable">
+    <thead>
+      <tr>
+        <th>Organization</th>
+        <th class="has-text-right">Portal</th>
+      </tr>
+    </thead>
+    <tbody id="og-portal-orgs-tbody">
+      {% for o in og_orgs_chunk %}
+      {% include "scope/_ownership_group_portal_org_row.html" with o=o only %}
+      {% empty %}
+      <tr><td colspan="2" class="has-text-grey">{% if portal_org_q %}No organizations match this filter.{% else %}None linked.{% endif %}</td></tr>
+      {% endfor %}
+      {% if og_orgs_has_more %}
+      <tr
+        id="og-portal-orgs-sentinel"
+        hx-get="{{ og_portal_htmx_base }}?format=htmx-og-organizations-append&org_offset={{ og_orgs_next_offset }}&portal_org_q={{ portal_org_q|urlencode }}&portal_user_q={{ portal_user_q|urlencode }}"
+        hx-trigger="revealed"
+        hx-swap="outerHTML"
+        hx-push-url="false"
+      >
+        <td colspan="2" class="is-size-7 has-text-grey py-3"><span class="htmx-indicator">Loading more…</span></td>
+      </tr>
+      {% endif %}
+    </tbody>
+  </table>
+</div>
+</div>

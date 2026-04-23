@@ -1,0 +1,16 @@
+{% for p in permissions %}
+{% include "access_management/_access_permission_row.html" with p=p only %}
+{% endfor %}
+{% if perm_has_more %}
+<tr
+  id="access-permissions-sentinel"
+  hx-get="{% url 'access_management_index' %}?format=htmx-access-permissions-append&perm_q={{ perm_q|urlencode }}&offset={{ perm_next_offset }}"
+  hx-trigger="revealed"
+  hx-swap="outerHTML"
+  hx-push-url="false"
+>
+  <td colspan="2" class="is-size-7 has-text-grey py-3">
+    <span class="htmx-indicator">Loading more…</span>
+  </td>
+</tr>
+{% endif %}
