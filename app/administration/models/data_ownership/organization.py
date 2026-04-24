@@ -1,8 +1,8 @@
 from django.db import models
 
-from app.administration.models.audit import AuditFieldsMixin
-from app.administration.models.division import Division
-from app.administration.models.groupings.organisation_ownership_groups import (
+from app.administration.models.auditable_mixin import AuditFieldsMixin
+from app.administration.models.ownership_groups.division import Division
+from app.administration.models.ownership_groups.group_relationships.organisation_ownership_groups import (
     OrganizationOwnershipGroup,
 )
 

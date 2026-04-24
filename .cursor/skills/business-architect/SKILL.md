@@ -48,14 +48,7 @@ Actor → Step 1 → Decision → Step 2a / Step 2b → Outcome
 | Feature | Business value | Complexity (est.) | Risk | Recommended order |
 | :--- | :--- | :--- | :--- | :--- |
 
-## This project's domain context
 
-- **Assets:** Things tracked (equipment, inventory, etc.) tied to facilities.
-- **Events:** Occurrences (maintenance, incidents) that may relate to assets.
-- **Ownership groups:** The atomic facility/site unit — data and users are scoped to ownership groups.
-- **Organizations / Divisions:** Grouping layers above ownership groups for reporting and administration.
-- **Roles:** Users have different access levels (set by group templates) controlling what they can view and do.
-- **Part demands:** Requests for parts tied to events or maintenance actions.
 
 ## What you deliberately do not cover
 

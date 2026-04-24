@@ -1,6 +1,6 @@
 from django.db import models
 
-from app.administration.models.audit import AuditFieldsMixin
+from app.administration.models.auditable_mixin import AuditFieldsMixin
 
 
 class OrganizationOwnershipGroup(AuditFieldsMixin):

@@ -21,7 +21,7 @@ from app.administration.models import (
     UserOrganization,
     UserOwnershipGroup,
 )
-from app.administration.models.groupings.division_organisations import (
+from app.administration.models.ownership_groups.group_relationships.division_organisations import (
     DivisionOrganisation,
 )
 

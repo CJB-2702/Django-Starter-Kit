@@ -1,16 +1,16 @@
 from django.db import models
 
-from app.administration.models.audit import AuditFieldsMixin
+from app.administration.models.auditable_mixin import AuditFieldsMixin
 
 
-class Division(AuditFieldsMixin):
-    """Top-level grouping of organizations (e.g. regional or business division)."""
+class OwnershipGroup(AuditFieldsMixin):
+    """Atomic scope for data rows and user assignment."""
 
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, unique=True)
 
     class Meta:
-        db_table = "core_division"
+        db_table = "core_ownershipgroup"
         ordering = ["name"]
 
     def __str__(self) -> str:

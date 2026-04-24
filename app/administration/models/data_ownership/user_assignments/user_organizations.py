@@ -1,8 +1,8 @@
 from django.conf import settings
 from django.db import models
 
-from app.administration.models.audit import AuditFieldsMixin
-from app.administration.models.organization import Organization
+from app.administration.models.auditable_mixin import AuditFieldsMixin
+from app.administration.models.ownership_groups.organization import Organization
 
 from . import ActiveUserAssignmentManager
 
