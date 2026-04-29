@@ -13,15 +13,15 @@
 
 <div class="card mb-5">
   <header class="card-header">
-    <p class="card-header-title">Ownership groups</p>
+    <p class="card-header-title">Data domains</p>
   </header>
   <div class="card-content">
     {% if can_assign_scope %}
-    {% include "shared_components/_dual_listbox.html" with section_id="org-ogs" left_title="Available ownership groups" right_title="Ownership groups in this organization" left_help="Select ownership groups to link to this organization, then choose Assign." right_help="Select ownership groups to remove from this organization, then choose Remove." action_add="add_ownership_groups" action_remove="remove_ownership_groups" field_name="ownership_group_ids" list_kind="ownership_group" left_items=ownership_groups_available right_items=ownership_groups_assigned %}
+    {% include "shared_components/_dual_listbox.html" with section_id="org-domains" left_title="Available data domains" right_title="Data domains in this organization" left_help="Select data domains to link to this organization, then choose Assign." right_help="Select data domains to remove from this organization, then choose Remove." action_add="add_domains" action_remove="remove_domains" field_name="domain_ids" list_kind="domain" left_items=domains_available right_items=domains_assigned %}
     {% else %}
     <ul class="ml-4">
-      {% for g in ownership_groups_assigned %}
-      <li><a href="{% url 'ownership_group_portal' g.pk %}">{{ g.name }}</a></li>
+      {% for d in domains_assigned %}
+      <li><a href="{% url 'domain_portal' d.pk %}">{{ d.name }}</a></li>
       {% empty %}
       <li class="has-text-grey">None linked.</li>
       {% endfor %}
@@ -35,7 +35,7 @@
     <p class="card-header-title">Users with this organization</p>
   </header>
   <div class="card-content">
-    <p class="is-size-7 mb-3">Adding a user assigns the organization and all linked ownership groups above.</p>
+    <p class="is-size-7 mb-3">Adding a user assigns the organization and all linked data domains above.</p>
     {% if can_assign_scope %}
     {% include "shared_components/_dual_listbox.html" with section_id="org-users" left_title="Available users" right_title="Users with this organization" left_help="Select users to add to this organization, then choose Assign." right_help="Select users to remove from this organization, then choose Remove." action_add="add_users" action_remove="remove_users" field_name="user_ids" list_kind="user" left_items=users_available right_items=users_assigned %}
     {% else %}

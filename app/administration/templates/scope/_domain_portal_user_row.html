@@ -1,0 +1,15 @@
+<tr>
+  <td><a href="{% url 'user_portal_detail' row.user_id %}">{{ row.user.username }}</a></td>
+  <td class="has-text-right">
+    {% if can_assign_scope %}
+    <form method="post" class="is-inline">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="disable_assignment">
+      <input type="hidden" name="user_domain_id" value="{{ row.pk }}">
+      <button class="button is-warning is-light is-small" type="submit" aria-label="Disable assignment">
+        <span class="icon"><span class="material-icons" aria-hidden="true">block</span></span>
+      </button>
+    </form>
+    {% endif %}
+  </td>
+</tr>

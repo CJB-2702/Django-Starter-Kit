@@ -1,13 +1,13 @@
 from django.contrib.auth.models import AbstractUser
 
-from app.administration.control_layer.permission_grant_policy import is_admin_actor
+from app.administration.control_layer.permissions.permission_grant_guard import is_admin_actor
 from app.administration.models import (
     Division,
+    Domain,
     Organization,
-    OwnershipGroup,
     UserDivision,
+    UserDomain,
     UserOrganization,
-    UserOwnershipGroup,
 )
 
 
@@ -27,12 +27,9 @@ def list_organizations(user: AbstractUser):
     return qs.filter(pk__in=ids)
 
 
-def list_ownership_groups(user: AbstractUser):
-    qs = OwnershipGroup.objects.order_by("name")
+def list_domains(user: AbstractUser):
+    qs = Domain.objects.order_by("name")
     if is_admin_actor(user):
         return qs
-    ids = UserOwnershipGroup.objects.filter(user=user).values_list(
-        "ownership_group_id",
-        flat=True,
-    )
+    ids = UserDomain.objects.filter(user=user).values_list("domain_id", flat=True)
     return qs.filter(pk__in=ids)

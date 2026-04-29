@@ -29,7 +29,7 @@
       </tr>
       <tr>
         <th>Data ownership</th>
-        <td>Browse divisions, organizations, and ownership groups; open a portal per row to manage users and scope.</td>
+        <td>Browse divisions, organizations, and data domains; open a portal per row to manage users and scope.</td>
         <td class="has-text-right">
           <a class="button is-small is-link is-light" href="{% url 'data_ownership_index' %}">
             <span class="icon"><span class="material-icons" aria-hidden="true">account_tree</span></span>
@@ -44,6 +44,16 @@
           <a class="button is-small is-link is-light" href="{% url 'access_management_index' %}">
             <span class="icon"><span class="material-icons" aria-hidden="true">admin_panel_settings</span></span>
             <span>Open access management</span>
+          </a>
+        </td>
+      </tr>
+      <tr>
+        <th>Permission group templates</th>
+        <td>Manage named bundles of permission groups (role profiles) used for one-step user onboarding.</td>
+        <td class="has-text-right">
+          <a class="button is-small is-link is-light" href="{% url 'permission_group_template_index' %}">
+            <span class="icon"><span class="material-icons" aria-hidden="true">assignment_ind</span></span>
+            <span>Manage templates</span>
           </a>
         </td>
       </tr>

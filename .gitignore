@@ -1,3 +1,5 @@
 docs/users_and_passwords.md
 .env
 *.sqlite3
+*.pyc
+*__pycache__

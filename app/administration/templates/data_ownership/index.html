@@ -5,14 +5,18 @@
 {% endblock %}
 {% block content %}
 <h1 class="title">Data ownership</h1>
-<p class="mb-4">Browse scope: each row opens a portal to view linked scope, manage users, and child records.</p>
+<p class="mb-4">
+  Browse scope: each row opens a portal to view linked scope, manage users, and child records.
+  Row-level access is decided by <strong>data domain</strong> membership only — divisions and organizations
+  are informational. See <code>docs/DOMAIN/admin/DATA_OWNERSHIP.md</code> for the Golden Rule.
+</p>
 
 <div class="card mb-5">
   <header class="card-header">
     <p class="card-header-title">Divisions</p>
   </header>
   <div class="card-content">
-    {% include "shared_components/_htmx_browse_filter_form.html" with hx_url_name="data_ownership_index" hx_format="htmx-data-divisions-panel" hx_target_panel_id="data-divisions-panel" hx_include_selectors="#data-divisions-filter, #data-organization-q-input, #data-ownership-group-q-input" filter_fields_id="data-divisions-filter" search_input_id="data-division-q-input" search_input_name="division_q" search_input_value=division_q search_input_placeholder="Filter divisions by name" %}
+    {% include "shared_components/_htmx_browse_filter_form.html" with hx_url_name="data_ownership_index" hx_format="htmx-data-divisions-panel" hx_target_panel_id="data-divisions-panel" hx_include_selectors="#data-divisions-filter, #data-organization-q-input, #data-domain-q-input" filter_fields_id="data-divisions-filter" search_input_id="data-division-q-input" search_input_name="division_q" search_input_value=division_q search_input_placeholder="Filter divisions by name" %}
     {% include "data_ownership/_data_divisions_panel.html" %}
   </div>
 </div>
@@ -22,18 +26,18 @@
     <p class="card-header-title">Organizations</p>
   </header>
   <div class="card-content">
-    {% include "shared_components/_htmx_browse_filter_form.html" with hx_url_name="data_ownership_index" hx_format="htmx-data-organizations-panel" hx_target_panel_id="data-organizations-panel" hx_include_selectors="#data-organizations-filter, #data-division-q-input, #data-ownership-group-q-input" filter_fields_id="data-organizations-filter" search_input_id="data-organization-q-input" search_input_name="organization_q" search_input_value=organization_q search_input_placeholder="Filter by organization or division name" %}
+    {% include "shared_components/_htmx_browse_filter_form.html" with hx_url_name="data_ownership_index" hx_format="htmx-data-organizations-panel" hx_target_panel_id="data-organizations-panel" hx_include_selectors="#data-organizations-filter, #data-division-q-input, #data-domain-q-input" filter_fields_id="data-organizations-filter" search_input_id="data-organization-q-input" search_input_name="organization_q" search_input_value=organization_q search_input_placeholder="Filter by organization or division name" %}
     {% include "data_ownership/_data_organizations_panel.html" %}
   </div>
 </div>
 
 <div class="card">
   <header class="card-header">
-    <p class="card-header-title">Ownership groups</p>
+    <p class="card-header-title">Data domains</p>
   </header>
   <div class="card-content">
-    {% include "shared_components/_htmx_browse_filter_form.html" with hx_url_name="data_ownership_index" hx_format="htmx-data-ownership-groups-panel" hx_target_panel_id="data-ownership-groups-panel" hx_include_selectors="#data-ownership-groups-filter, #data-division-q-input, #data-organization-q-input" filter_fields_id="data-ownership-groups-filter" search_input_id="data-ownership-group-q-input" search_input_name="ownership_group_q" search_input_value=ownership_group_q search_input_placeholder="Filter ownership groups by name" %}
-    {% include "data_ownership/_data_ownership_groups_panel.html" %}
+    {% include "shared_components/_htmx_browse_filter_form.html" with hx_url_name="data_ownership_index" hx_format="htmx-data-domains-panel" hx_target_panel_id="data-domains-panel" hx_include_selectors="#data-domains-filter, #data-division-q-input, #data-organization-q-input" filter_fields_id="data-domains-filter" search_input_id="data-domain-q-input" search_input_name="domain_q" search_input_value=domain_q search_input_placeholder="Filter data domains by name" %}
+    {% include "data_ownership/_data_domains_panel.html" %}
   </div>
 </div>
 {% endblock %}

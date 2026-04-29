@@ -1,0 +1,72 @@
+{# Data domain assignment with red/yellow audit warnings.
+   Expects: domain_rows (list of {domain, warning} dicts), available_items (list of Domain).
+#}
+<div class="mb-5">
+  <p class="is-size-7 has-text-grey mb-3">
+    Data domains are the row-level access primitive — each business record belongs to exactly one.
+    <span class="tag is-danger is-light">Red</span> means the domain belongs to an organization the user is not assigned to.
+    <span class="tag is-warning is-light">Yellow</span> means the domain's organization or division does not match the user's assignments.
+  </p>
+
+  <div class="columns is-multiline is-align-items-flex-start">
+    <div class="column is-6">
+      <h4 class="title is-6">Assigned data domains</h4>
+      {% if domain_rows %}
+      <table class="table is-fullwidth is-size-7 mb-3">
+        <tbody>
+          {% for row in domain_rows %}
+          <tr>
+            <td>
+              {{ row.domain.name }}
+              {% if row.warning.severity == 'red' %}
+              <span class="tag is-danger is-light is-small ml-2" title="{{ row.warning.label }}">cross-org</span>
+              {% elif row.warning.severity == 'yellow' %}
+              <span class="tag is-warning is-light is-small ml-2" title="{{ row.warning.label }}">cross-division</span>
+              {% endif %}
+            </td>
+            <td class="has-text-right">
+              <form method="post" class="is-inline mb-0">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="disable_domains">
+                <input type="hidden" name="domain_ids" value="{{ row.domain.pk }}">
+                <button type="submit" class="button is-small is-danger is-light">
+                  <span class="icon"><span class="material-icons" aria-hidden="true">delete</span></span>
+                  <span>Remove</span>
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p class="is-size-7 has-text-grey mb-3">No data domains assigned.</p>
+      {% endif %}
+    </div>
+
+    <div class="column is-6">
+      <h4 class="title is-6">Add a data domain</h4>
+      <form method="post" class="mb-0">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="assign_domains">
+        <div class="field mb-2">
+          <div class="select is-fullwidth">
+            <select name="domain_ids"{% if not available_items %} disabled{% endif %}>
+              <option value="">Select…</option>
+              {% for d in available_items %}
+              <option value="{{ d.pk }}">{{ d.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <button type="submit" class="button is-link is-light is-small"{% if not available_items %} disabled{% endif %}>
+          <span class="icon"><span class="material-icons" aria-hidden="true">add</span></span>
+          <span>Add data domain</span>
+        </button>
+      </form>
+      {% if not available_items %}
+      <p class="is-size-7 has-text-grey mt-2 mb-0">All data domains are already assigned.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>

@@ -1,0 +1,192 @@
+{% extends "adm_base.html" %}
+{% block title %}{{ template.name }} — Permission group template{% endblock %}
+{% block breadcrumb %}
+<li><a href="{% url 'access_management_index' %}">Access management</a></li>
+<li><a href="{% url 'permission_group_template_index' %}">Permission group templates</a></li>
+<li class="is-active"><a href="#" aria-current="page">{{ template.name }}</a></li>
+{% endblock %}
+{% block content %}
+<h1 class="title">{{ template.name }}</h1>
+<p class="subtitle is-6 has-text-grey">
+  Permission group template
+  {% if template.is_active %}
+  <span class="tag is-success is-light ml-2">Active</span>
+  {% else %}
+  <span class="tag is-light ml-2">Inactive</span>
+  {% endif %}
+</p>
+
+<div class="card mb-5">
+  <header class="card-header">
+    <p class="card-header-title">Details</p>
+  </header>
+  <div class="card-content">
+    {% if can_edit %}
+    <form method="post" class="mb-3">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="update_metadata">
+      <div class="field">
+        <label class="label is-size-7 mb-1">Name</label>
+        <div class="control">
+          <input class="input" type="text" name="name" value="{{ template.name }}" required>
+        </div>
+      </div>
+      <div class="field">
+        <label class="label is-size-7 mb-1">Description</label>
+        <div class="control">
+          <textarea class="textarea" name="description" rows="2">{{ template.description }}</textarea>
+        </div>
+      </div>
+      <button class="button is-link is-light is-small" type="submit">
+        <span class="icon"><span class="material-icons" aria-hidden="true">save</span></span>
+        <span>Save details</span>
+      </button>
+    </form>
+    <form method="post" class="mb-0">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="set_active">
+      {% if template.is_active %}
+      <input type="hidden" name="is_active" value="0">
+      <button class="button is-warning is-light is-small" type="submit">
+        <span class="icon"><span class="material-icons" aria-hidden="true">visibility_off</span></span>
+        <span>Deactivate template</span>
+      </button>
+      {% else %}
+      <input type="hidden" name="is_active" value="1">
+      <button class="button is-success is-light is-small" type="submit">
+        <span class="icon"><span class="material-icons" aria-hidden="true">visibility</span></span>
+        <span>Activate template</span>
+      </button>
+      {% endif %}
+    </form>
+    {% else %}
+    <p class="is-size-7"><strong>Slug:</strong> {{ template.slug }}</p>
+    <p class="is-size-7"><strong>Description:</strong> {{ template.description|default:"—" }}</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="card mb-5">
+  <header class="card-header">
+    <p class="card-header-title">Permission groups in this template</p>
+  </header>
+  <div class="card-content">
+    {% if can_edit %}
+    {% include "shared_components/_dual_listbox.html" with section_id="tpl-pgs" left_title="Available permission groups" right_title="Permission groups in this template" left_help="Select permission groups to add to the template, then choose Assign." right_help="Select permission groups to remove from the template, then choose Remove." action_add="add_permission_groups" action_remove="remove_permission_groups" field_name="permission_group_ids" list_kind="permission_group" left_items=permission_groups_available right_items=permission_groups_assigned %}
+    {% else %}
+    <ul class="ml-4 is-size-7">
+      {% for g in permission_groups_assigned %}
+      <li>{{ g.name }}</li>
+      {% empty %}
+      <li class="has-text-grey">No permission groups assigned.</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+</div>
+
+<div class="card">
+  <header class="card-header">
+    <p class="card-header-title">Assignees ({{ assignees|length }})</p>
+  </header>
+  <div class="card-content">
+    {% if assignees %}
+    <table class="table is-fullwidth is-striped is-hoverable is-size-7">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Status</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for a in assignees %}
+        <tr>
+          <td><a href="{% url 'user_portal_detail' a.user_id %}">{{ a.user.username }}</a></td>
+          <td>
+            {% if a.disabled %}
+            <span class="tag is-light">Disabled</span>
+            {% else %}
+            <span class="tag is-success is-light">Active</span>
+            {% endif %}
+          </td>
+          <td style="white-space: pre-wrap;">{{ a.notes|default:"—" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="has-text-grey is-size-7 mb-0">No users currently hold this template.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+{% block body_scripts %}
+{% if can_edit %}
+<script>
+(function () {
+  function filterOptions(selectId, query) {
+    const sel = document.getElementById(selectId);
+    if (!sel) return;
+    const q = (query || "").trim().toLowerCase();
+    for (const opt of sel.options) {
+      opt.hidden = q && !opt.textContent.toLowerCase().includes(q);
+    }
+  }
+  function fillHiddenAndSubmit(form, selectId, fieldName) {
+    const sel = document.getElementById(selectId);
+    const container = form.querySelector(".dual-hidden-inputs");
+    container.innerHTML = "";
+    if (!sel || !sel.selectedOptions.length) {
+      window.alert("Please select an item in the list.");
+      return;
+    }
+    for (const opt of sel.selectedOptions) {
+      const inp = document.createElement("input");
+      inp.type = "hidden";
+      inp.name = fieldName;
+      inp.value = opt.value;
+      container.appendChild(inp);
+    }
+    form.submit();
+  }
+  function selectAllVisible(selectId, chooseVisibleOnly) {
+    const sel = document.getElementById(selectId);
+    if (!sel) return;
+    for (const opt of sel.options) {
+      if (chooseVisibleOnly && opt.hidden) continue;
+      opt.selected = true;
+    }
+  }
+  document.querySelectorAll(".dual-filter-left, .dual-filter-right").forEach(function (input) {
+    input.addEventListener("input", function () {
+      filterOptions(input.getAttribute("data-dual-target"), input.value);
+    });
+  });
+  document.querySelectorAll(".dual-listbox-section").forEach(function (section) {
+    const sid = section.getAttribute("data-section-id");
+    const fieldName = section.getAttribute("data-field-name");
+    const formAdd = section.querySelector("#" + sid + "-form-add");
+    const formRemove = section.querySelector("#" + sid + "-form-remove");
+    const btnChoose = section.querySelector(".dual-choose");
+    const btnRemove = section.querySelector(".dual-remove");
+    const btnChooseAll = section.querySelector(".dual-choose-all");
+    const btnRemoveAll = section.querySelector(".dual-remove-all");
+    if (btnChoose && formAdd) btnChoose.addEventListener("click", function () { fillHiddenAndSubmit(formAdd, sid + "-left", fieldName); });
+    if (btnRemove && formRemove) btnRemove.addEventListener("click", function () { fillHiddenAndSubmit(formRemove, sid + "-right", fieldName); });
+    if (btnChooseAll && formAdd) btnChooseAll.addEventListener("click", function () { selectAllVisible(sid + "-left", true); fillHiddenAndSubmit(formAdd, sid + "-left", fieldName); });
+    if (btnRemoveAll && formRemove) btnRemoveAll.addEventListener("click", function () { selectAllVisible(sid + "-right", true); fillHiddenAndSubmit(formRemove, sid + "-right", fieldName); });
+  });
+  document.querySelectorAll(".dual-clear-filter").forEach(function (el) {
+    el.addEventListener("click", function () {
+      const sid = el.getAttribute("data-dual-clear");
+      const leftF = document.getElementById(sid + "-filter-left");
+      const rightF = document.getElementById(sid + "-filter-right");
+      if (leftF) { leftF.value = ""; filterOptions(leftF.getAttribute("data-dual-target"), ""); }
+      if (rightF) { rightF.value = ""; filterOptions(rightF.getAttribute("data-dual-target"), ""); }
+    });
+  });
+})();
+</script>
+{% endif %}
+{% endblock %}

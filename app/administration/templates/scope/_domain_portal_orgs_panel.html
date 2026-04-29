@@ -1,0 +1,42 @@
+<div id="domain-portal-orgs-panel">
+<div class="level mb-2">
+  <div class="level-left">
+    <div class="level-item">
+      <p class="is-size-7 has-text-grey">
+        {{ domain_orgs_total }} organization{{ domain_orgs_total|pluralize }} linked{% if portal_org_q %} (filter applied){% endif %}
+        {% if domain_orgs_has_more %}
+        <span class="is-block">Scroll to load more ({{ domain_portal_chunk }} at a time).</span>
+        {% endif %}
+      </p>
+    </div>
+  </div>
+</div>
+<div class="table-container" style="max-height: min(40vh, 24rem); overflow-y: auto;">
+  <table class="table is-fullwidth is-striped is-hoverable">
+    <thead>
+      <tr>
+        <th>Organization</th>
+        <th class="has-text-right">Portal</th>
+      </tr>
+    </thead>
+    <tbody id="domain-portal-orgs-tbody">
+      {% for o in domain_orgs_chunk %}
+      {% include "scope/_domain_portal_org_row.html" with o=o only %}
+      {% empty %}
+      <tr><td colspan="2" class="has-text-grey">{% if portal_org_q %}No organizations match this filter.{% else %}None linked.{% endif %}</td></tr>
+      {% endfor %}
+      {% if domain_orgs_has_more %}
+      <tr
+        id="domain-portal-orgs-sentinel"
+        hx-get="{{ domain_portal_htmx_base }}?format=htmx-domain-organizations-append&org_offset={{ domain_orgs_next_offset }}&portal_org_q={{ portal_org_q|urlencode }}&portal_user_q={{ portal_user_q|urlencode }}"
+        hx-trigger="revealed"
+        hx-swap="outerHTML"
+        hx-push-url="false"
+      >
+        <td colspan="2" class="is-size-7 has-text-grey py-3"><span class="htmx-indicator">Loading more…</span></td>
+      </tr>
+      {% endif %}
+    </tbody>
+  </table>
+</div>
+</div>

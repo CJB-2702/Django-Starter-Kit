@@ -7,7 +7,13 @@
 <h1 class="title">Access management</h1>
 <p class="mb-2">
   Django’s built-in <code>auth_group</code> table is labeled <strong>{{ django_groups_ui_name }}</strong> in this application
-  (distinct from data <em>ownership groups</em> under Data ownership).
+  (distinct from <em>data domains</em> under Data ownership).
+</p>
+<p class="mb-4">
+  <a class="button is-link is-light is-small" href="{% url 'permission_group_template_index' %}">
+    <span class="icon"><span class="material-icons" aria-hidden="true">assignment_ind</span></span>
+    <span>Manage permission group templates</span>
+  </a>
 </p>
 
 <div class="card mb-5">

@@ -190,17 +190,52 @@
     </div>
 
     <div class="mb-0">
-      <h3 class="title is-6 mb-3">Ownership groups</h3>
-      {% if ownership.ownership_groups %}
+      <h3 class="title is-6 mb-3">Data domains</h3>
+      {% if domain_rows %}
       <ul class="mb-0">
-        {% for g in ownership.ownership_groups %}
-        <li>{{ g.name }}</li>
+        {% for row in domain_rows %}
+        <li>
+          {{ row.domain.name }}
+          {% if row.warning.severity == 'red' %}
+          <span class="tag is-danger is-light is-small ml-2" title="{{ row.warning.label }}">cross-org</span>
+          {% elif row.warning.severity == 'yellow' %}
+          <span class="tag is-warning is-light is-small ml-2" title="{{ row.warning.label }}">cross-division</span>
+          {% endif %}
+        </li>
         {% endfor %}
       </ul>
       {% else %}
       <p class="mb-0 is-size-7 has-text-grey">None assigned.</p>
       {% endif %}
     </div>
+  </div>
+</div>
+
+<div class="card mt-5">
+  <header class="card-header">
+    <p class="card-header-title">Permission group template</p>
+  </header>
+  <div class="card-content">
+    {% if template_drift.has_template %}
+    <p class="mb-2">
+      <strong>{{ template_drift.template.name }}</strong>
+      {% if template_drift.has_drift %}
+      <span class="tag is-warning is-light ml-2">drift detected</span>
+      {% else %}
+      <span class="tag is-success is-light ml-2">in sync</span>
+      {% endif %}
+    </p>
+    {% if template_drift.notes %}
+    <div class="mb-0">
+      <h4 class="title is-6 mt-3 mb-2">Notes</h4>
+      <p class="is-size-7 mb-0" style="white-space: pre-wrap;">{{ template_drift.notes }}</p>
+    </div>
+    {% else %}
+    <p class="is-size-7 has-text-grey mb-0">No justification notes recorded.</p>
+    {% endif %}
+    {% else %}
+    <p class="is-size-7 has-text-grey mb-0">No template assigned.</p>
+    {% endif %}
   </div>
 </div>
 {% endblock %}

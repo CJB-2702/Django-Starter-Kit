@@ -1,14 +1,14 @@
 from django.db import models
 
 from app.administration.models.auditable_mixin import AuditFieldsMixin
-from app.administration.models.ownership_groups.division import Division
-from app.administration.models.ownership_groups.group_relationships.organisation_ownership_groups import (
-    OrganizationOwnershipGroup,
+from app.administration.models.data_ownership.divisions import Division
+from app.administration.models.data_ownership.group_relationships.organization_domains import (
+    OrganizationDomain,
 )
 
 
 class Organization(AuditFieldsMixin):
-    """Groups ownership groups for structure and reporting; overlap across orgs is allowed."""
+    """Groups data domains for navigation and reporting; overlap across orgs is allowed."""
 
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255)
@@ -19,9 +19,9 @@ class Organization(AuditFieldsMixin):
         related_name="organizations",
     )
 
-    ownership_groups = models.ManyToManyField(
-        "OwnershipGroup",
-        through=OrganizationOwnershipGroup,
+    domains = models.ManyToManyField(
+        "Domain",
+        through=OrganizationDomain,
         related_name="organizations",
     )
 

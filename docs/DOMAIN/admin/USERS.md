@@ -1,6 +1,6 @@
 # Users and administration (concepts)
 
-This document describes how **users** participate in **administration**: dependency of audited models on a **user** table, **group template** metadata stored per user, **Django group membership**, and **ownership group** assignments used for row-level scope. For Django permission mechanics and group templates, see [RBAC.md](RBAC.md). For the organizational hierarchy around ownership groups, see [DATA_OWNERSHIP.md](DATA_OWNERSHIP.md).
+This document describes how **users** participate in **administration**: dependency of audited models on a **user** table, **permission group template** metadata stored per user, **Django group (permission group) membership**, and **Data Domain** assignments used for row-level scope. For Django permission mechanics and templates, see [RBAC.md](RBAC.md). For the Data Domain primitive and its hierarchy, see [DATA_OWNERSHIP.md](DATA_OWNERSHIP.md).
 
 ---
 
@@ -10,26 +10,59 @@ Core and downstream apps use **auditable** models (creator, timestamps, last upd
 
 ---
 
-## 2. Group template reference on the user
+## 2. Permission group template assignment on the user
 
-The product **stores at most one** **group template identifier** per user when using the template mechanism (see [RBAC.md](RBAC.md), section 3).
+A user may have **at most one** active permission group template assignment at a time. The assignment row (`UserPermissionGroupTemplate`) records:
 
-- That field is **metadata** about **which template** was used or is current; **authorization checks** still rely on **resolved group membership** and `Permission` as Django defines.
-- If the user’s template changes, group membership is updated to match the new template’s bundle (per product rules).
+- The template id (which profile the user was given).
+- The **notes** field — free-text justification captured at assignment time.
+- Audit fields (created at/by, updated at/by).
+
+The template assignment is **metadata**; authorization checks still rely on **resolved permission group membership** as Django defines. When the template changes, the user's permission group membership is synced (rebase by default, with an optional additive toggle) — see [permission_group_templates/concept.md](permission_group_templates/concept.md).
 
 ---
 
-## 3. Ownership group assignments
+## 3. Domain template assignment on the user
 
-- **Database:** Users have **many** ownership groups (many-to-many or equivalent). This is the **source of truth** for which scopes apply to a user.
-- **Session:** While interacting with the application, that assignment (or a derived “active” subset, depending on product rules) is **represented in the session** so list views, APIs, and policy checks can enforce scope **without** re-resolving full membership from the database on every request. Exact session shape and refresh rules are implementation details.
+A user may have **at most one** active domain template assignment at a time. The assignment row (`UserDomainTemplate`) records:
 
-Combining **Django permissions** with **ownership group filters** is the standard pattern for “may this user do this action on **these** rows?”—not Django `Permission` per row.
+- The template id (which scope profile the user was given).
+- Audit fields (created at/by, updated at/by).
+
+The template assignment is **metadata**; the real access control happens through the **resolved domain set** — the union of domains from the template and explicit `UserDomain` rows. When the template changes, the user's domain set is resynced (rebase by default, with an optional additive toggle) — see [domain_templates/concept.md](domain_templates/concept.md).
+
+---
+
+## 5. Data domain assignments
+
+A user's **domain set** (the domains they can see) is the **union** of:
+
+1. Domains from their active **domain template** (if assigned).
+2. Explicit **`UserDomain` rows** (ad-hoc assignments, may have expiration).
+
+**Database source of truth** — `UserDomain` rows hold explicit assignments. The domain template merely defines a reusable bundle that feeds into these assignments.
+
+**Session snapshot** — at login, the user's complete domain set (from both template + explicit assignments) is snapshotted into the session (`user_domain_ids`) so every route can enforce scope without re-resolving from the database on every request. This is critical for performance: every data-filtered query consults the session, not the DB.
+
+Combining **Django permissions** with the **domain filter** is the standard pattern for "may this user do this action on **these** rows?" — not `Permission` rows per row.
+
+### 5.1 Organization and Division assignments
+
+Users also have `UserOrganization` and `UserDivision` rows. These are **informational only** — they describe where the user "sits" in the organizational hierarchy. They do **not** grant row-level access. See [DATA_OWNERSHIP.md §4](DATA_OWNERSHIP.md).
+
+The admin warning system compares a user's data domain grants against their organization/division assignments to flag:
+
+- **Red** — the user holds a domain whose organization is not among the user's assigned organizations.
+- **Yellow** — organization matches but division does not (or vice versa).
 
 ---
 
 ## Related documents
 
-- [RBAC.md](RBAC.md) — group templates and Django permission boundaries.
-- [DATA_OWNERSHIP.md](DATA_OWNERSHIP.md) — division, organization, and ownership group scope.
+- [RBAC.md](RBAC.md) — permission group templates and Django permission boundaries.
+- [DATA_OWNERSHIP.md](DATA_OWNERSHIP.md) — divisions, organizations, data domain scope, and domain templates.
+- [permission_group_templates/concept.md](permission_group_templates/concept.md) — permission group template business concept.
+- [permission_group_templates/models_and_control_layer_updates.md](permission_group_templates/models_and_control_layer_updates.md) — permission group template implementation plan.
+- [domain_templates/concept.md](domain_templates/concept.md) — domain template business concept.
+- [domain_templates/models_and_control_layer_updates.md](domain_templates/models_and_control_layer_updates.md) — domain template implementation plan.
 - [core/CORE_MODELS.md](../core/CORE_MODELS.md) — core entities and auditing expectations.

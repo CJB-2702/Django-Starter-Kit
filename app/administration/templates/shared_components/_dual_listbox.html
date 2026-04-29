@@ -45,7 +45,9 @@
             <option value="{{ item.pk }}">{{ item.name }}</option>
           {% elif list_kind == "organization" %}
             <option value="{{ item.pk }}">{{ item.name }}{% if item.division %} — {{ item.division.name }}{% endif %}</option>
-          {% elif list_kind == "ownership_group" %}
+          {% elif list_kind == "domain" %}
+            <option value="{{ item.pk }}">{{ item.name }}</option>
+          {% elif list_kind == "permission_group" %}
             <option value="{{ item.pk }}">{{ item.name }}</option>
           {% endif %}
         {% endfor %}
@@ -142,7 +144,9 @@
             <option value="{{ item.pk }}">{{ item.name }}</option>
           {% elif list_kind == "organization" %}
             <option value="{{ item.pk }}">{{ item.name }}{% if item.division %} — {{ item.division.name }}{% endif %}</option>
-          {% elif list_kind == "ownership_group" %}
+          {% elif list_kind == "domain" %}
+            <option value="{{ item.pk }}">{{ item.name }}</option>
+          {% elif list_kind == "permission_group" %}
             <option value="{{ item.pk }}">{{ item.name }}</option>
           {% endif %}
         {% endfor %}

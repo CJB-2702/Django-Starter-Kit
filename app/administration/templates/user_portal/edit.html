@@ -168,10 +168,12 @@
     <h3 class="title is-5 mb-3 mt-5">Organizations</h3>
     {% include "user_portal/_organization_scope_block.html" with section_id="up-orgs" assigned_items=organizations_assigned available_items=organizations_available field_name="organization_ids" empty_assigned_msg="No organizations assigned yet." %}
 
-    <h3 class="title is-5 mb-3 mt-5">Ownership groups</h3>
-    {% include "shared_components/_dual_listbox.html" with section_id="up-ogs" left_title="Available ownership groups" right_title="Assigned ownership groups" left_help="Select ownership groups to assign, then choose the arrow button." right_help="Select ownership groups to remove, then choose the trash button." action_add="assign_ownership_groups" action_remove="disable_ownership_groups" field_name="ownership_group_ids" list_kind="ownership_group" left_items=ownership_groups_available right_items=ownership_groups_assigned %}
+    <h3 class="title is-5 mb-3 mt-5">Data domains</h3>
+    {% include "user_portal/_data_domain_assignment_block.html" with domain_rows=domain_rows available_items=domains_available %}
   </div>
 </div>
+
+{% include "user_portal/_template_assignment_block.html" with target_user=target_user template_drift=template_drift available_templates=available_templates %}
 
 <script>
 (function () {

@@ -1,0 +1,14 @@
+{% for row in domain_users_chunk %}
+{% include "scope/_domain_portal_user_row.html" with row=row can_assign_scope=can_assign_scope only %}
+{% endfor %}
+{% if domain_users_has_more %}
+<tr
+  id="domain-portal-users-sentinel"
+  hx-get="{{ domain_portal_htmx_base }}?format=htmx-domain-users-append&user_offset={{ domain_users_next_offset }}&portal_org_q={{ portal_org_q|urlencode }}&portal_user_q={{ portal_user_q|urlencode }}"
+  hx-trigger="revealed"
+  hx-swap="outerHTML"
+  hx-push-url="false"
+>
+  <td colspan="2" class="is-size-7 has-text-grey py-3"><span class="htmx-indicator">Loading more…</span></td>
+</tr>
+{% endif %}

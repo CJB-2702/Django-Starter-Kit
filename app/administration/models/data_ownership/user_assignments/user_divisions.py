@@ -2,13 +2,13 @@ from django.conf import settings
 from django.db import models
 
 from app.administration.models.auditable_mixin import AuditFieldsMixin
-from app.administration.models.ownership_groups.division import Division
+from app.administration.models.data_ownership.divisions import Division
 
 from . import ActiveUserAssignmentManager
 
 
 class UserDivision(AuditFieldsMixin):
-    """User membership in a division; soft-remove via disabled."""
+    """User membership in a division; soft-remove via is_active."""
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -20,7 +20,7 @@ class UserDivision(AuditFieldsMixin):
         on_delete=models.CASCADE,
         related_name="user_division_links",
     )
-    disabled = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
 
     objects = ActiveUserAssignmentManager()
     all_objects = models.Manager()

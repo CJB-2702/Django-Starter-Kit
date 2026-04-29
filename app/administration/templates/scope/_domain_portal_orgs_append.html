@@ -1,0 +1,14 @@
+{% for o in domain_orgs_chunk %}
+{% include "scope/_domain_portal_org_row.html" with o=o only %}
+{% endfor %}
+{% if domain_orgs_has_more %}
+<tr
+  id="domain-portal-orgs-sentinel"
+  hx-get="{{ domain_portal_htmx_base }}?format=htmx-domain-organizations-append&org_offset={{ domain_orgs_next_offset }}&portal_org_q={{ portal_org_q|urlencode }}&portal_user_q={{ portal_user_q|urlencode }}"
+  hx-trigger="revealed"
+  hx-swap="outerHTML"
+  hx-push-url="false"
+>
+  <td colspan="2" class="is-size-7 has-text-grey py-3"><span class="htmx-indicator">Loading more…</span></td>
+</tr>
+{% endif %}

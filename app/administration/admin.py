@@ -3,12 +3,21 @@ from django.contrib import admin
 from app.administration.models import (
     Division,
     DivisionOrganisation,
+    Domain,
+    DomainTemplate,
+    DomainTemplateItem,
     Organization,
-    OrganizationOwnershipGroup,
-    OwnershipGroup,
+    OrganizationDomain,
+    PermissionGroupTemplate,
+    PermissionGroupTemplateItem,
+    Role,
+    RoleItem,
     UserDivision,
+    UserDomain,
+    UserDomainTemplate,
     UserOrganization,
-    UserOwnershipGroup,
+    UserPermissionGroupTemplate,
+    UserRole,
 )
 
 
@@ -25,15 +34,15 @@ class OrganizationAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
 
 
-@admin.register(OwnershipGroup)
-class OwnershipGroupAdmin(admin.ModelAdmin):
+@admin.register(Domain)
+class DomainAdmin(admin.ModelAdmin):
     list_display = ("name", "slug", "updated_at")
     prepopulated_fields = {"slug": ("name",)}
 
 
-@admin.register(OrganizationOwnershipGroup)
-class OrganizationOwnershipGroupAdmin(admin.ModelAdmin):
-    list_display = ("organization", "ownership_group", "updated_at")
+@admin.register(OrganizationDomain)
+class OrganizationDomainAdmin(admin.ModelAdmin):
+    list_display = ("organization", "domain", "updated_at")
 
 
 @admin.register(DivisionOrganisation)
@@ -43,17 +52,72 @@ class DivisionOrganisationAdmin(admin.ModelAdmin):
 
 @admin.register(UserDivision)
 class UserDivisionAdmin(admin.ModelAdmin):
-    list_display = ("user", "division", "disabled", "updated_at")
-    list_filter = ("disabled",)
+    list_display = ("user", "division", "is_active", "updated_at")
+    list_filter = ("is_active",)
 
 
 @admin.register(UserOrganization)
 class UserOrganizationAdmin(admin.ModelAdmin):
-    list_display = ("user", "organization", "disabled", "updated_at")
-    list_filter = ("disabled",)
+    list_display = ("user", "organization", "is_active", "updated_at")
+    list_filter = ("is_active",)
 
 
-@admin.register(UserOwnershipGroup)
-class UserOwnershipGroupAdmin(admin.ModelAdmin):
-    list_display = ("user", "ownership_group", "disabled", "updated_at")
-    list_filter = ("disabled",)
+@admin.register(UserDomain)
+class UserDomainAdmin(admin.ModelAdmin):
+    list_display = ("user", "domain", "is_active", "updated_at")
+    list_filter = ("is_active",)
+
+
+@admin.register(PermissionGroupTemplate)
+class PermissionGroupTemplateAdmin(admin.ModelAdmin):
+    list_display = ("name", "slug", "is_active", "updated_at")
+    list_filter = ("is_active",)
+    prepopulated_fields = {"slug": ("name",)}
+
+
+@admin.register(PermissionGroupTemplateItem)
+class PermissionGroupTemplateItemAdmin(admin.ModelAdmin):
+    list_display = ("template", "permission_group", "updated_at")
+
+
+@admin.register(UserPermissionGroupTemplate)
+class UserPermissionGroupTemplateAdmin(admin.ModelAdmin):
+    list_display = ("user", "template", "is_active", "updated_at")
+    list_filter = ("is_active", "template")
+
+
+@admin.register(Role)
+class RoleAdmin(admin.ModelAdmin):
+    list_display = ("name", "slug", "parent_role", "is_active", "updated_at")
+    list_filter = ("is_active",)
+    prepopulated_fields = {"slug": ("name",)}
+
+
+@admin.register(RoleItem)
+class RoleItemAdmin(admin.ModelAdmin):
+    list_display = ("role", "permission_group", "updated_at")
+
+
+@admin.register(UserRole)
+class UserRoleAdmin(admin.ModelAdmin):
+    list_display = ("user", "role", "relationship_type", "is_active", "updated_at")
+    list_filter = ("is_active", "relationship_type", "role")
+
+
+@admin.register(DomainTemplate)
+class DomainTemplateAdmin(admin.ModelAdmin):
+    list_display = ("name", "slug", "is_active", "updated_at")
+    list_filter = ("is_active",)
+    prepopulated_fields = {"slug": ("name",)}
+
+
+@admin.register(DomainTemplateItem)
+class DomainTemplateItemAdmin(admin.ModelAdmin):
+    list_display = ("template", "domain", "is_active", "updated_at")
+    list_filter = ("is_active",)
+
+
+@admin.register(UserDomainTemplate)
+class UserDomainTemplateAdmin(admin.ModelAdmin):
+    list_display = ("user", "template", "is_active", "updated_at")
+    list_filter = ("is_active", "template")

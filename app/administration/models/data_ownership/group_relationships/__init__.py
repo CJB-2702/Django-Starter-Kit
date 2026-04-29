@@ -1,6 +1,8 @@
-from app.administration.models.ownership_groups.group_relationships.division_organisations import DivisionOrganisation
-from app.administration.models.ownership_groups.group_relationships.organisation_ownership_groups import (
-    OrganizationOwnershipGroup,
+from app.administration.models.data_ownership.group_relationships.division_organisations import (
+    DivisionOrganisation,
+)
+from app.administration.models.data_ownership.group_relationships.organization_domains import (
+    OrganizationDomain,
 )
 
-__all__ = ["DivisionOrganisation", "OrganizationOwnershipGroup"]
+__all__ = ["DivisionOrganisation", "OrganizationDomain"]

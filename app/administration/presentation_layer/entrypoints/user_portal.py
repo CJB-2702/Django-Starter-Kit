@@ -11,25 +11,33 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
-from app.administration.control_layer.django_permissions_context import (
+from app.administration.control_layer.data_ownership.data_ownership_context import (
+    DataOwnershipContext,
+)
+from app.administration.control_layer.permissions.django_permissions_context import (
     DjangoPermissionsContext,
 )
-from app.administration.control_layer.ownership_context import OwnershipContext
-from app.administration.control_layer.permission_grant_policy import (
+from app.administration.control_layer.permissions.permission_grant_guard import (
     GrantPermissionDenied,
     is_admin_actor,
 )
 from app.administration.models import (
     Division,
+    Domain,
     Organization,
-    OwnershipGroup,
+    PermissionGroupTemplate,
     UserDivision,
+    UserDomain,
     UserOrganization,
-    UserOwnershipGroup,
+)
+from app.administration.presentation_layer.search.domain_warnings import (
+    compute_domain_warnings,
+    serialize_warnings,
 )
 from app.administration.presentation_layer.search.user_access import (
+    load_template_drift_struct,
+    load_user_data_ownership_struct,
     load_user_django_permissions_struct,
-    load_user_ownership_struct,
 )
 from app.administration.presentation_layer.search.users import list_users_ordered
 
@@ -87,11 +95,7 @@ def user_portal_index(request: HttpRequest) -> HttpResponse:
         "page_size": page_size,
     }
 
-    return render(
-        request,
-        "user_portal/index.html",
-        base_context,
-    )
+    return render(request, "user_portal/index.html", base_context)
 
 
 @require_http_methods(["GET"])
@@ -114,7 +118,15 @@ def user_portal_detail(request: HttpRequest, user_id: int) -> HttpResponse:
     )
 
     perm_struct = load_user_django_permissions_struct(target.pk)
-    ownership = load_user_ownership_struct(target.pk)
+    ownership = load_user_data_ownership_struct(target.pk)
+    template_drift = load_template_drift_struct(target.pk)
+    domain_warnings = serialize_warnings(
+        compute_domain_warnings(user_id=target.pk, domains=ownership.domains),
+    )
+    domain_rows = [
+        {"domain": d, "warning": domain_warnings.get(d.pk, {"severity": "", "label": ""})}
+        for d in ownership.domains
+    ]
 
     return render(
         request,
@@ -123,6 +135,9 @@ def user_portal_detail(request: HttpRequest, user_id: int) -> HttpResponse:
             "target_user": target,
             "perm_struct": perm_struct,
             "ownership": ownership,
+            "template_drift": template_drift,
+            "domain_warnings": domain_warnings,
+            "domain_rows": domain_rows,
             "show_edit_link": is_admin_actor(request.user),
         },
     )
@@ -133,11 +148,7 @@ def check_direct_permissions_against_group(
     request: HttpRequest,
     user_id: int,
 ) -> HttpResponse:
-    """
-    HTML fragment (HTMX): POST ``permission_ids`` from the available-permissions
-    multiselect; returns which selected permissions are already granted via the
-    user's Django groups, for display under that list.
-    """
+    """HTML fragment (HTMX): check which selected permissions are already inherited via groups."""
     if not is_admin_actor(request.user):
         return HttpResponseForbidden("Forbidden")
 
@@ -165,33 +176,18 @@ def check_direct_permissions_against_group(
             if not group_names:
                 continue
             label = f"{p.content_type.app_label} | {p.content_type.model} | {p.name}"
-            items.append(
-                {
-                    "label": label,
-                    "groups": group_names,
-                },
-            )
+            items.append({"label": label, "groups": group_names})
 
     return render(
         request,
         "user_portal/_direct_perm_group_check.html",
-        {
-            "message": CHECK_DIRECT_PERMS_GROUP_NOTICE,
-            "items": items,
-        },
+        {"message": CHECK_DIRECT_PERMS_GROUP_NOTICE, "items": items},
     )
 
 
 @require_http_methods(["GET", "POST"])
 def user_portal_edit(request: HttpRequest, user_id: int) -> HttpResponse:
-    """
-    Restricted editor: password, Django groups/permissions, ownership.
-
-    GET returns 403 unless `is_admin_actor` (Django superuser or `generic_admin` group).
-    POST mutations use DjangoPermissionsContext / OwnershipContext; `is_grant_actor` includes
-    superusers so those mutations succeed. Grant policy still blocks self-target for grants.
-    Password change does not use assert_can_manage_target and may target any user including self.
-    """
+    """Restricted editor: password, Django groups/permissions, ownership, template assignment."""
     if not is_admin_actor(request.user):
         return HttpResponseForbidden(
             "Only Django superusers or members of the generic_admin group may access this page.",
@@ -212,14 +208,10 @@ def user_portal_edit(request: HttpRequest, user_id: int) -> HttpResponse:
                     messages.success(request, "Password updated.")
                     return redirect(reverse("user_portal_edit", kwargs={"user_id": user_id}))
                 messages.error(request, "Correct the errors below.")
-                return _render_user_portal_edit(
-                    request,
-                    target,
-                    password_form=form,
-                )
+                return _render_user_portal_edit(request, target, password_form=form)
 
             ctx_perm = DjangoPermissionsContext(user_id)
-            ctx_own = OwnershipContext(user_id)
+            ctx_own = DataOwnershipContext(user_id)
 
             if action == "add_groups":
                 ids = _parse_id_list(request.POST, "group_ids")
@@ -337,7 +329,7 @@ def user_portal_edit(request: HttpRequest, user_id: int) -> HttpResponse:
                         messages.error(request, str(exc))
                 return redirect(reverse("user_portal_edit", kwargs={"user_id": user_id}))
 
-            if action == "assign_organization_with_groups":
+            if action == "assign_organization_with_domains":
                 ids = _parse_id_list(request.POST, "organization_ids")
                 if not ids:
                     messages.error(request, "Select an organization to assign.")
@@ -345,11 +337,14 @@ def user_portal_edit(request: HttpRequest, user_id: int) -> HttpResponse:
                     try:
                         with transaction.atomic():
                             for oid in ids:
-                                ctx_own.enable_or_assign_organization_with_ownership_groups(
+                                ctx_own.enable_or_assign_organization_with_domains(
                                     actor=request.user,
                                     organization_id=oid,
                                 )
-                        messages.success(request, "Organization and linked ownership groups updated.")
+                        messages.success(
+                            request,
+                            "Organization and linked data domains updated.",
+                        )
                     except GrantPermissionDenied as exc:
                         messages.error(request, str(exc))
                 return redirect(reverse("user_portal_edit", kwargs={"user_id": user_id}))
@@ -377,7 +372,7 @@ def user_portal_edit(request: HttpRequest, user_id: int) -> HttpResponse:
                         messages.error(request, str(exc))
                 return redirect(reverse("user_portal_edit", kwargs={"user_id": user_id}))
 
-            if action == "disable_organization_with_groups":
+            if action == "disable_organization_with_domains":
                 ids = _parse_id_list(request.POST, "organization_ids")
                 if not ids:
                     messages.error(request, "Select at least one organization to remove.")
@@ -385,53 +380,53 @@ def user_portal_edit(request: HttpRequest, user_id: int) -> HttpResponse:
                     try:
                         with transaction.atomic():
                             for oid in ids:
-                                ctx_own.disable_organization_with_ownership_groups(
+                                ctx_own.disable_organization_with_domains(
                                     actor=request.user,
                                     organization_id=oid,
                                 )
-                        messages.success(request, "Organization and linked ownership groups updated.")
+                        messages.success(
+                            request,
+                            "Organization and linked data domains updated.",
+                        )
                     except ObjectDoesNotExist:
                         messages.error(request, "That organization assignment was not found.")
                     except GrantPermissionDenied as exc:
                         messages.error(request, str(exc))
                 return redirect(reverse("user_portal_edit", kwargs={"user_id": user_id}))
 
-            if action == "assign_ownership_groups":
-                ids = _parse_id_list(request.POST, "ownership_group_ids")
+            if action == "assign_domains":
+                ids = _parse_id_list(request.POST, "domain_ids")
                 if not ids:
-                    messages.error(request, "Select at least one ownership group to assign.")
+                    messages.error(request, "Select at least one data domain to assign.")
                 else:
                     try:
                         with transaction.atomic():
-                            for ogid in ids:
-                                ctx_own.enable_or_assign_ownership_group(
+                            for did in ids:
+                                ctx_own.enable_or_assign_domain(
                                     actor=request.user,
-                                    ownership_group_id=ogid,
+                                    domain_id=did,
                                 )
-                        messages.success(request, "Ownership group assignment updated.")
+                        messages.success(request, "Data domain assignment updated.")
                     except GrantPermissionDenied as exc:
                         messages.error(request, str(exc))
                 return redirect(reverse("user_portal_edit", kwargs={"user_id": user_id}))
 
-            if action == "disable_ownership_groups":
-                ids = _parse_id_list(request.POST, "ownership_group_ids")
+            if action == "disable_domains":
+                ids = _parse_id_list(request.POST, "domain_ids")
                 if not ids:
-                    messages.error(request, "Select at least one ownership group to remove.")
+                    messages.error(request, "Select at least one data domain to remove.")
                 else:
                     try:
                         with transaction.atomic():
-                            for ogid in ids:
-                                row = UserOwnershipGroup.objects.get(
-                                    user_id=user_id,
-                                    ownership_group_id=ogid,
-                                )
-                                ctx_own.disable_ownership_group_assignment(
+                            for did in ids:
+                                row = UserDomain.objects.get(user_id=user_id, domain_id=did)
+                                ctx_own.disable_domain_assignment(
                                     actor=request.user,
-                                    user_ownership_group_id=row.pk,
+                                    user_domain_id=row.pk,
                                 )
-                        messages.success(request, "Ownership group assignment updated.")
+                        messages.success(request, "Data domain assignment updated.")
                     except ObjectDoesNotExist:
-                        messages.error(request, "That ownership group assignment was not found.")
+                        messages.error(request, "That data domain assignment was not found.")
                     except GrantPermissionDenied as exc:
                         messages.error(request, str(exc))
                 return redirect(reverse("user_portal_edit", kwargs={"user_id": user_id}))
@@ -452,7 +447,15 @@ def _render_user_portal_edit(
     password_form: SetPasswordForm | None,
 ) -> HttpResponse:
     perm_struct = load_user_django_permissions_struct(target.pk)
-    ownership = load_user_ownership_struct(target.pk)
+    ownership = load_user_data_ownership_struct(target.pk)
+    template_drift = load_template_drift_struct(target.pk)
+    domain_warnings = serialize_warnings(
+        compute_domain_warnings(user_id=target.pk, domains=ownership.domains),
+    )
+    domain_rows = [
+        {"domain": d, "warning": domain_warnings.get(d.pk, {"severity": "", "label": ""})}
+        for d in ownership.domains
+    ]
 
     assigned_group_ids = target.groups.values_list("pk", flat=True)
     groups_available = list(
@@ -464,11 +467,7 @@ def _render_user_portal_edit(
     permissions_available = list(
         Permission.objects.select_related("content_type")
         .exclude(pk__in=direct_ids)
-        .order_by(
-            "content_type__app_label",
-            "content_type__model",
-            "codename",
-        ),
+        .order_by("content_type__app_label", "content_type__model", "codename"),
     )
     permissions_assigned = list(
         target.user_permissions.select_related("content_type").order_by(
@@ -480,9 +479,7 @@ def _render_user_portal_edit(
 
     available_perm_ids = {p.pk for p in permissions_available}
     group_granted_perm_ids = set(
-        Permission.objects.filter(group__user=target)
-        .values_list("pk", flat=True)
-        .distinct(),
+        Permission.objects.filter(group__user=target).values_list("pk", flat=True).distinct(),
     )
     inherited_permission_ids = sorted(available_perm_ids & group_granted_perm_ids)
 
@@ -500,11 +497,15 @@ def _render_user_portal_edit(
     )
     organizations_assigned = ownership.organizations
 
-    assigned_og_ids = [g.pk for g in ownership.ownership_groups]
-    ownership_groups_available = list(
-        OwnershipGroup.objects.exclude(pk__in=assigned_og_ids).order_by("name"),
+    assigned_domain_ids = [d.pk for d in ownership.domains]
+    domains_available = list(
+        Domain.objects.exclude(pk__in=assigned_domain_ids).order_by("name"),
     )
-    ownership_groups_assigned = ownership.ownership_groups
+    domains_assigned = ownership.domains
+
+    available_templates = list(
+        PermissionGroupTemplate.objects.filter(is_active=True).order_by("name"),
+    )
 
     pwd_form = password_form if password_form is not None else SetPasswordForm(user=target)
 
@@ -515,6 +516,10 @@ def _render_user_portal_edit(
             "target_user": target,
             "perm_struct": perm_struct,
             "ownership": ownership,
+            "template_drift": template_drift,
+            "domain_warnings": domain_warnings,
+            "domain_rows": domain_rows,
+            "available_templates": available_templates,
             "password_form": pwd_form,
             "groups_available": groups_available,
             "groups_assigned": groups_assigned,
@@ -524,8 +529,8 @@ def _render_user_portal_edit(
             "divisions_assigned": divisions_assigned,
             "organizations_available": organizations_available,
             "organizations_assigned": organizations_assigned,
-            "ownership_groups_available": ownership_groups_available,
-            "ownership_groups_assigned": ownership_groups_assigned,
+            "domains_available": domains_available,
+            "domains_assigned": domains_assigned,
             "inherited_permission_ids": inherited_permission_ids,
         },
     )

@@ -1,20 +1,45 @@
-from app.administration.models.ownership_groups.division import Division
-from app.administration.models.ownership_groups.group_relationships import DivisionOrganisation, OrganizationOwnershipGroup
-from app.administration.models.ownership_groups.organization import Organization
-from app.administration.models.ownership_groups.ownership_group import OwnershipGroup
-from app.administration.models.ownership_groups.user_assignments import (
+from app.administration.models.data_ownership.divisions import Division
+from app.administration.models.data_ownership.domain_templates import DomainTemplate
+from app.administration.models.data_ownership.domain_template_items import (
+    DomainTemplateItem,
+)
+from app.administration.models.data_ownership.domains import Domain
+from app.administration.models.data_ownership.group_relationships import (
+    DivisionOrganisation,
+    OrganizationDomain,
+)
+from app.administration.models.data_ownership.organization import Organization
+from app.administration.models.data_ownership.user_assignments import (
     UserDivision,
+    UserDomain,
+    UserDomainTemplate,
     UserOrganization,
-    UserOwnershipGroup,
+)
+from app.administration.models.permissions import (
+    PermissionGroupTemplate,
+    PermissionGroupTemplateItem,
+    Role,
+    RoleItem,
+    UserPermissionGroupTemplate,
+    UserRole,
 )
 
 __all__ = [
     "Division",
     "DivisionOrganisation",
+    "Domain",
+    "DomainTemplate",
+    "DomainTemplateItem",
     "Organization",
-    "OrganizationOwnershipGroup",
-    "OwnershipGroup",
+    "OrganizationDomain",
+    "PermissionGroupTemplate",
+    "PermissionGroupTemplateItem",
+    "Role",
+    "RoleItem",
     "UserDivision",
+    "UserDomain",
+    "UserDomainTemplate",
     "UserOrganization",
-    "UserOwnershipGroup",
+    "UserPermissionGroupTemplate",
+    "UserRole",
 ]

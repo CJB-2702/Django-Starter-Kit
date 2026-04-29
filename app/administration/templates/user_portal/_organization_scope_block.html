@@ -14,11 +14,11 @@
             <div class="column is-half py-1">
               <form method="post" class="mb-0">
                 {% csrf_token %}
-                <input type="hidden" name="action" value="disable_organization_with_groups">
+                <input type="hidden" name="action" value="disable_organization_with_domains">
                 <input type="hidden" name="{{ field_name }}" value="{{ item.pk }}">
                 <button type="submit" class="button is-small is-danger is-light is-fullwidth is-justify-content-flex-start">
                   <span class="icon"><span class="material-icons" aria-hidden="true">delete_sweep</span></span>
-                  <span>Remove organization and all groups linked only to it</span>
+                  <span>Remove organization and all data domains linked only to it</span>
                 </button>
               </form>
             </div>
@@ -45,9 +45,9 @@
 
   <h4 class="title is-6">Add an organization</h4>
   <p class="is-size-7 has-text-grey mb-3">
-    <strong>+ all groups</strong> assigns every ownership group linked to that organization in the catalog.
-    Groups already assigned are left as a single row (no duplicates).
-    <strong>Remove org + all groups</strong> drops groups linked only to that organization; if another assigned organization shares a group, that assignment stays.
+    <strong>+ all data domains</strong> assigns every data domain linked to that organization in the catalog.
+    Domains already assigned are left as a single row (no duplicates).
+    <strong>Remove org + all domains</strong> drops domains linked only to that organization; if another assigned organization shares a domain, that assignment stays.
   </p>
   <form method="post" class="mb-0">
     {% csrf_token %}
@@ -63,9 +63,9 @@
     </div>
     <div class="columns is-mobile is-variable is-2 mb-0">
       <div class="column is-two-thirds">
-        <button type="submit" name="action" value="assign_organization_with_groups" class="button is-link is-light is-fullwidth"{% if not available_items %} disabled{% endif %}>
+        <button type="submit" name="action" value="assign_organization_with_domains" class="button is-link is-light is-fullwidth"{% if not available_items %} disabled{% endif %}>
           <span class="icon"><span class="material-icons" aria-hidden="true">add</span></span>
-          <span>Add organization + all groups</span>
+          <span>Add organization + all data domains</span>
         </button>
       </div>
       <div class="column is-one-third">
