@@ -1,0 +1,78 @@
+{% extends "adm_base.html" %}
+{% block title %}Edit {{ organization.name }} — Organization{% endblock %}
+{% block breadcrumb %}
+<li><a href="{% url 'organization_index' %}">Organizations</a></li>
+<li><a href="{% url 'organization_detail' organization.pk %}">{{ organization.name }}</a></li>
+<li class="is-active"><a href="#" aria-current="page">Edit</a></li>
+{% endblock %}
+{% block content %}
+<div class="mb-4">
+  <a class="button is-light is-small" href="{% url 'organization_detail' organization.pk %}">
+    <span class="icon"><span class="material-icons" aria-hidden="true">arrow_back</span></span>
+    <span>Back to organization</span>
+  </a>
+</div>
+
+<h1 class="title">Edit {{ organization.name }}</h1>
+
+{% if can_edit_metadata %}
+<div class="card mb-5">
+  <header class="card-header">
+    <p class="card-header-title">Details</p>
+  </header>
+  <div class="card-content">
+    <form method="post" class="mb-4">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="update_metadata">
+      <div class="field">
+        <label class="label is-size-7 mb-1" for="org-edit-name">Name</label>
+        <div class="control">
+          <input class="input" type="text" id="org-edit-name" name="name" value="{{ organization.name }}" required>
+        </div>
+      </div>
+      <button class="button is-link is-small" type="submit">Save details</button>
+    </form>
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="set_division">
+      <div class="field">
+        <label class="label is-size-7 mb-1" for="org-edit-division">Division</label>
+        <div class="control">
+          <div class="select">
+            <select id="org-edit-division" name="division_id">
+              <option value="">— None —</option>
+              {% for d in divisions %}
+              <option value="{{ d.pk }}" {% if current_division and d.pk == current_division.pk %}selected{% endif %}>{{ d.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </div>
+      <button class="button is-link is-small" type="submit">Save division</button>
+    </form>
+  </div>
+</div>
+{% endif %}
+
+<div class="card mb-5">
+  <header class="card-header">
+    <p class="card-header-title">Linked data domains</p>
+  </header>
+  <div class="card-content">
+    {% include "shared_components/_dual_listbox.html" with section_id="org-domains" left_title="Available domains" right_title="Linked to this organization" left_help="Pick domains to link." right_help="Pick domains to unlink." action_add="add_domains" action_remove="remove_domains" field_name="domain_ids" list_kind="domain" left_items=domains_available right_items=domains_assigned %}
+  </div>
+</div>
+
+<div class="card">
+  <header class="card-header">
+    <p class="card-header-title">User assignments</p>
+  </header>
+  <div class="card-content">
+    <p class="is-size-7 has-text-grey mb-3">Informational — does not grant data access.</p>
+    {% include "shared_components/_dual_listbox.html" with section_id="org-users" left_title="Available users" right_title="Assigned users" left_help="Pick users to assign." right_help="Pick users to unassign." action_add="add_users" action_remove="remove_users" field_name="user_ids" list_kind="user" left_items=users_available right_items=users_assigned %}
+  </div>
+</div>
+{% endblock %}
+{% block body_scripts %}
+{% include "shared_components/_dual_listbox_script.html" %}
+{% endblock %}

@@ -1,0 +1,142 @@
+{% extends "adm_base.html" %}
+{% block title %}{{ target_user.username }} — User{% endblock %}
+{% block breadcrumb %}
+<li><a href="{% url 'user_index' %}">Users</a></li>
+<li class="is-active"><a href="#" aria-current="page">{{ target_user.username }}</a></li>
+{% endblock %}
+{% block content %}
+<div class="is-flex is-justify-content-space-between is-align-items-flex-start mb-4">
+  <div>
+    <h1 class="title mb-1">{{ target_user.username }}</h1>
+    <p class="subtitle is-6 has-text-grey">
+      {% if target_user.first_name or target_user.last_name %}{{ target_user.first_name }} {{ target_user.last_name }} · {% endif %}
+      {{ target_user.email|default:"no email" }}
+      {% if target_user.is_active %}<span class="tag is-success is-light ml-2">Active</span>{% else %}<span class="tag is-light ml-2">Inactive</span>{% endif %}
+      {% if target_user.is_staff %}<span class="tag is-info is-light ml-1">Staff</span>{% endif %}
+      {% if target_user.is_superuser %}<span class="tag is-warning ml-1">Superuser</span>{% endif %}
+    </p>
+  </div>
+  {% if show_edit_link %}
+  <a class="button is-link" href="{% url 'user_edit' target_user.pk %}">
+    <span class="icon"><span class="material-icons" aria-hidden="true">edit</span></span>
+    <span>Edit</span>
+  </a>
+  {% endif %}
+</div>
+
+<div class="columns is-multiline">
+  <div class="column is-6">
+    <div class="card">
+      <header class="card-header"><p class="card-header-title">Identity</p></header>
+      <div class="card-content">
+        <p class="is-size-7"><strong>Last login:</strong> {% if target_user.last_login %}{{ target_user.last_login }}{% else %}Never{% endif %}</p>
+        <p class="is-size-7"><strong>Date joined:</strong> {{ target_user.date_joined }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="column is-6">
+    <div class="card">
+      <header class="card-header"><p class="card-header-title">Roles ({{ role_assignments|length }})</p></header>
+      <div class="card-content">
+        {% if role_assignments %}
+        <ul>
+          {% for ra in role_assignments %}
+          <li>
+            <a href="{% url 'role_detail' ra.role.slug %}">{{ ra.role.name }}</a>
+            <span class="tag is-light is-size-7 ml-2">{{ ra.get_relationship_type_display }}</span>
+            {% if ra.role.parent_role %}<span class="is-size-7 has-text-grey">— specializes {{ ra.role.parent_role.name }}</span>{% endif %}
+            {% if ra.notes %}<p class="is-size-7 has-text-grey-dark mt-1">{{ ra.notes|truncatechars:120 }}</p>{% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p class="has-text-grey is-size-7 mb-0">No roles assigned.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="column is-6">
+    <div class="card">
+      <header class="card-header"><p class="card-header-title">Permission groups (effective)</p></header>
+      <div class="card-content">
+        {% if perm_struct.group_names %}
+        <ul>{% for n in perm_struct.group_names %}<li>{{ n }}</li>{% endfor %}</ul>
+        {% else %}
+        <p class="has-text-grey is-size-7 mb-0">No group memberships.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="column is-6">
+    <div class="card">
+      <header class="card-header"><p class="card-header-title">Direct permissions ({{ perm_struct.direct_permission_keys|length }})</p></header>
+      <div class="card-content">
+        {% if perm_struct.direct_permission_keys %}
+        <ul class="is-size-7">{% for k in perm_struct.direct_permission_keys %}<li><code>{{ k }}</code></li>{% endfor %}</ul>
+        {% else %}
+        <p class="has-text-grey is-size-7 mb-0">No direct permissions.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="column is-12">
+    <div class="card">
+      <header class="card-header"><p class="card-header-title">Data access</p></header>
+      <div class="card-content">
+
+        <h3 class="title is-6 mb-2">Domain template</h3>
+        {% if domain_template_assignment %}
+        <p class="is-size-7 mb-3">
+          <a href="{% url 'domain_template_detail' domain_template_assignment.template.slug %}">
+            <strong>{{ domain_template_assignment.template.name }}</strong>
+          </a>
+          <span class="tag is-success is-light ml-2">Active</span>
+        </p>
+        {% else %}
+        <p class="is-size-7 has-text-grey mb-3">No active domain template.</p>
+        {% endif %}
+
+        <h3 class="title is-6 mb-2">Data domains ({{ domain_rows|length }})</h3>
+        {% if domain_rows %}
+        <ul class="is-size-7 mb-4">
+          {% for row in domain_rows %}
+          <li>
+            <a href="{% url 'domain_detail' row.domain.pk %}">{{ row.domain.name }}</a>
+            {% if row.warning.severity == "red" %}
+            <span class="tag is-danger is-light ml-1" title="{{ row.warning.label }}">⚠ red</span>
+            {% elif row.warning.severity == "yellow" %}
+            <span class="tag is-warning is-light ml-1" title="{{ row.warning.label }}">⚠ yellow</span>
+            {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p class="has-text-grey is-size-7 mb-3">No domain access.</p>
+        {% endif %}
+
+        <h3 class="title is-6 mb-2">Organizations</h3>
+        {% if ownership.organizations %}
+        <ul class="is-size-7 mb-4">
+          {% for o in ownership.organizations %}<li><a href="{% url 'organization_detail' o.pk %}">{{ o.name }}</a></li>{% endfor %}
+        </ul>
+        {% else %}
+        <p class="has-text-grey is-size-7 mb-3">No organization assignments.</p>
+        {% endif %}
+
+        <h3 class="title is-6 mb-2">Divisions</h3>
+        {% if ownership.divisions %}
+        <ul class="is-size-7 mb-0">
+          {% for d in ownership.divisions %}<li><a href="{% url 'division_detail' d.pk %}">{{ d.name }}</a></li>{% endfor %}
+        </ul>
+        {% else %}
+        <p class="has-text-grey is-size-7 mb-0">No division assignments.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

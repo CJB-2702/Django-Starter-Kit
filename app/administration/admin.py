@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from app.administration.models import (
+    AllowedEmailDomain,
     Division,
     DivisionOrganisation,
     Domain,
@@ -8,17 +9,21 @@ from app.administration.models import (
     DomainTemplateItem,
     Organization,
     OrganizationDomain,
-    PermissionGroupTemplate,
-    PermissionGroupTemplateItem,
     Role,
     RoleItem,
     UserDivision,
     UserDomain,
     UserDomainTemplate,
     UserOrganization,
-    UserPermissionGroupTemplate,
     UserRole,
 )
+
+
+@admin.register(AllowedEmailDomain)
+class AllowedEmailDomainAdmin(admin.ModelAdmin):
+    list_display = ("domain", "is_active", "created_at", "updated_at")
+    list_filter = ("is_active",)
+    search_fields = ("domain",)
 
 
 @admin.register(Division)
@@ -66,24 +71,6 @@ class UserOrganizationAdmin(admin.ModelAdmin):
 class UserDomainAdmin(admin.ModelAdmin):
     list_display = ("user", "domain", "is_active", "updated_at")
     list_filter = ("is_active",)
-
-
-@admin.register(PermissionGroupTemplate)
-class PermissionGroupTemplateAdmin(admin.ModelAdmin):
-    list_display = ("name", "slug", "is_active", "updated_at")
-    list_filter = ("is_active",)
-    prepopulated_fields = {"slug": ("name",)}
-
-
-@admin.register(PermissionGroupTemplateItem)
-class PermissionGroupTemplateItemAdmin(admin.ModelAdmin):
-    list_display = ("template", "permission_group", "updated_at")
-
-
-@admin.register(UserPermissionGroupTemplate)
-class UserPermissionGroupTemplateAdmin(admin.ModelAdmin):
-    list_display = ("user", "template", "is_active", "updated_at")
-    list_filter = ("is_active", "template")
 
 
 @admin.register(Role)

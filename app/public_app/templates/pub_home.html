@@ -36,6 +36,18 @@
 {% else %}
 
 <h2 class="subtitle is-6">Sign in</h2>
+
+<div class="mb-4">
+  <a href="{% url 'oidc_authentication_init' %}" class="button is-link is-fullwidth">
+    <span class="icon"><span class="material-icons" aria-hidden="true">account_circle</span></span>
+    <span>Sign in with Microsoft</span>
+  </a>
+</div>
+
+<div class="box py-3 px-3 mb-4">
+  <p class="is-size-7 has-text-centered has-text-grey">Or use username and password</p>
+</div>
+
 <form method="post" action="{% url 'public_home' %}">
   {% csrf_token %}
   <input type="hidden" name="action" value="login">

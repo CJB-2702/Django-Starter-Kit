@@ -1,0 +1,37 @@
+
+================================================================================
+ADMIN PAGE LOAD TEST SUMMARY
+================================================================================
+Total Tests: 18
+Passed: 18
+Failed: 0
+Errors: 0
+================================================================================
+
+PASSED PAGES (18):
+  ✓ administration_index
+  ✓ organization_create
+  ✓ division_create
+  ✓ domain_create
+  ✓ domain_template_create
+  ✓ permission_group_create
+  ✓ role_create
+  ✓ division_index
+  ✓ domain_index
+  ✓ domain_organizations_portal
+  ✓ domain_template_index
+  ✓ login
+  ✓ organization_index
+  ✓ permission_group_index
+  ✓ permission_index
+  ✓ role_index
+  ✓ auth_redirect
+  ✓ user_index
+
+FAILED PAGES (0):
+  (none)
+
+PAGES WITH ERRORS (0):
+  (none)
+
+================================================================================

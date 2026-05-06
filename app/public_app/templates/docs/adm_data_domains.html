@@ -1,0 +1,113 @@
+{% extends "pub_base.html" %}
+{% block title %}Data domains and scope — Administration docs{% endblock %}
+{% block content %}
+<h1 class="title is-4">Data domains and scope</h1>
+
+<p class="mb-4">
+  A <strong>data domain</strong> is the atomic unit of row-level access control. Every database row that contains sensitive data is tagged with a domain. Users are assigned domains, and only see rows in their assigned domains.
+</p>
+
+<div class="notification is-info is-light mb-5">
+  <strong>The Golden Rule:</strong> A user can see a row if and only if the row's domain is in the user's assigned domains. Nothing else grants access at the row level.
+</div>
+
+<div class="card mb-5">
+  <header class="card-header">
+    <p class="card-header-title">The domain primitive</p>
+  </header>
+  <div class="card-content">
+    <p class="mb-3">Every sensitive data row carries exactly one <strong>domain foreign key</strong>:</p>
+    <ul class="ml-4 mb-3">
+      <li>An Asset row has `domain_id = 5` (e.g., "Facility 1 Transportation")</li>
+      <li>An Event row has `domain_id = 7` (e.g., "Headquarters Operations")</li>
+    </ul>
+    <p class="mb-3">A user is assigned zero or more domains:</p>
+    <ul class="ml-4 mb-3">
+      <li>Jane is assigned domains 5 and 7</li>
+      <li>On every query, only rows with `domain_id in [5, 7]` are returned</li>
+    </ul>
+    <p class="mb-0">This is the <strong>sole mechanism</strong> for row-level access. No other system — not roles, not organizations, not divisions — grants row visibility.</p>
+  </div>
+</div>
+
+<div class="card mb-5">
+  <header class="card-header">
+    <p class="card-header-title">How users are assigned domains</p>
+  </header>
+  <div class="card-content">
+    <p class="mb-3">Domains are assigned to users in two ways:</p>
+    <dl class="mb-0">
+      <dt><strong>Via domain template (bulk):</strong></dt>
+      <dd class="mb-3">A named template bundles related domains (e.g., "Facility 1 Transportation" = transportation domain + supply domain). Assign the template → user gets all its domains.</dd>
+      <dt><strong>Via explicit assignment (ad-hoc):</strong></dt>
+      <dd class="mb-0">Directly assign a single domain to a user outside any template.</dd>
+    </dl>
+  </div>
+</div>
+
+<div class="card mb-5">
+  <header class="card-header">
+    <p class="card-header-title">The organizational hierarchy</p>
+  </header>
+  <div class="card-content">
+    <p class="mb-3">The system has a three-level hierarchy of organization:</p>
+    <pre class="p-3" style="background-color: #f5f5f5; border-radius: 0; overflow-x: auto;"><code>Division (e.g., "Transportation")
+  └─ Organization (e.g., "Facility 1")
+       └─ Domain (e.g., "Facility 1 Transportation")</code></pre>
+    <p class="mb-3"><strong>Important:</strong> This hierarchy is for <em>navigation and administration only</em>. It does <strong>not grant access</strong>.</p>
+    <p class="mb-3">Example: Assigning a user to the "Facility 1" organization does <strong>not</strong> automatically let them see Facility 1's rows. They must be explicitly assigned the domains under that organization.</p>
+    <p class="mb-0">The hierarchy exists to help operators find and organize domains, not to control access.</p>
+  </div>
+</div>
+
+<div class="card mb-5">
+  <header class="card-header">
+    <p class="card-header-title">Cross-organization and cross-division grants</p>
+  </header>
+  <div class="card-content">
+    <p class="mb-3">It is <strong>expected and allowed</strong> for a user to be granted domains outside their organization or division:</p>
+    <ul class="ml-4 mb-3">
+      <li>An IT technician from the IT organization needs read access to a Facilities domain to troubleshoot kiosks</li>
+      <li>A shared-service auditor needs domains across every division</li>
+      <li>A contractor is "on loan" from one organization to another</li>
+    </ul>
+    <p class="mb-0">Rather than prohibiting these grants, the system <strong>allows them and makes them visible</strong> so operators can audit unusual access.</p>
+  </div>
+</div>
+
+<div class="card mb-5">
+  <header class="card-header">
+    <p class="card-header-title">The admin warning system</p>
+  </header>
+  <div class="card-content">
+    <p class="mb-3">When viewing a user's domain assignments, the system highlights grants that fall outside the user's assigned organization or division:</p>
+    <table class="table is-fullwidth mb-3" style="font-size: 0.875rem;">
+      <thead>
+        <tr>
+          <th style="width: 20%;">Color</th>
+          <th>Condition</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tag is-danger is-light">Red</span></td>
+          <td>The domain belongs to an organization the user is not assigned to.</td>
+        </tr>
+        <tr>
+          <td><span class="tag is-warning is-light">Yellow</span></td>
+          <td>The domain's organization matches, but the division differs (or vice versa).</td>
+        </tr>
+        <tr>
+          <td><span style="color: #7a7a7a;">Default</span></td>
+          <td>The domain belongs to one of the user's assigned organization/division pairs.</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="mb-0"><strong>Note:</strong> The warning is an audit aid. The grant still works regardless of color.</p>
+  </div>
+</div>
+
+<hr class="my-5">
+
+<p class="is-size-7"><a href="{% url 'docs_administration_overview' %}">← Back to overview</a></p>
+{% endblock %}

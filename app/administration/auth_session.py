@@ -48,3 +48,13 @@ def session_permission_codenames(request: HttpRequest) -> frozenset[str]:
     if raw is None:
         return frozenset()
     return frozenset(raw)
+
+
+from django.contrib.auth.signals import user_logged_in
+from django.dispatch import receiver
+
+
+@receiver(user_logged_in)
+def _on_user_logged_in(sender, request, user, **kwargs):
+    """Automatically refresh auth snapshot when any user logs in."""
+    refresh_auth_in_session(request, user)

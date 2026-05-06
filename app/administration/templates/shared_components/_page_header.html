@@ -1,0 +1,8 @@
+{# Reusable page header: title, optional subtitle, optional right-aligned action buttons #}
+<div class="is-flex is-justify-content-space-between is-align-items-flex-start mb-4">
+  <div>
+    <h1 class="title mb-1">{{ page_title }}</h1>
+    {% if page_subtitle %}<p class="subtitle is-6 has-text-grey">{{ page_subtitle }}</p>{% endif %}
+  </div>
+  {% if page_actions %}<div class="buttons">{{ page_actions }}</div>{% endif %}
+</div>

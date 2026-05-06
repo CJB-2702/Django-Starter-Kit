@@ -1,13 +1,14 @@
+from app.administration.models.auth.allowed_email_domains import AllowedEmailDomain
 from app.administration.models.data_ownership.divisions import Division
-from app.administration.models.data_ownership.domain_templates import DomainTemplate
-from app.administration.models.data_ownership.domain_template_items import (
-    DomainTemplateItem,
-)
-from app.administration.models.data_ownership.domains import Domain
-from app.administration.models.data_ownership.group_relationships import (
+from app.administration.models.data_ownership.domain_relationships import (
     DivisionOrganisation,
     OrganizationDomain,
 )
+from app.administration.models.data_ownership.domain_template_items import (
+    DomainTemplateItem,
+)
+from app.administration.models.data_ownership.domain_templates import DomainTemplate
+from app.administration.models.data_ownership.domains import Domain
 from app.administration.models.data_ownership.organization import Organization
 from app.administration.models.data_ownership.user_assignments import (
     UserDivision,
@@ -15,16 +16,10 @@ from app.administration.models.data_ownership.user_assignments import (
     UserDomainTemplate,
     UserOrganization,
 )
-from app.administration.models.permissions import (
-    PermissionGroupTemplate,
-    PermissionGroupTemplateItem,
-    Role,
-    RoleItem,
-    UserPermissionGroupTemplate,
-    UserRole,
-)
+from app.administration.models.permissions import Role, RoleItem, UserRole
 
 __all__ = [
+    "AllowedEmailDomain",
     "Division",
     "DivisionOrganisation",
     "Domain",
@@ -32,14 +27,11 @@ __all__ = [
     "DomainTemplateItem",
     "Organization",
     "OrganizationDomain",
-    "PermissionGroupTemplate",
-    "PermissionGroupTemplateItem",
     "Role",
     "RoleItem",
     "UserDivision",
     "UserDomain",
     "UserDomainTemplate",
     "UserOrganization",
-    "UserPermissionGroupTemplate",
     "UserRole",
 ]

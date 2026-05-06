@@ -1,0 +1,77 @@
+{% extends "adm_base.html" %}
+{% block title %}{{ group.name }} — Permission group{% endblock %}
+{% block breadcrumb %}
+<li><a href="{% url 'permission_group_index' %}">Permission groups</a></li>
+<li class="is-active"><a href="#" aria-current="page">{{ group.name }}</a></li>
+{% endblock %}
+{% block content %}
+<div class="is-flex is-justify-content-space-between is-align-items-flex-start mb-4">
+  <div>
+    <h1 class="title mb-1">{{ group.name }}</h1>
+    <p class="subtitle is-6 has-text-grey">Permission group (Django <code>auth.Group</code>)</p>
+  </div>
+  {% if can_edit %}
+  <div class="buttons">
+    <a class="button is-link" href="{% url 'permission_group_edit' group.pk %}">
+      <span class="icon"><span class="material-icons" aria-hidden="true">edit</span></span>
+      <span>Edit</span>
+    </a>
+    <form method="post" action="{% url 'permission_group_delete' group.pk %}" onsubmit="return confirm('Delete this permission group? Users lose its permissions, and any roles referencing it lose the link.');" class="is-inline-block">
+      {% csrf_token %}
+      <button class="button is-danger is-light" type="submit">
+        <span class="icon"><span class="material-icons" aria-hidden="true">delete</span></span>
+        <span>Delete</span>
+      </button>
+    </form>
+  </div>
+  {% endif %}
+</div>
+
+<div class="card mb-5">
+  <header class="card-header">
+    <p class="card-header-title">Permissions in this group ({{ permissions|length }})</p>
+  </header>
+  <div class="card-content">
+    {% if permissions %}
+    <table class="table is-fullwidth is-narrow is-size-7">
+      <thead><tr><th>App</th><th>Model</th><th>Codename</th><th>Label</th></tr></thead>
+      <tbody>
+        {% for p in permissions %}
+        <tr>
+          <td>{{ p.content_type.app_label }}</td>
+          <td>{{ p.content_type.model }}</td>
+          <td><code>{{ p.codename }}</code></td>
+          <td><a href="{% url 'permission_detail' p.pk %}">{{ p.name }}</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="has-text-grey is-size-7 mb-0">No permissions in this group.</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="card">
+  <header class="card-header">
+    <p class="card-header-title">Members ({{ members|length }})</p>
+  </header>
+  <div class="card-content">
+    {% if members %}
+    <table class="table is-fullwidth is-narrow is-size-7">
+      <thead><tr><th>User</th><th>Email</th></tr></thead>
+      <tbody>
+        {% for u in members %}
+        <tr>
+          <td><a href="{% url 'user_detail' u.pk %}">{{ u.username }}</a></td>
+          <td>{{ u.email|default:"—" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="has-text-grey is-size-7 mb-0">No members.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

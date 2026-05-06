@@ -101,7 +101,7 @@ def main() -> int:
     parser.add_argument(
         "--seed",
         action="store_true",
-        help="Run `manage.py seed_dev` after migrate.",
+        help="Load dev fixtures via `manage.py loaddata` after migrate.",
     )
     args = parser.parse_args()
 
@@ -121,7 +121,14 @@ def main() -> int:
     call_command("migrate", verbosity=1)
 
     if args.seed:
-        call_command("seed_dev", verbosity=1)
+        for label in (
+            "dev_auth_groups",
+            "dev_users",
+            "dev_ownership",
+            "dev_user_scope",
+            "dev_roles",
+        ):
+            call_command("loaddata", label, verbosity=1)
 
     print("Done.", flush=True)
     return 0

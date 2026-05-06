@@ -47,13 +47,34 @@
           hx-select="#admin-main-content"
           hx-push-url="true"
         >
-          <p class="menu-label">Portal navigation</p>
+          <p class="menu-label">Home</p>
           <ul class="menu-list">
-            <li><a href="{% url 'administration_index' %}">Home</a></li>
-            <li><a href="{% url 'user_portal_index' %}">Users</a></li>
-            <li><a href="{% url 'data_ownership_index' %}">Data ownership</a></li>
-            <li><a href="{% url 'access_management_index' %}">Access management</a></li>
-            <li><a href="{% url 'permission_group_template_index' %}">Templates</a></li>
+            <li><a href="{% url 'administration_index' %}">Dashboard</a></li>
+          </ul>
+
+          <p class="menu-label">User Management</p>
+          <ul class="menu-list">
+            <li><a href="{% url 'user_index' %}">Users</a></li>
+          </ul>
+
+          <p class="menu-label">Organizational Assignments</p>
+          <ul class="menu-list">
+            <li><a href="{% url 'organization_index' %}">Organizations</a></li>
+            <li><a href="{% url 'division_index' %}">Divisions</a></li>
+          </ul>
+
+          <p class="menu-label">Permissions System</p>
+          <ul class="menu-list">
+            <li><a href="{% url 'permission_index' %}">Permissions</a></li>
+            <li><a href="{% url 'permission_group_index' %}">Permission Groups</a></li>
+            <li><a href="{% url 'role_index' %}">Roles</a></li>
+          </ul>
+
+          <p class="menu-label">Data Access</p>
+          <ul class="menu-list">
+            <li><a href="{% url 'domain_index' %}">Domains</a></li>
+            <li><a href="{% url 'domain_template_index' %}">Domain Templates</a></li>
+            <li><a href="{% url 'domain_organizations_portal' %}">Domain ↔ Organization Links</a></li>
           </ul>
         </aside>
       </aside>

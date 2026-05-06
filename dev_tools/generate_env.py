@@ -142,6 +142,11 @@ CSRF_TRUSTED_ORIGINS={self._csrf_trusted_origins()}
 SECURE_PROXY_SSL_HEADER=HTTP_X_FORWARDED_PROTO,https
 USE_X_FORWARDED_HOST=True
 
+# --- OIDC (Microsoft Entra ID / Azure AD) ---
+# Register an App in Azure Portal and set these to enable SSO
+OIDC_RP_CLIENT_ID=<azure-app-client-id>
+OIDC_RP_CLIENT_SECRET=<azure-app-client-secret>
+
 # --- Static & media (production paths; safe to set in dev) ---
 STATIC_ROOT={static_root}
 MEDIA_ROOT={media_root}

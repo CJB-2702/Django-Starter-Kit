@@ -5,60 +5,95 @@
 {% endblock %}
 {% block content %}
 <h1 class="title is-4">Site administration</h1>
-<p class="mb-4">Choose a portal below to manage users, access permissions, and ownership scope.</p>
+<p class="mb-5 has-text-grey">Pick an area below. Permissions ("what you can do") and data access ("what you can see") are independent systems.</p>
 
-<div class="table-container">
-  <table class="table is-fullwidth">
-    <thead>
-      <tr>
-        <th>Application</th>
-        <th>Capabilities</th>
-        <th class="has-text-right">Open</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <th>User portal</th>
-        <td>Search users, filter by staff/active status, and launch user-focused admin actions.</td>
-        <td class="has-text-right">
-          <a class="button is-small is-link is-light" href="{% url 'user_portal_index' %}">
-            <span class="icon"><span class="material-icons" aria-hidden="true">people</span></span>
-            <span>Manage users</span>
+<div class="columns is-multiline">
+  <div class="column is-6">
+    <div class="card">
+      <header class="card-header">
+        <p class="card-header-title">User Management</p>
+      </header>
+      <div class="card-content">
+        <p class="is-size-7 has-text-grey mb-3">Search, view, and edit user identities, role assignments, and data scope.</p>
+        <a class="button is-small is-link is-light" href="{% url 'user_index' %}">
+          <span class="icon"><span class="material-icons" aria-hidden="true">people</span></span>
+          <span>Users</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="column is-6">
+    <div class="card">
+      <header class="card-header">
+        <p class="card-header-title">Organizational Assignments</p>
+      </header>
+      <div class="card-content">
+        <p class="is-size-7 has-text-grey mb-3">Divisions and organizations are <strong>informational</strong> — they do not grant access. Used for navigation and audit warnings.</p>
+        <div class="buttons">
+          <a class="button is-small is-link is-light" href="{% url 'organization_index' %}">
+            <span class="icon"><span class="material-icons" aria-hidden="true">business</span></span>
+            <span>Organizations</span>
           </a>
-        </td>
-      </tr>
-      <tr>
-        <th>Data ownership</th>
-        <td>Browse divisions, organizations, and data domains; open a portal per row to manage users and scope.</td>
-        <td class="has-text-right">
-          <a class="button is-small is-link is-light" href="{% url 'data_ownership_index' %}">
-            <span class="icon"><span class="material-icons" aria-hidden="true">account_tree</span></span>
-            <span>Browse data ownership</span>
+          <a class="button is-small is-link is-light" href="{% url 'division_index' %}">
+            <span class="icon"><span class="material-icons" aria-hidden="true">domain</span></span>
+            <span>Divisions</span>
           </a>
-        </td>
-      </tr>
-      <tr>
-        <th>Access management</th>
-        <td>Browse permission groups (Django groups), open group portals, and filter permissions.</td>
-        <td class="has-text-right">
-          <a class="button is-small is-link is-light" href="{% url 'access_management_index' %}">
-            <span class="icon"><span class="material-icons" aria-hidden="true">admin_panel_settings</span></span>
-            <span>Open access management</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="column is-6">
+    <div class="card">
+      <header class="card-header">
+        <p class="card-header-title">Permissions System (capability gate)</p>
+      </header>
+      <div class="card-content">
+        <p class="is-size-7 has-text-grey mb-3">Controls <em>what actions</em> a user can perform. Permission groups bundle Django permissions; roles bundle permission groups.</p>
+        <div class="buttons">
+          <a class="button is-small is-link is-light" href="{% url 'permission_index' %}">
+            <span class="icon"><span class="material-icons" aria-hidden="true">vpn_key</span></span>
+            <span>Permissions</span>
           </a>
-        </td>
-      </tr>
-      <tr>
-        <th>Permission group templates</th>
-        <td>Manage named bundles of permission groups (role profiles) used for one-step user onboarding.</td>
-        <td class="has-text-right">
-          <a class="button is-small is-link is-light" href="{% url 'permission_group_template_index' %}">
-            <span class="icon"><span class="material-icons" aria-hidden="true">assignment_ind</span></span>
-            <span>Manage templates</span>
+          <a class="button is-small is-link is-light" href="{% url 'permission_group_index' %}">
+            <span class="icon"><span class="material-icons" aria-hidden="true">group_work</span></span>
+            <span>Permission Groups</span>
           </a>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+          <a class="button is-small is-link is-light" href="{% url 'role_index' %}">
+            <span class="icon"><span class="material-icons" aria-hidden="true">badge</span></span>
+            <span>Roles</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="column is-6">
+    <div class="card">
+      <header class="card-header">
+        <p class="card-header-title">Data Access (scope gate)</p>
+      </header>
+      <div class="card-content">
+        <p class="is-size-7 has-text-grey mb-3">Controls <em>which rows</em> a user can see. Every scoped row carries a single Domain; templates bundle domains for bulk assignment.</p>
+        <div class="buttons">
+          <a class="button is-small is-link is-light" href="{% url 'domain_index' %}">
+            <span class="icon"><span class="material-icons" aria-hidden="true">layers</span></span>
+            <span>Domains</span>
+          </a>
+          <a class="button is-small is-link is-light" href="{% url 'domain_template_index' %}">
+            <span class="icon"><span class="material-icons" aria-hidden="true">view_list</span></span>
+            <span>Domain Templates</span>
+          </a>
+          <a class="button is-small is-link is-light" href="{% url 'domain_organizations_portal' %}">
+            <span class="icon"><span class="material-icons" aria-hidden="true">link</span></span>
+            <span>Domain ↔ Organization Links</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-<p class="mt-4 has-text-grey is-size-7">Grant actions require membership in the generic_manager or generic_admin group.</p>
+
+<p class="mt-5 has-text-grey is-size-7">Grant actions require membership in the <code>generic_manager</code> or <code>generic_admin</code> group, or superuser status.</p>
 {% endblock %}

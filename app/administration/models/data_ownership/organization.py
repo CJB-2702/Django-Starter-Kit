@@ -2,7 +2,7 @@ from django.db import models
 
 from app.administration.models.auditable_mixin import AuditFieldsMixin
 from app.administration.models.data_ownership.divisions import Division
-from app.administration.models.data_ownership.group_relationships.organization_domains import (
+from app.administration.models.data_ownership.domain_relationships.organization_domains import (
     OrganizationDomain,
 )
 

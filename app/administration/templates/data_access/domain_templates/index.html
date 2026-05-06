@@ -1,0 +1,65 @@
+{% extends "adm_base.html" %}
+{% block title %}Domain templates{% endblock %}
+{% block breadcrumb %}
+<li class="is-active"><a href="#" aria-current="page">Domain templates</a></li>
+{% endblock %}
+{% block content %}
+<div class="is-flex is-justify-content-space-between is-align-items-flex-start mb-4">
+  <div>
+    <h1 class="title mb-1">Domain templates</h1>
+    <p class="subtitle is-6 has-text-grey">Reusable bundles of domains for bulk user assignment.</p>
+  </div>
+  {% if can_edit %}
+  <a class="button is-link" href="{% url 'domain_template_create' %}">
+    <span class="icon"><span class="material-icons" aria-hidden="true">add</span></span>
+    <span>New Template</span>
+  </a>
+  {% endif %}
+</div>
+
+<form method="get" class="mb-4">
+  <div class="field has-addons">
+    <div class="control is-expanded">
+      <input class="input" type="search" name="q" value="{{ q }}" placeholder="Filter by name" autocomplete="off">
+    </div>
+    <div class="control"><button type="submit" class="button is-link is-light">Filter</button></div>
+    {% if q %}<div class="control"><a class="button is-light" href="{% url 'domain_template_index' %}">Clear</a></div>{% endif %}
+  </div>
+</form>
+
+<div class="card">
+  <div class="card-content">
+    <div class="table-container">
+      <table class="table is-fullwidth is-striped is-hoverable">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Status</th>
+            <th class="has-text-right">Domains</th>
+            <th class="has-text-right">Assignees</th>
+            <th class="has-text-right">Open</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for t in templates %}
+          <tr>
+            <td>{{ t.name }}</td>
+            <td>{% if t.is_active %}<span class="tag is-success is-light">Active</span>{% else %}<span class="tag is-light">Inactive</span>{% endif %}</td>
+            <td class="has-text-right">{{ t.active_item_count }}</td>
+            <td class="has-text-right">{{ t.assignee_count }}</td>
+            <td class="has-text-right">
+              <a class="button is-link is-light is-small" href="{% url 'domain_template_detail' t.slug %}">
+                <span class="icon"><span class="material-icons" aria-hidden="true">visibility</span></span>
+                <span>View</span>
+              </a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="5" class="has-text-grey">No templates found.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

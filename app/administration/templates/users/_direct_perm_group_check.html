@@ -1,0 +1,13 @@
+{% if items %}
+<div class="notification is-warning is-light is-size-7">
+  <p class="mb-2">{{ message }}</p>
+  <ul class="ml-4">
+    {% for it in items %}
+    <li>
+      <code>{{ it.label }}</code> — already granted via:
+      {% for g in it.groups %}<span class="tag is-light is-size-7 ml-1">{{ g }}</span>{% endfor %}
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}

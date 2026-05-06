@@ -1,0 +1,35 @@
+[
+  {
+    "model": "auth.group",
+    "pk": 1,
+    "fields": {
+      "name": "generic_user",
+      "permissions": []
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 2,
+    "fields": {
+      "name": "generic_manager",
+      "permissions": [
+        ["add_user", "auth", "user"],
+        ["change_user", "auth", "user"],
+        ["view_user", "auth", "user"]
+      ]
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 3,
+    "fields": {
+      "name": "generic_admin",
+      "permissions": [
+        ["add_user", "auth", "user"],
+        ["change_user", "auth", "user"],
+        ["delete_user", "auth", "user"],
+        ["view_user", "auth", "user"]
+      ]
+    }
+  }
+]

@@ -17,6 +17,8 @@
           <a href="{% url 'public_home' %}" class="has-text-weight-semibold">Home</a>
           <span class="mx-2">·</span>
           <a href="{% url 'public_about' %}">About</a>
+          <span class="mx-2">·</span>
+          <a href="{% url 'docs_administration_overview' %}">Docs</a>
         </div>
       </div>
       {% if user.is_authenticated %}

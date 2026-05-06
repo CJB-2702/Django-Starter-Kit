@@ -17,8 +17,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
+from app.public_app.presentation_layer.entrypoints.oidc import (
+    PublicOIDCAuthCallbackView,
+    PublicOIDCAuthRequestView,
+)
+
 urlpatterns = [
     path('', include('app.public_app.urls')),
+    path('oidc/authenticate/', PublicOIDCAuthRequestView.as_view(), name='oidc_authentication_init'),
+    path('oidc/callback/', PublicOIDCAuthCallbackView.as_view(), name='oidc_authentication_callback'),
     path('admin/', admin.site.urls),
     path('administration/', include('app.administration.urls')),
 ]

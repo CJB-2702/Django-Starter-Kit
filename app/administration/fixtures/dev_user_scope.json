@@ -1,0 +1,275 @@
+[
+  {
+    "model": "administration.userdivision",
+    "pk": 1,
+    "fields": {
+      "user": 2,
+      "division": 1,
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "created_by": 3,
+      "updated_by": 3
+    }
+  },
+  {
+    "model": "administration.userdivision",
+    "pk": 2,
+    "fields": {
+      "user": 3,
+      "division": 1,
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "created_by": 3,
+      "updated_by": 3
+    }
+  },
+  {
+    "model": "administration.userdivision",
+    "pk": 3,
+    "fields": {
+      "user": 3,
+      "division": 2,
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "created_by": 3,
+      "updated_by": 3
+    }
+  },
+  {
+    "model": "administration.userorganization",
+    "pk": 1,
+    "fields": {
+      "user": 2,
+      "organization": 1,
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "created_by": 3,
+      "updated_by": 3
+    }
+  },
+  {
+    "model": "administration.userorganization",
+    "pk": 2,
+    "fields": {
+      "user": 2,
+      "organization": 2,
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "created_by": 3,
+      "updated_by": 3
+    }
+  },
+  {
+    "model": "administration.userorganization",
+    "pk": 3,
+    "fields": {
+      "user": 3,
+      "organization": 1,
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "created_by": 3,
+      "updated_by": 3
+    }
+  },
+  {
+    "model": "administration.userorganization",
+    "pk": 4,
+    "fields": {
+      "user": 3,
+      "organization": 2,
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "created_by": 3,
+      "updated_by": 3
+    }
+  },
+  {
+    "model": "administration.userorganization",
+    "pk": 5,
+    "fields": {
+      "user": 3,
+      "organization": 3,
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "created_by": 3,
+      "updated_by": 3
+    }
+  },
+  {
+    "model": "administration.userorganization",
+    "pk": 6,
+    "fields": {
+      "user": 3,
+      "organization": 4,
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "created_by": 3,
+      "updated_by": 3
+    }
+  },
+  {
+    "model": "administration.userdomain",
+    "pk": 1,
+    "fields": {
+      "user": 2,
+      "domain": 1,
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "created_by": 3,
+      "updated_by": 3
+    }
+  },
+  {
+    "model": "administration.userdomain",
+    "pk": 2,
+    "fields": {
+      "user": 2,
+      "domain": 2,
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "created_by": 3,
+      "updated_by": 3
+    }
+  },
+  {
+    "model": "administration.userdomain",
+    "pk": 3,
+    "fields": {
+      "user": 2,
+      "domain": 3,
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "created_by": 3,
+      "updated_by": 3
+    }
+  },
+  {
+    "model": "administration.userdomain",
+    "pk": 4,
+    "fields": {
+      "user": 2,
+      "domain": 4,
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "created_by": 3,
+      "updated_by": 3
+    }
+  },
+  {
+    "model": "administration.userdomain",
+    "pk": 5,
+    "fields": {
+      "user": 3,
+      "domain": 1,
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "created_by": 3,
+      "updated_by": 3
+    }
+  },
+  {
+    "model": "administration.userdomain",
+    "pk": 6,
+    "fields": {
+      "user": 3,
+      "domain": 2,
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "created_by": 3,
+      "updated_by": 3
+    }
+  },
+  {
+    "model": "administration.userdomain",
+    "pk": 7,
+    "fields": {
+      "user": 3,
+      "domain": 3,
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "created_by": 3,
+      "updated_by": 3
+    }
+  },
+  {
+    "model": "administration.userdomain",
+    "pk": 8,
+    "fields": {
+      "user": 3,
+      "domain": 4,
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "created_by": 3,
+      "updated_by": 3
+    }
+  },
+  {
+    "model": "administration.userdomain",
+    "pk": 9,
+    "fields": {
+      "user": 3,
+      "domain": 5,
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "created_by": 3,
+      "updated_by": 3
+    }
+  },
+  {
+    "model": "administration.userdomain",
+    "pk": 10,
+    "fields": {
+      "user": 3,
+      "domain": 6,
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "created_by": 3,
+      "updated_by": 3
+    }
+  },
+  {
+    "model": "administration.userdomain",
+    "pk": 11,
+    "fields": {
+      "user": 3,
+      "domain": 7,
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "created_by": 3,
+      "updated_by": 3
+    }
+  },
+  {
+    "model": "administration.userdomain",
+    "pk": 12,
+    "fields": {
+      "user": 3,
+      "domain": 8,
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "created_by": 3,
+      "updated_by": 3
+    }
+  }
+]

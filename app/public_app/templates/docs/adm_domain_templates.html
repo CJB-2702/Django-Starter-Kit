@@ -1,0 +1,81 @@
+{% extends "pub_base.html" %}
+{% block title %}Domain templates — Administration docs{% endblock %}
+{% block content %}
+<h1 class="title is-4">Domain templates</h1>
+
+<p class="mb-4">
+  A <strong>domain template</strong> is a named bundle of data domains representing a real-world scope profile. Instead of assigning domains individually, operators can assign a template and get all related domains at once.
+</p>
+
+<div class="card mb-5">
+  <header class="card-header">
+    <p class="card-header-title">What a template is</p>
+  </header>
+  <div class="card-content">
+    <p class="mb-3">A domain template is a convenience tool for bulk domain assignment. Examples:</p>
+    <ul class="ml-4 mb-3">
+      <li><em>Facility 1 Transportation</em> → [transportation_domain, supply_domain]</li>
+      <li><em>Warehouse Operations</em> → [warehouse_receiving, warehouse_inventory]</li>
+      <li><em>Cross-site Auditor</em> → [all_facilities, headquarters]</li>
+    </ul>
+    <p class="mb-3">Assigning a template to a user means: "This user should have access to every domain the template bundles together."</p>
+    <p class="mb-0"><strong>Template as a pointer:</strong> Templates reference domain rows; they do not copy domain state. When a domain's configuration changes, every template that references it sees the change immediately.</p>
+  </div>
+</div>
+
+<div class="card mb-5">
+  <header class="card-header">
+    <p class="card-header-title">One active template per user (at most)</p>
+  </header>
+  <div class="card-content">
+    <p class="mb-3">Each user can have <strong>at most one active domain template assignment</strong> at a time.</p>
+    <p class="mb-3">Users whose scope spans multiple unrelated areas use one of:</p>
+    <ul class="ml-4 mb-3">
+      <li>A single template that bundles all required domains, OR</li>
+      <li>Explicit domain assignments (called "manual" assignments) outside any template</li>
+    </ul>
+    <p class="mb-0">A user can mix: "Assign me Facility 1 Transportation template, plus a manual domain for Cross-facility Auditing."</p>
+  </div>
+</div>
+
+<div class="card mb-5">
+  <header class="card-header">
+    <p class="card-header-title">The rebase rule (default behavior)</p>
+  </header>
+  <div class="card-content">
+    <p class="mb-3">When a user's template changes (or is first assigned), the default is <strong>rebase</strong>:</p>
+    <ol class="ml-4 mb-3">
+      <li>Remove all domains that came from the <em>previous</em> template</li>
+      <li>Add every domain from the <em>new</em> template</li>
+      <li>Leave explicit manual assignments alone</li>
+    </ol>
+    <p class="mb-3">This keeps template changes predictable and prevents scope creep.</p>
+    <p class="mb-3"><details>
+      <summary class="has-text-weight-semibold is-clickable">Alternative: Additive mode (opt-in)</summary>
+      <p class="mt-3">When assigning a template, operators can choose <strong>Additive</strong> instead of Rebase. In additive mode, the new template's domains are <em>layered on top</em> of any existing assignments rather than replacing the old template's domains.</p>
+    </details></p>
+  </div>
+</div>
+
+<div class="card mb-5">
+  <header class="card-header">
+    <p class="card-header-title">Domain template changes are auditable</p>
+  </header>
+  <div class="card-content">
+    <p class="mb-3">Every add/remove of a domain to/from a template is tracked:</p>
+    <ul class="ml-4 mb-3">
+      <li>Each template item is timestamped with `created_at`, `updated_at`, `created_by`, `updated_by`</li>
+      <li>When an item is removed, the row is soft-deleted (marked `is_active=False`) rather than permanently deleted</li>
+      <li>Historical views show the complete audit trail: what domains a template contained at any given time, who made changes, and when</li>
+    </ul>
+  </div>
+</div>
+
+<div class="notification is-info is-light mb-5">
+  <strong>Important:</strong> Domain templates manage <em>scope</em> only. They have <strong>zero effect on capabilities</strong>. A user with a domain template still cannot perform actions unless they hold the required <a href="{% url 'docs_administration_roles' %}">roles</a>. The two systems stay separate on purpose.
+</div>
+
+<hr class="my-5">
+
+<p class="is-size-7"><a href="{% url 'docs_administration_overview' %}">← Back to overview</a></p>
+{% endblock %}

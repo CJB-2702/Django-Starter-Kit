@@ -1,0 +1,103 @@
+{% extends "pub_base.html" %}
+{% block title %}How access control works — Administration docs{% endblock %}
+{% block content %}
+<h1 class="title is-4">How access control works</h1>
+
+<p class="mb-4">
+  This system controls access through <strong>two independent gates</strong>. Both must pass for a user to perform an action or see data.
+</p>
+
+<div class="notification is-info is-light mb-5">
+  <strong>The Two Gates:</strong> A user must clear both a <em>capability gate</em> (what actions they may perform) and a <em>scope gate</em> (what rows they may see). Neither implies the other.
+</div>
+
+<div class="card mb-5">
+  <header class="card-header">
+    <p class="card-header-title">Gate 1 — Capability (What you can do)</p>
+  </header>
+  <div class="card-content">
+    <p class="mb-3"><strong>Question:</strong> Does this user have permission to perform this action at all?</p>
+    <p class="mb-3"><strong>Answer:</strong> Django checks the user's permission groups.</p>
+    <ol class="ml-4 mb-3">
+      <li>User holds a <strong>role</strong> (e.g., "Technician")</li>
+      <li>Each role bundles multiple <strong>permission groups</strong> (e.g., "Asset Lifecycle", "Equipment Tracking")</li>
+      <li>Each permission group grants specific <strong>actions</strong> (add/change/view/delete a model)</li>
+      <li>Django checks: "Can this user add an asset?" Yes → proceed. No → denied.</li>
+    </ol>
+    <p><strong>Related:</strong> <a href="{% url 'docs_administration_roles' %}">Roles and permission groups</a></p>
+  </div>
+</div>
+
+<div class="card mb-5">
+  <header class="card-header">
+    <p class="card-header-title">Gate 2 — Scope (What you can see)</p>
+  </header>
+  <div class="card-content">
+    <p class="mb-3"><strong>Question:</strong> Does this user have access to the data domains this row belongs to?</p>
+    <p class="mb-3"><strong>Answer:</strong> Every row carries a domain. Every user is assigned domains.</p>
+    <ol class="ml-4 mb-3">
+      <li>Every database row lives in a <strong>data domain</strong> (e.g., "Facility 1 Transportation")</li>
+      <li>User is assigned one or more <strong>domains</strong> (directly or via template)</li>
+      <li>On every query, only rows matching the user's domain set are returned</li>
+      <li>Check: "Is row.domain in my assigned domains?" Yes → visible. No → filtered out.</li>
+    </ol>
+    <p><strong>Related:</strong> <a href="{% url 'docs_administration_data_domains' %}">Data domains and scope</a> · <a href="{% url 'docs_administration_domain_templates' %}">Domain templates</a></p>
+  </div>
+</div>
+
+<div class="card mb-5">
+  <header class="card-header">
+    <p class="card-header-title">Both gates must pass</p>
+  </header>
+  <div class="card-content">
+    <p class="mb-3"><strong>Example:</strong> Jane is a Technician and has the "Asset Lifecycle" permission group, so she can add assets. But she is assigned only "Facility 1 Transportation" domains. If she tries to view an asset in "Facility 2", she gets 403 Forbidden, because the asset belongs to a domain she does not have access to.</p>
+    <p>The two gates are <strong>orthogonal</strong> — independent. A user can:</p>
+    <ul class="ml-4">
+      <li>Have permissions but no domains → can act, but sees nothing</li>
+      <li>Have domains but no permissions → sees data, but cannot act on it</li>
+      <li>Have both → full access within their scope</li>
+      <li>Have neither → no access</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card mb-5">
+  <header class="card-header">
+    <p class="card-header-title">Summary table</p>
+  </header>
+  <div class="card-content">
+    <div class="table-container">
+      <table class="table is-fullwidth is-striped">
+        <thead>
+          <tr>
+            <th style="width: 25%;">System</th>
+            <th style="width: 25%;">Bundles</th>
+            <th style="width: 25%;">Assigned via</th>
+            <th style="width: 25%;">Answers</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Capability</strong> (Gate 1)</td>
+            <td>Permission groups</td>
+            <td>Roles</td>
+            <td>"Can I do this action?"</td>
+          </tr>
+          <tr>
+            <td><strong>Scope</strong> (Gate 2)</td>
+            <td>Data domains</td>
+            <td>Domain templates or direct assignment</td>
+            <td>"Can I see this row?"</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<hr class="my-5">
+
+<p class="is-size-7 has-text-grey-dark">
+  <strong>Next:</strong> Learn more about <a href="{% url 'docs_administration_roles' %}">roles and permission groups</a>, <a href="{% url 'docs_administration_data_domains' %}">data domains</a>, or <a href="{% url 'docs_administration_domain_templates' %}">domain templates</a>.
+</p>
+{% endblock %}

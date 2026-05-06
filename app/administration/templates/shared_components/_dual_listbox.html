@@ -49,6 +49,8 @@
             <option value="{{ item.pk }}">{{ item.name }}</option>
           {% elif list_kind == "permission_group" %}
             <option value="{{ item.pk }}">{{ item.name }}</option>
+          {% elif list_kind == "role" %}
+            <option value="{{ item.pk }}">{{ item.name }}{% if item.parent_role %} (specializes {{ item.parent_role.name }}){% endif %}</option>
           {% endif %}
         {% endfor %}
       </select>
@@ -148,6 +150,8 @@
             <option value="{{ item.pk }}">{{ item.name }}</option>
           {% elif list_kind == "permission_group" %}
             <option value="{{ item.pk }}">{{ item.name }}</option>
+          {% elif list_kind == "role" %}
+            <option value="{{ item.pk }}">{{ item.name }}{% if item.parent_role %} (specializes {{ item.parent_role.name }}){% endif %}</option>
           {% endif %}
         {% endfor %}
       </select>

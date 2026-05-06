@@ -1,0 +1,71 @@
+{% extends "adm_base.html" %}
+{% block title %}Permissions{% endblock %}
+{% block breadcrumb %}
+<li class="is-active"><a href="#" aria-current="page">Permissions</a></li>
+{% endblock %}
+{% block content %}
+<h1 class="title">Permissions</h1>
+<p class="subtitle is-6 has-text-grey">Django <code>auth.Permission</code> rows. Read-only — permissions are created automatically by migrations and cannot be edited here.</p>
+
+<form method="get" class="mb-4">
+  <div class="field has-addons">
+    <div class="control is-expanded">
+      <input class="input" type="search" name="q" value="{{ q }}" placeholder="Filter by app, model, codename, or label" autocomplete="off">
+    </div>
+    <div class="control"><button type="submit" class="button is-link is-light">Filter</button></div>
+    {% if q %}<div class="control"><a class="button is-light" href="{% url 'permission_index' %}">Clear</a></div>{% endif %}
+  </div>
+</form>
+
+<div class="card">
+  <div class="card-content">
+    <div class="table-container">
+      <table class="table is-fullwidth is-striped is-hoverable is-size-7">
+        <thead>
+          <tr>
+            <th>App</th>
+            <th>Model</th>
+            <th>Codename</th>
+            <th>Label</th>
+            <th class="has-text-right">Open</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in page %}
+          <tr>
+            <td>{{ p.content_type.app_label }}</td>
+            <td>{{ p.content_type.model }}</td>
+            <td><code>{{ p.codename }}</code></td>
+            <td>{{ p.name }}</td>
+            <td class="has-text-right">
+              <a class="button is-link is-light is-small" href="{% url 'permission_detail' p.pk %}">
+                <span class="icon"><span class="material-icons" aria-hidden="true">visibility</span></span>
+                <span>View</span>
+              </a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="5" class="has-text-grey">No permissions found.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if page.has_other_pages %}
+    <nav class="pagination is-small" role="navigation" aria-label="pagination">
+      {% if page.has_previous %}
+      <a class="pagination-previous" href="?q={{ q }}&page={{ page.previous_page_number }}">Previous</a>
+      {% else %}
+      <span class="pagination-previous is-disabled">Previous</span>
+      {% endif %}
+      {% if page.has_next %}
+      <a class="pagination-next" href="?q={{ q }}&page={{ page.next_page_number }}">Next</a>
+      {% else %}
+      <span class="pagination-next is-disabled">Next</span>
+      {% endif %}
+      <p class="pagination-list has-text-grey is-size-7">Page {{ page.number }} of {{ page.paginator.num_pages }} · {{ page.paginator.count }} total</p>
+    </nav>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -33,16 +33,9 @@ Three concrete problems:
 
 ## 3. The rules
 
-### Rule 1 — One active domain template per user
 
-Each user has **at most one** active domain template assignment at a time. Users whose data scope spans multiple unrelated areas are handled via:
 
-- A single domain template that bundles all required domains, OR
-- Explicit `UserDomain` assignments outside the template (tracked and visible in the audit UI).
 
-### Rule 2 — The template is a pointer, not a copy
-
-Domain templates **reference** domain rows; they do not copy domain state inline. When a domain's configuration changes, every template that references it sees the change immediately. No template-sync job is needed.
 
 ### Rule 3 — Default assignment is REBASE
 

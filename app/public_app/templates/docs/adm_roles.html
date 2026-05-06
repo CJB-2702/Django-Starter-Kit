@@ -1,0 +1,100 @@
+{% extends "pub_base.html" %}
+{% block title %}Roles and permission groups — Administration docs{% endblock %}
+{% block content %}
+<h1 class="title is-4">Roles and permission groups</h1>
+
+<p class="mb-4">
+  A <strong>role</strong> is a job title (e.g., "Technician", "IT Manager") that bundles together permission groups. Roles let you assign multiple permissions at once and tell a story about what a person is responsible for.
+</p>
+
+<div class="card mb-5">
+  <header class="card-header">
+    <p class="card-header-title">Permission groups</p>
+  </header>
+  <div class="card-content">
+    <p class="mb-3">A <strong>permission group</strong> is an <em>atomic</em> bundle of permissions tied to a specific action or feature:</p>
+    <ul class="ml-4 mb-3">
+      <li><em>Asset Lifecycle</em> — permissions to add, change, delete, view assets</li>
+      <li><em>Supply Management</em> — permissions to manage supply requests</li>
+      <li><em>Audit Report Generation</em> — permissions to generate compliance reports</li>
+    </ul>
+    <p class="mb-0">Permission groups <strong>are not</strong> organizational teams or departments — they represent specific job functions.</p>
+  </div>
+</div>
+
+<div class="card mb-5">
+  <header class="card-header">
+    <p class="card-header-title">Roles</p>
+  </header>
+  <div class="card-content">
+    <p class="mb-3">A <strong>role</strong> is a real-world job profile that bundles multiple permission groups:</p>
+    <ul class="ml-4 mb-3">
+      <li><em>Technician</em> → Asset Lifecycle, Equipment Tracking</li>
+      <li><em>IT Manager</em> → User Administration, System Configuration</li>
+      <li><em>Facilities Auditor</em> → Audit Reports, Facility Access</li>
+    </ul>
+    <p class="mb-3">Assigning a role to a user means: "This person should be able to do everything this role requires." Instead of manually assigning 10 permission groups to 20 users (200 clicks), assign one role to 20 users (20 clicks).</p>
+  </div>
+</div>
+
+<div class="card mb-5">
+  <header class="card-header">
+    <p class="card-header-title">Multiple roles per user</p>
+  </header>
+  <div class="card-content">
+    <p class="mb-3">A user can hold <strong>multiple roles at the same time</strong>. Their effective permissions are the <strong>union</strong> of all roles:</p>
+    <p class="mb-2">Example:</p>
+    <pre class="p-3" style="background-color: #f5f5f5; border-radius: 0; overflow-x: auto;"><code>User: Jane
+├─ Role: Technician
+│  └─ Groups: [Asset Lifecycle, Equipment Tracking]
+└─ Role: Facilities Auditor
+   └─ Groups: [Audit Reports, Facility Access]
+
+Effective groups: {Asset Lifecycle, Equipment Tracking, Audit Reports, Facility Access}</code></pre>
+  </div>
+</div>
+
+<div class="card mb-5">
+  <header class="card-header">
+    <p class="card-header-title">Role inheritance (one level)</p>
+  </header>
+  <div class="card-content">
+    <p class="mb-3">Roles can form a parent-child relationship to represent specialization:</p>
+    <ul class="ml-4 mb-3">
+      <li><strong>Base role:</strong> "Technician" (has no parent)</li>
+      <li><strong>Specialized role:</strong> "Documentation Technician" (parent: Technician) adds documentation responsibilities on top</li>
+    </ul>
+    <p class="mb-3">The child role <strong>automatically includes all permission groups from its parent</strong>. When a user holds the specialized role, they get both parent and child groups (no overlap).</p>
+    <p class="mb-0"><strong>Constraint:</strong> Role hierarchy is only one level deep. A specialized role cannot itself be a parent.</p>
+  </div>
+</div>
+
+<div class="card mb-5">
+  <header class="card-header">
+    <p class="card-header-title">Relationship types and notes</p>
+  </header>
+  <div class="card-content">
+    <p class="mb-3">Each role assignment includes a <strong>relationship type</strong> that contextualizes the assignment:</p>
+    <ul class="ml-4 mb-3">
+      <li><strong>Primary</strong> — the user's main job title</li>
+      <li><strong>Specialty</strong> — a secondary specialization</li>
+      <li><strong>Side job</strong> — occasional duties outside the main role</li>
+      <li><strong>For learning/fun</strong> — training or temporary coverage</li>
+    </ul>
+    <p class="mb-3">Additionally, each assignment includes a <strong>notes</strong> field that explains <em>why</em> the user holds this role. Examples:</p>
+    <ul class="ml-4 mb-0">
+      <li>"Primary role — hired as field technician."</li>
+      <li>"Specialty added 2026-03-15 for Q1 documentation project; sunset 2026-09-01."</li>
+      <li>"Side job: supply coverage during Sarah's leave (until 2026-05-30)."</li>
+    </ul>
+  </div>
+</div>
+
+<div class="notification is-info is-light mb-5">
+  <strong>Important:</strong> Roles grant <em>capabilities</em> only. They have <strong>zero effect on data scope</strong>. A user with the "Technician" role still sees no rows until they are assigned domains. <a href="{% url 'docs_administration_data_domains' %}">Learn about data domains →</a>
+</div>
+
+<hr class="my-5">
+
+<p class="is-size-7"><a href="{% url 'docs_administration_overview' %}">← Back to overview</a></p>
+{% endblock %}

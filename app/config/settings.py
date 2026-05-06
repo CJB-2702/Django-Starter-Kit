@@ -107,6 +107,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "mozilla_django_oidc",
     "app.public_app",
     "app.administration",
 ]
@@ -114,6 +115,11 @@ INSTALLED_APPS = [
 LOGIN_URL = "/"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
+
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "app.administration.auth_backends.MicrosoftOIDCBackend",
+]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -161,21 +167,29 @@ else:
     }
 
 
-# Password validation
+# Password validation — OWASP-compliant
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
+# https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html
+#
+# OWASP guidance:
+# - Minimum length requirement (12 chars) without complexity/mixture rules
+# - Check against common/breached passwords
+# - Check against user attributes (username, email, etc.)
+# - No expiration, no history, no forced periodic changes
+# - Allow spaces and special characters
 
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "NAME": "app.administration.control_layer.password_validators.OWASPMinimumLengthValidator",
+        "OPTIONS": {
+            "min_length": 12,
+        },
     },
     {
         "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -251,3 +265,23 @@ if _proxy_header and "," in _proxy_header:
     SECURE_PROXY_SSL_HEADER = (h_name.strip(), h_val.strip())
 else:
     SECURE_PROXY_SSL_HEADER = None
+
+
+# -----------------------------------------------------------------------------
+# OIDC (Microsoft Entra ID / Azure AD)
+# https://mozilla-django-oidc.readthedocs.io/
+# -----------------------------------------------------------------------------
+
+OIDC_RP_CLIENT_ID = os.environ.get("OIDC_RP_CLIENT_ID", "")
+OIDC_RP_CLIENT_SECRET = os.environ.get("OIDC_RP_CLIENT_SECRET", "")
+OIDC_RP_SIGN_ALGO = "RS256"
+OIDC_RP_SCOPES = "openid email profile"
+
+OIDC_OP_AUTHORIZATION_ENDPOINT = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize"
+OIDC_OP_TOKEN_ENDPOINT = "https://login.microsoftonline.com/common/oauth2/v2.0/token"
+OIDC_OP_USER_ENDPOINT = "https://graph.microsoft.com/oidc/userinfo"
+OIDC_OP_JWKS_ENDPOINT = "https://login.microsoftonline.com/common/discovery/v2.0/keys"
+
+OIDC_CREATE_USER = True
+OIDC_STORE_ACCESS_TOKEN = False
+OIDC_AUTHENTICATION_CALLBACK_URL = "oidc_authentication_callback"
