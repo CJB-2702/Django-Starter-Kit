@@ -110,7 +110,10 @@ INSTALLED_APPS = [
     "mozilla_django_oidc",
     "app.public_app",
     "app.administration",
+    "app.events",
 ]
+
+AUTH_USER_MODEL = "administration.User"
 
 LOGIN_URL = "/"
 LOGIN_REDIRECT_URL = "/"
@@ -220,7 +223,7 @@ _static_root = os.environ.get("STATIC_ROOT", "").strip()
 STATIC_ROOT = _static_root or None
 
 _media_root = os.environ.get("MEDIA_ROOT", "").strip()
-MEDIA_ROOT = Path(_media_root) if _media_root else None
+MEDIA_ROOT = Path(_media_root) if _media_root else BASE_DIR / "media"
 MEDIA_URL = os.environ.get("MEDIA_URL", "media/")
 
 
@@ -285,3 +288,10 @@ OIDC_OP_JWKS_ENDPOINT = "https://login.microsoftonline.com/common/discovery/v2.0
 OIDC_CREATE_USER = True
 OIDC_STORE_ACCESS_TOKEN = False
 OIDC_AUTHENTICATION_CALLBACK_URL = "oidc_authentication_callback"
+
+
+# -----------------------------------------------------------------------------
+# Hashids (URL-safe PK encoding)
+# -----------------------------------------------------------------------------
+
+HASHIDS_SALT = os.environ.get("HASHIDS_SALT", "dev-insecure-hashids-salt-do-not-use-in-production")

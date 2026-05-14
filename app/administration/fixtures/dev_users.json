@@ -1,8 +1,9 @@
 [
   {
-    "model": "auth.user",
+    "model": "administration.user",
     "pk": 1,
     "fields": {
+      "slug": "devusr01",
       "username": "generic_user",
       "password": "pbkdf2_sha256$1200000$TG6gg5OS6Bir2QZOo19zpE$ZBO+IZh/0JqsozKgzz3KGzXw8LM8tPD3RNiXXF1fq6w=",
       "email": "generic_user@example.invalid",
@@ -18,9 +19,10 @@
     }
   },
   {
-    "model": "auth.user",
+    "model": "administration.user",
     "pk": 2,
     "fields": {
+      "slug": "devmgr01",
       "username": "generic_manager",
       "password": "pbkdf2_sha256$1200000$TG6gg5OS6Bir2QZOo19zpE$ZBO+IZh/0JqsozKgzz3KGzXw8LM8tPD3RNiXXF1fq6w=",
       "email": "generic_manager@example.invalid",
@@ -36,9 +38,10 @@
     }
   },
   {
-    "model": "auth.user",
+    "model": "administration.user",
     "pk": 3,
     "fields": {
+      "slug": "devadm01",
       "username": "generic_admin",
       "password": "pbkdf2_sha256$1200000$TG6gg5OS6Bir2QZOo19zpE$ZBO+IZh/0JqsozKgzz3KGzXw8LM8tPD3RNiXXF1fq6w=",
       "email": "generic_admin@example.invalid",

@@ -13,7 +13,7 @@
   hx-push-url="{{ hx_push_url|default:'true' }}"
   hx-include="{{ hx_include_selectors }}"
 >
-  <div id="{{ filter_fields_id }}" class="field is-grouped">
+  <div id="{{ filter_fields_id }}" class="field has-addons">
     <div class="control is-expanded">
       <input
         id="{{ search_input_id }}"
@@ -26,7 +26,7 @@
       >
     </div>
     <div class="control">
-      <button class="button is-link is-light" type="submit">
+      <button class="button is-medium is-link is-light" type="submit">
         <span class="icon"><span class="material-icons" aria-hidden="true">filter_list</span></span>
         <span>{{ filter_button_label|default:'Filter' }}</span>
       </button>

@@ -1,0 +1,41 @@
+<table class="table is-fullwidth is-striped is-hoverable">
+  <thead>
+    <tr>
+      <th>Name</th><th>Status</th><th>Owner</th><th>Domain</th><th class="has-text-right">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in rows %}
+    <tr>
+      <td class="is-family-monospace">{{ row.name }}</td>
+      <td>
+        {% if row.status == "active" %}
+          <span class="tag is-success is-light">active</span>
+        {% elif row.status == "pending" %}
+          <span class="tag is-warning is-light">pending</span>
+        {% else %}
+          <span class="tag is-light">{{ row.status }}</span>
+        {% endif %}
+      </td>
+      <td>{{ row.owner }}</td>
+      <td><span class="tag is-light is-small">{{ row.domain }}</span></td>
+      <td class="has-text-right">
+        <div class="buttons are-small is-justify-content-flex-end">
+          <a class="button is-info is-light is-small"
+             title="Edit {{ row.name }}" aria-label="Edit {{ row.name }}">
+            <span class="icon"><span class="material-icons" aria-hidden="true">edit</span></span>
+          </a>
+          <button class="button is-danger is-light is-small"
+                  title="Delete {{ row.name }}" aria-label="Delete {{ row.name }}">
+            <span class="icon"><span class="material-icons" aria-hidden="true">delete</span></span>
+          </button>
+        </div>
+      </td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="5" class="has-text-grey has-text-centered">No assets match your search.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

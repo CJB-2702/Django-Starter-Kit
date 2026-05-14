@@ -1,0 +1,187 @@
+{% extends "events/ev_base.html" %}
+
+{% block title %}{{ event.title }}{% endblock %}
+{% block subtitle %}Event detail{% endblock %}
+
+{% block content %}
+<nav class="breadcrumb is-size-7 mb-3" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="{% url 'event_index' %}">Events</a></li>
+    <li class="is-active"><a href="#" aria-current="page">{{ event.title }}</a></li>
+  </ul>
+</nav>
+
+<h1 class="title is-5 mb-4">{{ event.title }}</h1>
+
+<div class="columns">
+  <div class="column is-8">
+
+    {# ── Event card ── #}
+    <div class="card mb-4">
+      <div class="card-content">
+
+        <div class="is-flex is-align-items-center mb-3" style="gap: 0.5rem;">
+          <span class="tag is-light">{{ event.get_event_type_display }}</span>
+          <span class="is-size-7 has-text-grey">
+            {{ event.domain.name }} &middot; Created {{ event.created_at|date:"Y-m-d H:i" }} by {{ event.created_by }}
+          </span>
+        </div>
+
+        {% if event.description %}
+        <p class="is-size-7 mb-4">{{ event.description }}</p>
+        {% endif %}
+
+        <div class="columns is-size-7">
+          <div class="column">
+            <p class="has-text-grey mb-1">Status</p>
+            {% if event.status == 'in_progress' %}
+              <span class="tag is-info is-light">{{ event.get_status_display }}</span>
+            {% elif event.status == 'complete' %}
+              <span class="tag is-success is-light">{{ event.get_status_display }}</span>
+            {% elif event.status == 'failed' %}
+              <span class="tag is-danger is-light">{{ event.get_status_display }}</span>
+            {% elif event.status == 'blocked' %}
+              <span class="tag is-warning is-light">{{ event.get_status_display }}</span>
+            {% elif event.status == 'cancelled' %}
+              <span class="tag is-light has-text-grey">{{ event.get_status_display }}</span>
+            {% else %}
+              <span class="tag is-light">{{ event.get_status_display }}</span>
+            {% endif %}
+          </div>
+          <div class="column">
+            <p class="has-text-grey mb-1">Priority</p>
+            {% if event.priority == 'critical' %}
+              <span class="tag is-danger is-light">{{ event.get_priority_display }}</span>
+            {% elif event.priority == 'high' %}
+              <span class="tag is-warning is-light">{{ event.get_priority_display }}</span>
+            {% elif event.priority == 'medium' %}
+              <span class="tag is-info is-light">{{ event.get_priority_display }}</span>
+            {% elif event.priority %}
+              <span class="tag is-light">{{ event.get_priority_display }}</span>
+            {% else %}
+              <span class="has-text-grey-light">None</span>
+            {% endif %}
+          </div>
+          <div class="column">
+            <p class="has-text-grey mb-1">Start</p>
+            <p class="is-family-monospace"><strong>{{ event.event_start|date:"Y-m-d H:i"|default:"—" }}</strong></p>
+          </div>
+          <div class="column">
+            <p class="has-text-grey mb-1">End</p>
+            <p class="is-family-monospace"><strong>{{ event.event_end|date:"Y-m-d H:i"|default:"—" }}</strong></p>
+          </div>
+        </div>
+
+      </div>
+
+      {% if can_edit or can_delete %}
+      <footer class="card-footer custom-card-footer">
+        <div class="card-footer-secondaries">
+          {% if can_delete %}
+          <form method="post" action="{% url 'event_soft_delete' hash=event_hash %}">
+            {% csrf_token %}
+            <button class="button is-medium is-danger is-light" type="submit"
+              onclick="return confirm('Delete this event?');">
+              <span class="icon"><span class="material-icons" aria-hidden="true">delete</span></span>
+              <span>Delete</span>
+            </button>
+          </form>
+          {% endif %}
+        </div>
+        {% if can_edit %}
+        <a href="{% url 'event_edit' hash=event_hash %}" class="button is-medium is-info is-light card-footer-primary">
+          <span class="icon"><span class="material-icons" aria-hidden="true">edit</span></span>
+          <span>Edit</span>
+        </a>
+        {% endif %}
+      </footer>
+      {% endif %}
+    </div>
+
+    {# ── Comments ── #}
+    <h2 class="title is-6 mb-3">Comments</h2>
+
+    {% for row in comments_context %}
+    <div class="card mb-3 is-size-7">
+      <div class="card-content">
+
+        <div class="is-flex is-justify-content-space-between mb-2">
+          <span class="has-text-grey">
+            {{ row.comment.created_by }} &middot; {{ row.comment.created_at|date:"Y-m-d H:i" }}
+            {% if row.comment.revision > 1 %}
+            <span class="tag is-light ml-1">rev {{ row.comment.revision }}</span>
+            {% endif %}
+          </span>
+        </div>
+
+        <p>{{ row.comment.content }}</p>
+
+        {% include "events/comment/fragments/attachment_carousel.html" with comment_id=row.comment.pk att_list=row.attachments %}
+
+      </div>
+
+      {% if row.comment.created_by == request.user %}
+      <footer class="card-footer custom-card-footer">
+        <div class="card-footer-secondaries">
+          <form method="post"
+            action="{% url 'comment_soft_delete' event_hash=event_hash comment_hash=row.comment_hash %}">
+            {% csrf_token %}
+            <button class="button is-medium is-danger is-light" type="submit">
+              <span class="icon"><span class="material-icons" aria-hidden="true">delete</span></span>
+              <span>Delete</span>
+            </button>
+          </form>
+        </div>
+        <a href="{% url 'comment_edit' event_hash=event_hash comment_hash=row.comment_hash %}"
+          class="button is-medium is-info is-light card-footer-primary">
+          <span class="icon"><span class="material-icons" aria-hidden="true">edit</span></span>
+          <span>Edit</span>
+        </a>
+      </footer>
+      {% endif %}
+    </div>
+    {% empty %}
+    <p class="is-size-7 has-text-grey mb-4">No comments yet.</p>
+    {% endfor %}
+
+    {# ── Add comment ── #}
+    <h2 class="title is-6 mb-3">Add a comment</h2>
+    <form method="post" action="{% url 'comment_add' event_hash=event_hash %}" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="card">
+        <div class="card-content">
+          <div class="field">
+            <label class="label">Comment</label>
+            <div class="control">
+              <textarea class="textarea" name="content" rows="3" placeholder="Write a comment…"></textarea>
+            </div>
+          </div>
+          <div class="field">
+            <label class="label">Attachment (optional)</label>
+            <div class="file has-name">
+              <label class="file-label">
+                <input class="file-input" type="file" name="file" id="file-inline"
+                       onchange="document.getElementById('file-inline-name').textContent = this.files[0]?.name || 'No file chosen'">
+                <span class="file-cta">
+                  <span class="file-icon"><span class="material-icons is-size-7" aria-hidden="true">attach_file</span></span>
+                  <span class="file-label">Choose file…</span>
+                </span>
+                <span class="file-name" id="file-inline-name">No file chosen</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <footer class="card-footer custom-card-footer">
+          <div class="card-footer-secondaries"></div>
+          <button class="button is-medium is-primary card-footer-primary" type="submit">
+            <span class="icon"><span class="material-icons" aria-hidden="true">send</span></span>
+            <span>Submit</span>
+          </button>
+        </footer>
+      </div>
+    </form>
+
+  </div>
+</div>
+{% endblock %}

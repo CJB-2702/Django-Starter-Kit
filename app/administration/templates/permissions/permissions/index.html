@@ -12,8 +12,11 @@
     <div class="control is-expanded">
       <input class="input" type="search" name="q" value="{{ q }}" placeholder="Filter by app, model, codename, or label" autocomplete="off">
     </div>
-    <div class="control"><button type="submit" class="button is-link is-light">Filter</button></div>
-    {% if q %}<div class="control"><a class="button is-light" href="{% url 'permission_index' %}">Clear</a></div>{% endif %}
+    <div class="control"><button type="submit" class="button is-medium is-link is-light">
+      <span class="icon"><span class="material-icons" aria-hidden="true">filter_list</span></span>
+      <span>Filter</span>
+    </button></div>
+    {% if q %}<div class="control"><a class="button is-light is-medium" href="{% url 'permission_index' %}">Clear</a></div>{% endif %}
   </div>
 </form>
 
@@ -38,7 +41,7 @@
             <td><code>{{ p.codename }}</code></td>
             <td>{{ p.name }}</td>
             <td class="has-text-right">
-              <a class="button is-link is-light is-small" href="{% url 'permission_detail' p.pk %}">
+              <a class="button is-link is-light is-medium" href="{% url 'permission_detail' p.pk %}">
                 <span class="icon"><span class="material-icons" aria-hidden="true">visibility</span></span>
                 <span>View</span>
               </a>
@@ -52,7 +55,7 @@
     </div>
 
     {% if page.has_other_pages %}
-    <nav class="pagination is-small" role="navigation" aria-label="pagination">
+    <nav class="pagination" role="navigation" aria-label="pagination">
       {% if page.has_previous %}
       <a class="pagination-previous" href="?q={{ q }}&page={{ page.previous_page_number }}">Previous</a>
       {% else %}

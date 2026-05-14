@@ -7,7 +7,7 @@
 {% endblock %}
 {% block content %}
 <div class="mb-4">
-  <a class="button is-light is-small" href="{% url 'permission_group_detail' group.pk %}">
+  <a class="button is-light is-medium" href="{% url 'permission_group_detail' group.pk %}">
     <span class="icon"><span class="material-icons" aria-hidden="true">arrow_back</span></span>
     <span>Back to permission group</span>
   </a>
@@ -28,7 +28,7 @@
           <input class="input" type="text" id="pg-edit-name" name="name" value="{{ group.name }}" required>
         </div>
       </div>
-      <button class="button is-link is-small" type="submit">Save name</button>
+      <button class="button is-medium is-link" type="submit">Save name</button>
     </form>
   </div>
 </div>

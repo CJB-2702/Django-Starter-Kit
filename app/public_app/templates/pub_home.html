@@ -11,9 +11,13 @@
 {% if user.is_authenticated %}
 <p class="mb-4">Signed in as <strong>{{ user.username }}</strong>.</p>
 <div class="buttons mb-5">
-  <a class="button is-link" href="{% url 'administration_index' %}">
+  <a class="button is-link is-medium" href="{% url 'administration_index' %}">
     <span class="icon"><span class="material-icons" aria-hidden="true">dashboard</span></span>
     <span>Administration portal</span>
+  </a>
+  <a class="button is-medium is-info" href="{% url 'event_index' %}">
+    <span class="icon"><span class="material-icons" aria-hidden="true">event</span></span>
+    <span>Events portal</span>
   </a>
 </div>
 
@@ -27,7 +31,7 @@
       <textarea class="textarea" name="note" rows="5" placeholder="Type a short note…">{{ session_note }}</textarea>
     </div>
   </div>
-  <button type="submit" class="button is-primary">
+  <button type="submit" class="button is-medium is-primary">
     <span class="icon"><span class="material-icons" aria-hidden="true">save</span></span>
     <span>Save note</span>
   </button>
@@ -68,7 +72,7 @@
     </div>
     {% if form.password.errors %}<p class="help is-danger">{{ form.password.errors }}</p>{% endif %}
   </div>
-  <button type="submit" class="button is-link">
+  <button type="submit" class="button is-medium is-link">
     <span class="icon"><span class="material-icons" aria-hidden="true">login</span></span>
     <span>Sign in</span>
   </button>

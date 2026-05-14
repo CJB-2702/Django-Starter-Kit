@@ -12,13 +12,13 @@
   </div>
   {% if can_edit %}
   <div class="buttons">
-    <a class="button is-link" href="{% url 'division_edit' division.pk %}">
+    <a class="button is-link is-medium" href="{% url 'division_edit' division.pk %}">
       <span class="icon"><span class="material-icons" aria-hidden="true">edit</span></span>
       <span>Edit</span>
     </a>
     <form method="post" action="{% url 'division_delete' division.pk %}" onsubmit="return confirm('Delete this division? Organization links will be removed.');" class="is-inline-block">
       {% csrf_token %}
-      <button class="button is-danger is-light" type="submit">
+      <button class="button is-medium is-danger is-light" type="submit">
         <span class="icon"><span class="material-icons" aria-hidden="true">delete</span></span>
         <span>Delete</span>
       </button>

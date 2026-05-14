@@ -1,0 +1,8 @@
+{% for item in items %}
+  <li data-value="{{ item.id }}" class="is-family-monospace">
+    {{ item.label }}
+    <span class="has-text-grey is-size-7"> — {{ item.description }}</span>
+  </li>
+{% empty %}
+  <li class="is-disabled">No matches.</li>
+{% endfor %}

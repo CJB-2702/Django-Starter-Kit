@@ -7,7 +7,7 @@
 {% endblock %}
 {% block content %}
 <div class="mb-4">
-  <a class="button is-light is-small" href="{% url 'domain_template_detail' template.slug %}">
+  <a class="button is-light is-medium" href="{% url 'domain_template_detail' template.slug %}">
     <span class="icon"><span class="material-icons" aria-hidden="true">arrow_back</span></span>
     <span>Back to template</span>
   </a>
@@ -33,20 +33,20 @@
           <textarea class="textarea" id="dt-edit-description" name="description" rows="2">{{ template.description }}</textarea>
         </div>
       </div>
-      <button class="button is-link is-small" type="submit">Save details</button>
+      <button class="button is-medium is-link" type="submit">Save details</button>
     </form>
     <form method="post">
       {% csrf_token %}
       <input type="hidden" name="action" value="set_active">
       {% if template.is_active %}
       <input type="hidden" name="is_active" value="0">
-      <button class="button is-warning is-light is-small" type="submit">
+      <button class="button is-medium is-warning is-light" type="submit">
         <span class="icon"><span class="material-icons" aria-hidden="true">visibility_off</span></span>
         <span>Deactivate template</span>
       </button>
       {% else %}
       <input type="hidden" name="is_active" value="1">
-      <button class="button is-success is-light is-small" type="submit">
+      <button class="button is-medium is-success is-light" type="submit">
         <span class="icon"><span class="material-icons" aria-hidden="true">visibility</span></span>
         <span>Activate template</span>
       </button>

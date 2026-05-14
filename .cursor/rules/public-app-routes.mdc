@@ -1,9 +1,0 @@
----
-description: Public pages live only in public_app; all other routes assume LoginRequiredMiddleware.
-alwaysApply: true
----
-
-# Public routes vs login-by-default
-
-- **Unauthenticated (public) pages** belong **only** under `app/public_app` (URLs, entrypoints, templates for those flows). Mark their views with `login_not_required` so `LoginRequiredMiddleware` does not redirect guests.
-- **Everything else** is treated as **authenticated-only** by `LoginRequiredMiddleware` — do not add parallel “public” routes outside `public_app` unless there is an exceptional, documented reason.

@@ -1,0 +1,178 @@
+{% extends "kitchen_sink/structural_examples/_base.html" %}
+
+{% block title %}Index / Portal Hub Example{% endblock %}
+{% block active_portal %}maintenance{% endblock %}
+
+{% block extra_css %}
+  .portal-hub-hero {
+    text-align: center;
+    padding: 2rem 1rem 1.25rem;
+  }
+  .portal-hub-hero .hero-icon {
+    font-size: 2.5rem;
+    color: var(--bulma-text-strong);
+    margin-bottom: 0.5rem;
+  }
+  .portal-hub-hero h1 {
+    font-size: 2rem; font-weight: 700;
+    color: var(--bulma-text-strong);
+  }
+  .portal-hub-hero p {
+    color: var(--bulma-text-weak);
+    margin-top: 0.25rem;
+  }
+
+  .portal-primary-card {
+    background: var(--bulma-scheme-main);
+    border: 1px solid var(--bulma-border-weak);
+    padding: 2rem;
+    text-align: center;
+  }
+  .portal-primary-card .icon-big {
+    font-size: 2rem;
+    color: var(--bulma-warning);
+    margin-bottom: 0.5rem;
+  }
+  .portal-primary-card h2 {
+    font-size: 1.25rem; font-weight: 700;
+    color: var(--bulma-text-strong);
+    margin-bottom: 0.4rem;
+  }
+  .portal-primary-card p {
+    color: var(--bulma-text-weak);
+    margin-bottom: 1.25rem;
+  }
+
+  .portal-role-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+  .portal-role-card {
+    background: var(--bulma-scheme-main);
+    border: 1px solid var(--bulma-border-weak);
+    padding: 1.5rem 1.25rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.65rem;
+  }
+  .portal-role-card .role-icon {
+    font-size: 2rem;
+    margin-bottom: 0.25rem;
+  }
+  .portal-role-card h3 {
+    font-size: 1rem; font-weight: 700;
+    color: var(--bulma-text-strong);
+  }
+  .portal-role-card p {
+    color: var(--bulma-text-weak);
+    font-size: 0.82rem;
+    flex: 1;
+  }
+
+  .portal-overview-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    background: var(--bulma-scheme-main);
+    border: 1px solid var(--bulma-border-weak);
+  }
+  .portal-overview-stat {
+    text-align: center;
+    padding: 1.25rem 0.75rem;
+    border-right: 1px solid var(--bulma-border-weak);
+  }
+  .portal-overview-stat:last-child { border-right: none; }
+  .portal-overview-stat .v { font-size: 1.75rem; font-weight: 700; }
+  .portal-overview-stat .l { font-size: 0.78rem; color: var(--bulma-text-weak); margin-top: 0.15rem; }
+  .v.blue   { color: var(--bulma-info); }
+  .v.green  { color: var(--bulma-success); }
+  .v.yellow { color: var(--bulma-warning); }
+  .v.red    { color: var(--bulma-danger); }
+{% endblock %}
+
+{% block sidebar %}
+  <p class="sidebar-section-label">Maintenance</p>
+  <a href="#" class="sidebar-link is-active">Portal Home</a>
+  <a href="#" class="sidebar-link">Work Orders</a>
+  <a href="#" class="sidebar-link">Scheduled</a>
+  <a href="#" class="sidebar-link">Procedures</a>
+  <a href="#" class="sidebar-link">Parts Requests</a>
+
+  <div class="sidebar-divider"></div>
+
+  <p class="sidebar-section-label">By Role</p>
+  <a href="#" class="sidebar-link">Technician View</a>
+  <a href="#" class="sidebar-link">Manager View</a>
+  <a href="#" class="sidebar-link">Fleet / Admin View</a>
+
+  <div class="sidebar-divider"></div>
+
+  <p class="sidebar-section-label">Tools</p>
+  <a href="#" class="sidebar-link">Reports</a>
+  <a href="#" class="sidebar-link">Calendar</a>
+  <a href="#" class="sidebar-link">Audit Log</a>
+{% endblock %}
+
+{% block content %}
+  <!-- Small breadcrumb / back link row -->
+  <div style="display:flex; justify-content:flex-end; margin-bottom:0.5rem;">
+    <a href="{% url 'kitchen_sink' %}" class="button is-small is-light">← Kitchen Sink</a>
+  </div>
+
+  <!-- Hero -->
+  <div class="portal-hub-hero">
+    <div class="hero-icon">⚒</div>
+    <h1>Maintenance Portal</h1>
+    <p>Choose your portal based on your role</p>
+  </div>
+
+  <!-- Primary action card (full width inside container) -->
+  <div class="body-grid full-width" style="margin-bottom: 1.25rem;">
+    <div class="portal-primary-card">
+      <div class="icon-big">📅</div>
+      <h2>View Maintenance Events</h2>
+      <p>Browse and filter all maintenance events with comprehensive search, filtering, and enhanced data views.</p>
+      <a href="#" class="button is-warning" style="min-width: 18rem; justify-content:center;">→ View Events Portal</a>
+    </div>
+  </div>
+
+  <!-- Role cards (3 across) -->
+  <div class="portal-role-grid" style="margin-bottom: 1.25rem;">
+    <div class="portal-role-card">
+      <div class="role-icon">👷</div>
+      <h3>Technician Portal</h3>
+      <p>View assigned work, complete actions, request parts, and track your maintenance history.</p>
+      <a href="#" class="button is-info is-fullwidth" style="justify-content:center;">→ Go to Technician Portal</a>
+    </div>
+    <div class="portal-role-card">
+      <div class="role-icon">✓</div>
+      <h3>Manager Portal</h3>
+      <p>Create templates, manage plans, assign work to technicians, and approve part requests.</p>
+      <a href="#" class="button is-success is-fullwidth" style="justify-content:center;">→ Go to Manager Portal</a>
+    </div>
+    <div class="portal-role-card">
+      <div class="role-icon">📊</div>
+      <h3>Fleet/Admin Portal</h3>
+      <p>Fleet-wide dashboard, analytics, comprehensive maintenance data views, and reporting.</p>
+      <a href="#" class="button is-info is-light is-fullwidth" style="justify-content:center;">→ Go to Fleet Portal</a>
+    </div>
+  </div>
+
+  <!-- Overview stats (full width) -->
+  <div class="pc">
+    <div class="pc-header"><div class="pc-header-title"><span class="icon">📈</span>Maintenance Overview</div></div>
+    <div class="pc-body is-flush">
+      <div class="portal-overview-stats">
+        <div class="portal-overview-stat"><div class="v blue">2</div>   <div class="l">Open Events</div></div>
+        <div class="portal-overview-stat"><div class="v green">0</div>  <div class="l">Completed Today</div></div>
+        <div class="portal-overview-stat"><div class="v yellow">0</div> <div class="l">Awaiting Approval</div></div>
+        <div class="portal-overview-stat"><div class="v red">2</div>    <div class="l">Overdue</div></div>
+      </div>
+    </div>
+  </div>
+
+  <p class="ks-note">PORTAL HUB — no right rail. Layout is centered hero, full-width primary CTA, role cards, then summary stats.</p>
+{% endblock %}

@@ -7,7 +7,7 @@
 {% endblock %}
 {% block content %}
 <div class="mb-4">
-  <a class="button is-light is-small" href="{% url 'division_detail' division.pk %}">
+  <a class="button is-light is-medium" href="{% url 'division_detail' division.pk %}">
     <span class="icon"><span class="material-icons" aria-hidden="true">arrow_back</span></span>
     <span>Back to division</span>
   </a>
@@ -29,7 +29,7 @@
           <input class="input" type="text" id="div-edit-name" name="name" value="{{ division.name }}" required>
         </div>
       </div>
-      <button class="button is-link is-small" type="submit">Save details</button>
+      <button class="button is-medium is-link" type="submit">Save details</button>
     </form>
   </div>
 </div>

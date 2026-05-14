@@ -51,7 +51,7 @@
           </div>
         </div>
         <div class="column is-2 is-flex is-align-items-flex-end">
-          <button class="button is-link is-fullwidth" type="submit">
+          <button class="button is-medium is-link is-fullwidth" type="submit">
             <span class="icon"><span class="material-icons" aria-hidden="true">link</span></span>
             <span>Link</span>
           </button>
@@ -72,8 +72,11 @@
         <div class="control is-expanded">
           <input class="input" type="search" name="q" value="{{ q }}" placeholder="Filter by domain or organization name" autocomplete="off">
         </div>
-        <div class="control"><button type="submit" class="button is-link is-light">Filter</button></div>
-        {% if q %}<div class="control"><a class="button is-light" href="{% url 'domain_organizations_portal' %}">Clear</a></div>{% endif %}
+        <div class="control"><button type="submit" class="button is-medium is-link is-light">
+          <span class="icon"><span class="material-icons" aria-hidden="true">filter_list</span></span>
+          <span>Filter</span>
+        </button></div>
+        {% if q %}<div class="control"><a class="button is-light is-medium" href="{% url 'domain_organizations_portal' %}">Clear</a></div>{% endif %}
       </div>
     </form>
 
@@ -99,7 +102,7 @@
                 {% csrf_token %}
                 <input type="hidden" name="action" value="unlink">
                 <input type="hidden" name="link_id" value="{{ link.pk }}">
-                <button class="button is-danger is-light is-small" type="submit">
+                <button class="button is-medium is-danger is-light" type="submit">
                   <span class="icon"><span class="material-icons" aria-hidden="true">link_off</span></span>
                   <span>Unlink</span>
                 </button>

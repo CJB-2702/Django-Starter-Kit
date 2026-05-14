@@ -1,7 +1,9 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 from app.administration.models import (
     AllowedEmailDomain,
+    User,
     Division,
     DivisionOrganisation,
     Domain,
@@ -17,6 +19,12 @@ from app.administration.models import (
     UserOrganization,
     UserRole,
 )
+
+
+@admin.register(User)
+class UserAdmin(BaseUserAdmin):
+    list_display = ("username", "email", "first_name", "last_name", "slug", "is_staff", "is_active")
+    readonly_fields = ("slug",)
 
 
 @admin.register(AllowedEmailDomain)

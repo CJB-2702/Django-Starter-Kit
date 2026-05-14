@@ -1,0 +1,79 @@
+{% extends "events/ev_base.html" %}
+
+{% block title %}Edit Comment{% endblock %}
+
+{% block content %}
+<nav class="breadcrumb is-size-7 mb-3" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="{% url 'event_index' %}">Events</a></li>
+    <li><a href="{% url 'event_detail' hash=event_hash %}">{{ event.title }}</a></li>
+    <li class="is-active"><a href="#" aria-current="page">Edit Comment</a></li>
+  </ul>
+</nav>
+
+<h1 class="title is-5 mb-1">
+  Edit Comment
+  <span class="tag is-light">rev {{ comment.revision }}</span>
+</h1>
+<p class="is-size-7 has-text-grey mb-4">Editing creates a new revision. The previous version is preserved.</p>
+
+<form method="post" enctype="multipart/form-data" style="max-width: 560px;">
+  {% csrf_token %}
+  <div class="card">
+    <div class="card-content">
+
+      <div class="field">
+        <label class="label">Comment</label>
+        <div class="control">
+          <textarea class="textarea" name="content" rows="4">{{ comment.content }}</textarea>
+        </div>
+      </div>
+
+      {% if attachments %}
+      <div class="field">
+        <p class="label">Current attachments (carried forward)</p>
+        {% for att in attachments %}
+        <div class="is-flex is-align-items-center mb-1 is-size-7">
+          <span class="material-icons is-size-7 has-text-grey mr-2" aria-hidden="true">attach_file</span>
+          <a href="{% url 'file_download' file_id=att.file.id %}" class="has-text-link mr-2">
+            {{ att.file.original_filename }}
+          </a>
+          <span class="has-text-grey-light">({{ att.file.file_size|filesizeformat }})</span>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <div class="field">
+        <label class="label">Add attachment (optional)</label>
+        <div class="file has-name">
+          <label class="file-label">
+            <input class="file-input" type="file" name="file" id="file-edit"
+                   onchange="document.getElementById('file-edit-name').textContent = this.files[0]?.name || 'No file chosen'">
+            <span class="file-cta">
+              <span class="file-icon"><span class="material-icons is-size-7" aria-hidden="true">attach_file</span></span>
+              <span class="file-label">Choose file…</span>
+            </span>
+            <span class="file-name" id="file-edit-name">No file chosen</span>
+          </label>
+        </div>
+      </div>
+
+    </div>
+
+    <footer class="card-footer custom-card-footer">
+      <div class="card-footer-secondaries">
+        <a href="{% url 'event_detail' hash=event_hash %}" class="button is-medium is-light">
+          <span class="icon"><span class="material-icons" aria-hidden="true">close</span></span>
+          <span>Cancel</span>
+        </a>
+      </div>
+      <button class="button is-medium is-primary card-footer-primary" type="submit">
+        <span class="icon"><span class="material-icons" aria-hidden="true">save</span></span>
+        <span>Save Revision</span>
+      </button>
+    </footer>
+
+  </div>
+</form>
+{% endblock %}

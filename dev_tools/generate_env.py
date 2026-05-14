@@ -105,8 +105,14 @@ class EnvGenerator:
             return "False", "False", "False"
         return "True", "True", "True"
 
+    def generate_hashids_salt(self) -> str:
+        if self.dev_mode:
+            return "dev-insecure-hashids-salt-do-not-use-in-production"
+        return secrets.token_urlsafe(32)
+
     def build_content(self) -> tuple[str, dict[str, str]]:
         secret_key = self.generate_secret_key()
+        hashids_salt = self.generate_hashids_salt()
         db_url = self._database_url()
         admin_password = self.generate_password()
         ssl_redir, sess_secure, csrf_secure = self._secure_flags()
@@ -123,6 +129,7 @@ class EnvGenerator:
 
 # --- Django core ---
 SECRET_KEY={secret_key}
+HASHIDS_SALT={hashids_salt}
 DJANGO_DEBUG={'True' if self.dev_mode else 'False'}
 ALLOWED_HOSTS={self._allowed_hosts()}
 

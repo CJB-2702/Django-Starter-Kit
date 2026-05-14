@@ -4,59 +4,67 @@
   data-section-id="{{ section_id }}"
   data-field-name="{{ field_name }}"
 >
-  <div class="columns is-multiline is-align-items-flex-start">
-    <div class="column is-5">
+  <div class="columns is-multiline is-align-items-stretch">
+    {# ── LEFT: Available items with action buttons ── #}
+    <div class="column is-6">
       <h4 class="title is-6">{{ left_title }}</h4>
       <p class="is-size-7 has-text-grey mb-2">{{ left_help }}</p>
       <div class="field mb-2">
         <label class="label is-size-7 mb-1" for="{{ section_id }}-filter-left">Filter</label>
         <input
           type="search"
-          class="input is-small dual-filter-left"
+          class="input dual-filter-left"
           id="{{ section_id }}-filter-left"
           data-dual-target="{{ section_id }}-left"
           placeholder="Filter…"
           autocomplete="off"
         >
       </div>
-      <select
-        multiple
-        class="dual-select-left"
+      <ul
+        class="dual-listbox-list"
         id="{{ section_id }}-left"
-        {% if htmx_direct_perm_check_url %}name="{{ field_name }}"{% endif %}
-        size="14"
-        style="width:100%; min-height: 16rem;"
+        style="border: 1px solid #dbdbdb; min-height: 16rem; overflow-y: auto; padding: 0.5rem 0;"
         aria-label="{{ left_title }}"
       >
         {% for item in left_items %}
-          {% if list_kind == "group" %}
-            <option value="{{ item.pk }}">{{ item.name }}</option>
-          {% elif list_kind == "user" %}
-            <option value="{{ item.pk }}">{{ item.username }}</option>
-          {% elif list_kind == "permission" %}
-            <option
-              value="{{ item.pk }}"
-              {% if item.pk in inherited_permission_ids %}
-                class="up-perm-inherited-row"
-                title="Already granted through an assigned Django group"
+        <li>
+          <form method="post" id="{{ section_id }}-form-add-{{ item.pk }}" style="display: none;">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="{{ action_add }}">
+            <input type="hidden" name="{{ field_name }}" value="{{ item.pk }}">
+          </form>
+          <button
+            type="submit"
+            form="{{ section_id }}-form-add-{{ item.pk }}"
+            class="button is-fullwidth is-justify-content-flex-start is-size-7"
+            aria-label="Assign {{ item.name }}"
+          >
+            <span class="icon"><span class="material-icons" aria-hidden="true">arrow_forward</span></span>
+            <span>
+              {% if list_kind == "group" %}
+                {{ item.name }}
+              {% elif list_kind == "user" %}
+                {{ item.username }}
+              {% elif list_kind == "permission" %}
+                <span class="is-family-monospace">{{ item.content_type.app_label }} | {{ item.content_type.model }} | {{ item.name }}</span>
+              {% elif list_kind == "division" %}
+                {{ item.name }}
+              {% elif list_kind == "organization" %}
+                {{ item.name }}{% if item.division %} — {{ item.division.name }}{% endif %}
+              {% elif list_kind == "domain" %}
+                {{ item.name }}
+              {% elif list_kind == "permission_group" %}
+                {{ item.name }}
+              {% elif list_kind == "role" %}
+                {{ item.name }}{% if item.parent_role %} (specializes {{ item.parent_role.name }}){% endif %}
               {% endif %}
-            >{{ item.content_type.app_label }} | {{ item.content_type.model }} | {{ item.name }}</option>
-          {% elif list_kind == "division" %}
-            <option value="{{ item.pk }}">{{ item.name }}</option>
-          {% elif list_kind == "organization" %}
-            <option value="{{ item.pk }}">{{ item.name }}{% if item.division %} — {{ item.division.name }}{% endif %}</option>
-          {% elif list_kind == "domain" %}
-            <option value="{{ item.pk }}">{{ item.name }}</option>
-          {% elif list_kind == "permission_group" %}
-            <option value="{{ item.pk }}">{{ item.name }}</option>
-          {% elif list_kind == "role" %}
-            <option value="{{ item.pk }}">{{ item.name }}{% if item.parent_role %} (specializes {{ item.parent_role.name }}){% endif %}</option>
-          {% endif %}
+            </span>
+          </button>
+        </li>
+        {% empty %}
+        <li class="has-text-grey is-size-7 p-3">No matches.</li>
         {% endfor %}
-      </select>
-      <p class="is-size-7 has-text-grey mt-2 mb-0">
-        Hold <kbd>Ctrl</kbd> or <kbd>⌘</kbd> to select more than one.
-      </p>
+      </ul>
       {% if htmx_direct_perm_check_url %}
       <div id="{{ section_id }}-inherit-panel" class="mt-3"></div>
       <form
@@ -64,8 +72,7 @@
         style="display: none;"
         aria-hidden="true"
         hx-post="{{ htmx_direct_perm_check_url }}"
-        hx-trigger="change delay:200ms from:#{{ section_id }}-left"
-        hx-include="#{{ section_id }}-left"
+        hx-trigger="change delay:200ms"
         hx-target="#{{ section_id }}-inherit-panel"
         hx-swap="innerHTML"
       >
@@ -74,87 +81,67 @@
       {% endif %}
     </div>
 
-    <div class="column is-2 has-text-centered">
-      <form method="post" id="{{ section_id }}-form-add" class="mb-3">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="{{ action_add }}">
-        <div class="dual-hidden-inputs" data-role="container"></div>
-        <button type="button" class="button is-small is-fullwidth dual-choose mb-2" aria-label="Move selected to assigned">
-          <span class="icon-text">
-            <span class="icon"><span class="material-icons" aria-hidden="true">arrow_forward</span></span>
-            <span>Assign</span>
-          </span>
-        </button>
-      </form>
-      <form method="post" id="{{ section_id }}-form-remove">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="{{ action_remove }}">
-        <div class="dual-hidden-inputs" data-role="container"></div>
-        <button type="button" class="button is-small is-fullwidth is-light dual-remove" aria-label="Remove selected from assigned">
-          <span class="icon-text">
-            <span class="icon"><span class="material-icons" aria-hidden="true">delete</span></span>
-            <span>Remove</span>
-          </span>
-        </button>
-      </form>
-      <div class="mt-3">
-        <button type="button" class="button is-small is-fullwidth is-white dual-choose-all mb-2" aria-label="Assign all items currently shown in the left list">
-          <span class="icon-text">
-            <span class="icon"><span class="material-icons" aria-hidden="true">select_all</span></span>
-            <span>Assign all</span>
-          </span>
-        </button>
-        <button type="button" class="button is-small is-fullwidth is-white dual-remove-all" aria-label="Remove all items currently shown in the right list">
-          <span class="icon-text">
-            <span class="icon"><span class="material-icons" aria-hidden="true">delete_sweep</span></span>
-            <span>Remove all</span>
-          </span>
-        </button>
-      </div>
-    </div>
-
-    <div class="column is-5">
+    {# ── RIGHT: Selected items with inline remove ── #}
+    <div class="column is-6">
       <h4 class="title is-6">{{ right_title }}</h4>
       <p class="is-size-7 has-text-grey mb-2">{{ right_help }}</p>
       <div class="field mb-2">
         <label class="label is-size-7 mb-1" for="{{ section_id }}-filter-right">Filter</label>
         <input
           type="search"
-          class="input is-small dual-filter-right"
+          class="input dual-filter-right"
           id="{{ section_id }}-filter-right"
           data-dual-target="{{ section_id }}-right"
           placeholder="Filter…"
           autocomplete="off"
         >
       </div>
-      <select
-        multiple
-        class="dual-select-right"
+      <ul
+        class="dual-listbox-list"
         id="{{ section_id }}-right"
-        size="14"
-        style="width:100%; min-height: 16rem;"
+        style="border: 1px solid #dbdbdb; min-height: 16rem; overflow-y: auto; padding: 0.5rem 0;"
         aria-label="{{ right_title }}"
       >
         {% for item in right_items %}
-          {% if list_kind == "group" %}
-            <option value="{{ item.pk }}">{{ item.name }}</option>
-          {% elif list_kind == "user" %}
-            <option value="{{ item.pk }}">{{ item.username }}</option>
-          {% elif list_kind == "permission" %}
-            <option value="{{ item.pk }}">{{ item.content_type.app_label }} | {{ item.content_type.model }} | {{ item.name }}</option>
-          {% elif list_kind == "division" %}
-            <option value="{{ item.pk }}">{{ item.name }}</option>
-          {% elif list_kind == "organization" %}
-            <option value="{{ item.pk }}">{{ item.name }}{% if item.division %} — {{ item.division.name }}{% endif %}</option>
-          {% elif list_kind == "domain" %}
-            <option value="{{ item.pk }}">{{ item.name }}</option>
-          {% elif list_kind == "permission_group" %}
-            <option value="{{ item.pk }}">{{ item.name }}</option>
-          {% elif list_kind == "role" %}
-            <option value="{{ item.pk }}">{{ item.name }}{% if item.parent_role %} (specializes {{ item.parent_role.name }}){% endif %}</option>
-          {% endif %}
+        <li style="display: flex; align-items: center; padding: 0.25rem 0.5rem; border-bottom: 1px solid #f5f5f5;">
+          <span style="flex: 1; font-size: 0.875rem;">
+            {% if list_kind == "group" %}
+              {{ item.name }}
+            {% elif list_kind == "user" %}
+              {{ item.username }}
+            {% elif list_kind == "permission" %}
+              <span class="is-family-monospace">{{ item.content_type.app_label }} | {{ item.content_type.model }} | {{ item.name }}</span>
+            {% elif list_kind == "division" %}
+              {{ item.name }}
+            {% elif list_kind == "organization" %}
+              {{ item.name }}{% if item.division %} — {{ item.division.name }}{% endif %}
+            {% elif list_kind == "domain" %}
+              {{ item.name }}
+            {% elif list_kind == "permission_group" %}
+              {{ item.name }}
+            {% elif list_kind == "role" %}
+              {{ item.name }}{% if item.parent_role %} (specializes {{ item.parent_role.name }}){% endif %}
+            {% endif %}
+          </span>
+          <form method="post" id="{{ section_id }}-form-remove-{{ item.pk }}" style="display: none; margin: 0;">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="{{ action_remove }}">
+            <input type="hidden" name="{{ field_name }}" value="{{ item.pk }}">
+          </form>
+          <button
+            type="submit"
+            form="{{ section_id }}-form-remove-{{ item.pk }}"
+            class="button is-danger is-light"
+            style="margin-left: 0.5rem; flex-shrink: 0;"
+            aria-label="Remove"
+          >
+            <span class="icon"><span class="material-icons" aria-hidden="true">delete</span></span>
+          </button>
+        </li>
+        {% empty %}
+        <li class="has-text-grey is-size-7 p-3">No items selected.</li>
         {% endfor %}
-      </select>
+      </ul>
       <p class="is-size-7 has-text-grey mt-2 mb-0">
         <span class="dual-clear-filter is-clickable has-text-link" data-dual-clear="{{ section_id }}">(click to clear filters)</span>
       </p>

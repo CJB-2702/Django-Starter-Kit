@@ -1,0 +1,242 @@
+{% extends "kitchen_sink/structural_examples/_base.html" %}
+
+{% block title %}Work Portal Example{% endblock %}
+{% block active_portal %}maintenance{% endblock %}
+{% block active_sublink %}Work Orders{% endblock %}
+{% block shell_class %}has-inpage-nav is-sidebar-collapsed{% endblock %}
+
+{% block sidebar %}
+  <p class="sidebar-section-label">Work Queue</p>
+  <a href="#" class="sidebar-link is-active">My Open Work</a>
+  <a href="#" class="sidebar-link">Assigned to Team</a>
+  <a href="#" class="sidebar-link">Unassigned</a>
+  <a href="#" class="sidebar-link">Completed Today</a>
+
+  <div class="sidebar-divider"></div>
+
+  <p class="sidebar-section-label">Schedules</p>
+  <a href="#" class="sidebar-link">Upcoming</a>
+  <a href="#" class="sidebar-link">Overdue</a>
+  <a href="#" class="sidebar-link">Calendar View</a>
+
+  <div class="sidebar-divider"></div>
+
+  <p class="sidebar-section-label">Templates</p>
+  <a href="#" class="sidebar-link">Procedures</a>
+  <a href="#" class="sidebar-link">Action Library</a>
+
+  <div class="sidebar-divider"></div>
+
+  <p class="sidebar-section-label">Reports</p>
+  <a href="#" class="sidebar-link">Throughput</a>
+  <a href="#" class="sidebar-link">Mean Time to Repair</a>
+{% endblock %}
+
+{% block inpage_nav %}
+  <p class="inpage-nav-label">On This Page</p>
+  <a href="#sec-details"   class="inpage-nav-link is-active">Event Details</a>
+  <a href="#sec-activity"  class="inpage-nav-link">Event Activity</a>
+  <a href="#sec-actions"   class="inpage-nav-link">Actions (2)</a>
+  <a href="#sec-procedure" class="inpage-nav-link">Procedure Notes</a>
+
+  <div class="sidebar-divider"></div>
+
+  <p class="inpage-nav-label">Side Rail</p>
+  <a href="#sec-quick"      class="inpage-nav-link">Quick Actions</a>
+  <a href="#sec-assignment" class="inpage-nav-link">Assignment</a>
+  <a href="#sec-summary"    class="inpage-nav-link">Summary</a>
+  <a href="#sec-related"    class="inpage-nav-link">Related</a>
+{% endblock %}
+
+{% block content %}
+  <!-- ── Hero: wraps page header + actions + quick-info stat bar ── -->
+  <div class="page-hero">
+    <div class="page-header">
+      <div class="page-header-title-wrap">
+        <div class="page-header-icon">⚒</div>
+        <div>
+          <h1 class="page-title">Brake Inspection Procedure</h1>
+          <p class="page-subtitle">Maintenance Event Details</p>
+        </div>
+      </div>
+      <div class="page-header-actions">
+        <a href="{% url 'kitchen_sink' %}" class="button is-light">← Kitchen Sink</a>
+        <a href="#" class="button is-light">← Back to View Events</a>
+        <a href="#" class="button is-success">⚒ Do Work</a>
+      </div>
+    </div>
+
+    <div class="stat-bar">
+      <div class="stat-card accent-grey">
+        <div class="stat-label">Status</div>
+        <div class="stat-value"><span class="tag is-dark">Planned</span></div>
+      </div>
+      <div class="stat-card accent-blue">
+        <div class="stat-label">Priority</div>
+        <div class="stat-value"><span class="tag is-info">Medium</span></div>
+      </div>
+      <div class="stat-card accent-green">
+        <div class="stat-label">Actions</div>
+        <div class="stat-value">2</div>
+      </div>
+      <div class="stat-card accent-red">
+        <div class="stat-label">Blockers</div>
+        <div class="stat-value">0</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Body: 3/4 main + 1/4 quick actions rail ── -->
+  <div class="body-grid has-rail">
+
+    <!-- Main column -->
+    <div>
+      <div class="pc anchor-target" id="sec-details">
+        <div class="pc-header"><div class="pc-header-title"><span class="icon">ℹ</span>Maintenance Event Details</div></div>
+        <div class="pc-body">
+          <div class="detail-grid">
+            <div>
+              <div class="detail-label">TASK NAME</div>
+              <div class="detail-value">Brake Inspection Procedure</div>
+            </div>
+            <div>
+              <div class="detail-label">PLANNED START</div>
+              <div class="detail-value">2026-05-14 00:00</div>
+            </div>
+            <div>
+              <div class="detail-label">DESCRIPTION</div>
+              <div class="detail-value has-text-grey">N/A</div>
+            </div>
+            <div>
+              <div class="detail-label">ACTUAL START</div>
+              <div class="detail-value has-text-grey">N/A</div>
+            </div>
+            <div>
+              <div class="detail-label">ASSET</div>
+              <div class="detail-value"><a href="#" class="has-text-link">FTK-001</a></div>
+            </div>
+            <div>
+              <div class="detail-label">ACTUAL END</div>
+              <div class="detail-value has-text-grey">N/A</div>
+            </div>
+            <div>
+              <div class="detail-label">TEMPLATE SOURCE</div>
+              <div class="detail-value">Brake Inspection Procedure</div>
+            </div>
+            <div>
+              <div class="detail-label">ESTIMATED DURATION</div>
+              <div class="detail-value">0.75 hours <span class="has-text-grey is-size-7">(estimated)</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pc anchor-target" id="sec-activity">
+        <div class="pc-header">
+          <div class="pc-header-title"><span class="icon">↯</span>Event Activity</div>
+          <span class="has-text-grey is-size-7">Maintenance · 2026-05-14 00:00</span>
+        </div>
+        <div class="pc-body">
+          <div class="tabs is-small is-boxed mb-3">
+            <ul>
+              <li class="is-active"><a>Comments (0)</a></li>
+              <li><a>Attachments</a></li>
+              <li><a>Metadata</a></li>
+            </ul>
+          </div>
+          <details class="mb-2">
+            <summary class="has-text-link" style="cursor:pointer;">▶ Show / Hide Comments</summary>
+            <p class="has-text-grey is-size-7 mt-2">No comments yet.</p>
+          </details>
+          <details>
+            <summary class="has-text-link" style="cursor:pointer;">▶ ⊕ Add comment</summary>
+            <textarea class="textarea is-small mt-2" rows="2" placeholder="Add a comment…"></textarea>
+            <button class="button is-small is-primary mt-2">Post</button>
+          </details>
+        </div>
+      </div>
+
+      <div class="pc anchor-target" id="sec-actions">
+        <div class="pc-header"><div class="pc-header-title"><span class="icon">✓</span>Actions (2)</div></div>
+        <div class="pc-body is-flush">
+          <table class="table is-fullwidth is-size-7" style="margin:0;">
+            <thead>
+              <tr>
+                <th>#</th><th>Action</th><th>Status</th><th>Assigned</th><th>Duration</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>Visually inspect brake pad wear</td>
+                <td><span class="tag is-small is-light">Pending</span></td>
+                <td class="has-text-grey">Unassigned</td>
+                <td>0.25 h</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>Check brake fluid level</td>
+                <td><span class="tag is-small is-light">Pending</span></td>
+                <td class="has-text-grey">Unassigned</td>
+                <td>0.50 h</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <p class="ks-note">CONTENT ZONE — extra long content extends below; everything scrolls together with the right rail.</p>
+
+      <!-- Filler so you can see the rail scrolls with the body -->
+      <div class="pc anchor-target" id="sec-procedure">
+        <div class="pc-header"><div class="pc-header-title"><span class="icon">📋</span>Procedure Notes</div></div>
+        <div class="pc-body">
+          <p>Verify lift is engaged before beginning the inspection. Confirm wheel chocks are placed.</p>
+          <p class="mt-2">Document any abnormal pad wear with photos in the Attachments tab. If pads measure under 3mm, escalate to a replacement work order before continuing.</p>
+          <p class="mt-2">After completing the action checklist, sign off the event and notify the dispatch desk.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right rail (1/4) — scrolls with main column -->
+    <div class="body-rail">
+      <div class="pc anchor-target" id="sec-quick">
+        <div class="pc-header"><div class="pc-header-title"><span class="icon">⚡</span>Quick Actions</div></div>
+        <div class="pc-body">
+          <button class="button is-fullwidth is-warning is-light mb-2" style="justify-content:center;">✏ Edit Event</button>
+          <button class="button is-fullwidth is-success is-light" style="justify-content:center;">⚒ Do Work</button>
+        </div>
+      </div>
+
+      <div class="pc anchor-target" id="sec-assignment">
+        <div class="pc-header"><div class="pc-header-title"><span class="icon">👥</span>Assignment</div></div>
+        <div class="pc-body is-size-7">
+          <div class="detail-label">ASSIGNED TO</div>
+          <div class="detail-value has-text-grey">Unassigned</div>
+          <button class="button is-small is-light is-fullwidth mt-2" style="justify-content:center;">Assign…</button>
+        </div>
+      </div>
+
+      <div class="pc anchor-target" id="sec-summary">
+        <div class="pc-header"><div class="pc-header-title"><span class="icon">📊</span>Summary</div></div>
+        <div class="pc-body is-size-7">
+          <div class="mb-1"><strong>Total Actions:</strong> 2</div>
+          <div class="mb-1"><strong>Completed:</strong> 0</div>
+          <div class="mb-1"><strong>In Progress:</strong> 0</div>
+          <div class="mb-1"><strong>Total Parts:</strong> 0</div>
+          <div><strong>Total Tools:</strong> 2</div>
+        </div>
+      </div>
+
+      <div class="pc anchor-target" id="sec-related">
+        <div class="pc-header"><div class="pc-header-title"><span class="icon">🔗</span>Related</div></div>
+        <div class="pc-body is-size-7" style="display:flex; flex-direction:column; gap:0.3rem;">
+          <a href="#" class="has-text-link">→ Asset FTK-001</a>
+          <a href="#" class="has-text-link">→ Procedure Template</a>
+          <a href="#" class="has-text-link">→ Maintenance History</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+{% endblock %}

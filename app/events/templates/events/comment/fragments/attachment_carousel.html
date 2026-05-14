@@ -1,0 +1,56 @@
+{% load static %}
+
+{% if att_list %}
+
+{# ── Carousel ── #}
+<div class="box p-3 mt-2">
+  <script src="{% static 'web_components/image_carousel.js' %}" defer></script>
+
+  {% with image_count=att_list|length %}
+  {% if image_count > 0 %}
+  <image-carousel preview-height="300" preview-width="400">
+    {% for item in att_list %}
+    {% with f=item.attachment.file %}
+    {% if f.is_image %}
+    <img src="{% url 'file_inline' file_id=f.id %}"
+         alt="{{ f.original_filename }}"
+         loading="lazy"
+         title="{{ f.original_filename }} ({{ f.file_size|filesizeformat }})">
+    {% endif %}
+    {% endwith %}
+    {% endfor %}
+  </image-carousel>
+  {% endif %}
+  {% endwith %}
+
+  {# ── File details and non-image attachments ── #}
+  {% for item in att_list %}
+  {% with f=item.attachment.file %}
+  <div class="mt-2 is-size-7">
+    <p class="has-text-grey">
+      {{ f.original_filename }}
+      <span class="has-text-grey-light">({{ f.file_size|filesizeformat }})</span>
+    </p>
+    {% if item.snippet is not None %}
+    <pre class="p-2 mt-1" style="background:#f5f5f5;"><code>{{ item.snippet }}</code></pre>
+    {% endif %}
+  </div>
+  {% endwith %}
+  {% endfor %}
+
+</div>
+
+{# ── Href list ── #}
+<div class="mt-1 is-size-7">
+  {% for item in att_list %}
+  {% with f=item.attachment.file %}
+  <a href="{% url 'file_download' file_id=f.id %}"
+     class="has-text-link mr-3"
+     title="{{ f.original_filename }}">
+    <i class="bi {{ f.get_icon_class }} mr-1"></i>{{ f.original_filename }}
+  </a>
+  {% endwith %}
+  {% endfor %}
+</div>
+
+{% endif %}

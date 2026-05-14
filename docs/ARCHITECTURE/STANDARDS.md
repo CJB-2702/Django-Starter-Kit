@@ -14,4 +14,4 @@ Create an application to manage assets and locations, track usage and assignment
 
 Product and technical specifications live under [docs/](readme.md). Start with [VISION.md](VISION.md) and [REQUIREMENTS.md](REQUIREMENTS.md).
 
-UI layout, Bulma conventions, list formats, and accessibility baseline: [UX_UI.md](UX_UI.md).
+UI layout, Bulma conventions, list formats, and accessibility baseline: [UX_UI.md](../UX_UI/UX_UI.md).

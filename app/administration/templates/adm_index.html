@@ -15,7 +15,7 @@
       </header>
       <div class="card-content">
         <p class="is-size-7 has-text-grey mb-3">Search, view, and edit user identities, role assignments, and data scope.</p>
-        <a class="button is-small is-link is-light" href="{% url 'user_index' %}">
+        <a class="button is-link is-light is-medium" href="{% url 'user_index' %}">
           <span class="icon"><span class="material-icons" aria-hidden="true">people</span></span>
           <span>Users</span>
         </a>
@@ -31,11 +31,11 @@
       <div class="card-content">
         <p class="is-size-7 has-text-grey mb-3">Divisions and organizations are <strong>informational</strong> — they do not grant access. Used for navigation and audit warnings.</p>
         <div class="buttons">
-          <a class="button is-small is-link is-light" href="{% url 'organization_index' %}">
+          <a class="button is-link is-light is-medium" href="{% url 'organization_index' %}">
             <span class="icon"><span class="material-icons" aria-hidden="true">business</span></span>
             <span>Organizations</span>
           </a>
-          <a class="button is-small is-link is-light" href="{% url 'division_index' %}">
+          <a class="button is-link is-light is-medium" href="{% url 'division_index' %}">
             <span class="icon"><span class="material-icons" aria-hidden="true">domain</span></span>
             <span>Divisions</span>
           </a>
@@ -52,15 +52,15 @@
       <div class="card-content">
         <p class="is-size-7 has-text-grey mb-3">Controls <em>what actions</em> a user can perform. Permission groups bundle Django permissions; roles bundle permission groups.</p>
         <div class="buttons">
-          <a class="button is-small is-link is-light" href="{% url 'permission_index' %}">
+          <a class="button is-link is-light is-medium" href="{% url 'permission_index' %}">
             <span class="icon"><span class="material-icons" aria-hidden="true">vpn_key</span></span>
             <span>Permissions</span>
           </a>
-          <a class="button is-small is-link is-light" href="{% url 'permission_group_index' %}">
+          <a class="button is-link is-light is-medium" href="{% url 'permission_group_index' %}">
             <span class="icon"><span class="material-icons" aria-hidden="true">group_work</span></span>
             <span>Permission Groups</span>
           </a>
-          <a class="button is-small is-link is-light" href="{% url 'role_index' %}">
+          <a class="button is-link is-light is-medium" href="{% url 'role_index' %}">
             <span class="icon"><span class="material-icons" aria-hidden="true">badge</span></span>
             <span>Roles</span>
           </a>
@@ -77,15 +77,15 @@
       <div class="card-content">
         <p class="is-size-7 has-text-grey mb-3">Controls <em>which rows</em> a user can see. Every scoped row carries a single Domain; templates bundle domains for bulk assignment.</p>
         <div class="buttons">
-          <a class="button is-small is-link is-light" href="{% url 'domain_index' %}">
+          <a class="button is-link is-light is-medium" href="{% url 'domain_index' %}">
             <span class="icon"><span class="material-icons" aria-hidden="true">layers</span></span>
             <span>Domains</span>
           </a>
-          <a class="button is-small is-link is-light" href="{% url 'domain_template_index' %}">
+          <a class="button is-link is-light is-medium" href="{% url 'domain_template_index' %}">
             <span class="icon"><span class="material-icons" aria-hidden="true">view_list</span></span>
             <span>Domain Templates</span>
           </a>
-          <a class="button is-small is-link is-light" href="{% url 'domain_organizations_portal' %}">
+          <a class="button is-link is-light is-medium" href="{% url 'domain_organizations_portal' %}">
             <span class="icon"><span class="material-icons" aria-hidden="true">link</span></span>
             <span>Domain ↔ Organization Links</span>
           </a>

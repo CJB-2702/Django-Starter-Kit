@@ -15,13 +15,13 @@
   </div>
   {% if can_edit %}
   <div class="buttons">
-    <a class="button is-link" href="{% url 'organization_edit' organization.pk %}">
+    <a class="button is-link is-medium" href="{% url 'organization_edit' organization.pk %}">
       <span class="icon"><span class="material-icons" aria-hidden="true">edit</span></span>
       <span>Edit</span>
     </a>
     <form method="post" action="{% url 'organization_delete' organization.pk %}" onsubmit="return confirm('Delete this organization?');" class="is-inline-block">
       {% csrf_token %}
-      <button class="button is-danger is-light" type="submit">
+      <button class="button is-medium is-danger is-light" type="submit">
         <span class="icon"><span class="material-icons" aria-hidden="true">delete</span></span>
         <span>Delete</span>
       </button>

@@ -1,0 +1,1470 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kitchen Sink — Design System</title>
+  <meta name="color-scheme" content="light dark">
+  <link rel="stylesheet" href="{% static 'css/bulma.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  <script defer src="{% static 'js/htmx.min.js' %}"></script>
+  <script defer src="{% static 'web_components/search_dropdown.js' %}"></script>
+  <style>
+    /* All colors expressed via Bulma scheme variables so the page flips with prefers-color-scheme. */
+    body {
+      background-color: var(--bulma-scheme-main);
+      color: var(--bulma-text);
+    }
+    .ks-sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      background-color: var(--bulma-scheme-main-bis);
+      border-right: 1px solid var(--bulma-border);
+    }
+    .ks-section {
+      scroll-margin-top: 1.5rem;
+      padding-bottom: 3rem;
+      border-bottom: 1px solid var(--bulma-border-weak);
+      margin-bottom: 3rem;
+    }
+    .ks-section:last-child {
+      border-bottom: none;
+    }
+    .ks-label {
+      font-family: var(--app-font-mono-input, monospace);
+      font-size: 0.7rem;
+      color: var(--bulma-text-weak);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+    }
+    .ks-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: flex-end;
+      margin-bottom: 1rem;
+    }
+    .ks-swatch {
+      height: 2.5rem;
+      display: flex;
+      align-items: center;
+      padding: 0 0.75rem;
+      font-size: 0.75rem;
+      font-family: var(--app-font-mono-input, monospace);
+      font-weight: 500;
+    }
+    .ks-code {
+      font-family: var(--app-font-mono-input, monospace);
+      font-size: 0.78rem;
+      background: var(--bulma-scheme-main-ter);
+      border: 1px solid var(--bulma-border-weak);
+      padding: 0.15rem 0.4rem;
+      color: var(--bulma-text-weak);
+    }
+    .ks-demo-box {
+      background: var(--bulma-scheme-main-bis);
+      border: 1px solid var(--bulma-border-weak);
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .ks-sidebar .menu-label {
+      font-size: 0.65rem;
+      color: var(--bulma-text-weak);
+    }
+    .ks-sidebar .menu-list a {
+      font-size: 0.82rem;
+      padding: 0.2em 0.5em;
+      color: var(--bulma-text);
+    }
+    .ks-sidebar .menu-list a:hover {
+      background-color: var(--bulma-background);
+      color: var(--bulma-text-strong);
+    }
+    /* Tabs that live inside a card-content sit flush under the header. */
+    .card-content .tabs.is-boxed {
+      margin-bottom: 0;
+    }
+    .card-content .tabs.is-boxed ul {
+      border-bottom-color: var(--bulma-border);
+    }
+  </style>
+</head>
+<body>
+<script>
+  document.body.addEventListener('htmx:configRequest', (e) => {
+    e.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+  });
+</script>
+
+<div style="display: grid; grid-template-columns: 200px 1fr; min-height: 100vh;">
+
+  <!-- ── Sidebar TOC ── -->
+  <aside class="ks-sidebar p-4">
+    <p class="menu-label mt-2">Page Examples</p>
+    <ul class="menu-list">
+      <li><a href="{% url 'kitchen_sink_work_portal_example' %}">Work Portal Example</a></li>
+      <li><a href="{% url 'kitchen_sink_search_page_example' %}">Search Page Example</a></li>
+      <li><a href="{% url 'kitchen_sink_index_example' %}">Index / Portal Hub Example</a></li>
+      <li><a href="{% url 'kitchen_sink_sidebar_behavior_example' %}">Sidebar Behavior</a></li>
+    </ul>
+
+    <p class="menu-label mt-4">Design System</p>
+    <ul class="menu-list">
+      <li><a href="#typography">Typography</a></li>
+      <li><a href="#colors">Colors</a></li>
+      <li><a href="#buttons">Buttons</a></li>
+      <li><a href="#icon-buttons">Icon Buttons</a></li>
+      <li><a href="#forms">Forms</a></li>
+      <li><a href="#inline-form">Inline Form</a></li>
+      <li><a href="#addons">Grouped Addons</a></li>
+      <li><a href="#card-footers">Card Footers</a></li>
+      <li><a href="#search">Search Bars</a></li>
+      <li><a href="#tables">Tables</a></li>
+      <li><a href="#notifications">Notifications</a></li>
+      <li><a href="#tags">Tags</a></li>
+      <li><a href="#dual-listbox">Dual Listbox</a></li>
+      <li><a href="#modals">Modals</a></li>
+      <li><a href="#loading">Loading States</a></li>
+      <li><a href="#tabs">Tabs</a></li>
+      <li><a href="#empty-states">Empty States</a></li>
+      <li><a href="#breadcrumbs">Breadcrumbs</a></li>
+      <li><a href="#pagination">Pagination</a></li>
+      <li><a href="#htmx-demo">HTMX Demo</a></li>
+    </ul>
+    <p class="menu-label mt-4">Endpoints</p>
+    <ul class="menu-list">
+      <li><a href="{% url 'kitchen_sink_dummy_search_results' %}" target="_blank" class="has-text-grey">search-results</a></li>
+      <li><a href="{% url 'kitchen_sink_dummy_list_rows' %}" target="_blank" class="has-text-grey">list-rows</a></li>
+      <li><a href="{% url 'kitchen_sink_dummy_htmx_fragment' %}" target="_blank" class="has-text-grey">htmx-fragment</a></li>
+    </ul>
+  </aside>
+
+  <!-- ── Main Content ── -->
+  <main class="p-6" style="max-width: 960px;">
+
+    <nav class="breadcrumb mb-3" aria-label="breadcrumbs">
+      <ul>
+        <li><a href="{% url 'public_home' %}">Home</a></li>
+        <li class="is-active"><a aria-current="page">Kitchen Sink</a></li>
+      </ul>
+    </nav>
+    <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 0.25rem;">
+      <h1 class="title is-3 mb-0">Design System — Kitchen Sink</h1>
+      <button id="theme-toggle" class="button is-small is-light" style="font-family: var(--app-font-mono-input); font-size: 0.72rem;" title="Toggle light / dark mode">
+        <span class="icon"><span class="material-icons" aria-hidden="true">brightness_6</span></span>
+        <span id="theme-toggle-label">dark</span>
+      </button>
+    </div>
+    <p class="subtitle is-6 has-text-grey mb-5">All visual components and patterns in one reference page.</p>
+
+    <script>
+      (function () {
+        var root = document.documentElement;
+        var btn  = document.getElementById('theme-toggle');
+        var lbl  = document.getElementById('theme-toggle-label');
+
+        function getOsTheme() {
+          return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+
+        function apply(theme) {
+          root.setAttribute('data-theme', theme);
+          lbl.textContent = theme === 'dark' ? 'light' : 'dark';
+        }
+
+        var stored = localStorage.getItem('ks-theme');
+        apply(stored || getOsTheme());
+
+        btn.addEventListener('click', function () {
+          var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+          localStorage.setItem('ks-theme', next);
+          apply(next);
+        });
+      })();
+    </script>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         TYPOGRAPHY
+    ════════════════════════════════════════════════════════════ -->
+    <section id="typography" class="ks-section">
+      <h2 class="title is-5 mb-4">Typography</h2>
+
+      <div class="ks-demo-box">
+        <h1 class="title is-1">Heading 1 <span class="ks-code">title is-1</span></h1>
+        <h2 class="title is-2">Heading 2 <span class="ks-code">title is-2</span></h2>
+        <h3 class="title is-3">Heading 3 <span class="ks-code">title is-3</span></h3>
+        <h4 class="title is-4">Heading 4 <span class="ks-code">title is-4</span></h4>
+        <h5 class="title is-5">Heading 5 <span class="ks-code">title is-5</span></h5>
+        <h6 class="title is-6">Heading 6 <span class="ks-code">title is-6</span></h6>
+        <hr>
+        <p class="subtitle is-4">Subtitle 4 <span class="ks-code">subtitle is-4</span></p>
+        <p class="subtitle is-6">Subtitle 6 <span class="ks-code">subtitle is-6</span></p>
+        <hr>
+        <p class="is-size-7">Size 7 — smallest body text</p>
+        <p class="is-size-6">Size 6 — default body text</p>
+        <p class="is-size-5">Size 5 — slightly larger</p>
+        <hr>
+        <p><strong>Bold text</strong> — <span class="ks-code">strong</span></p>
+        <p><em>Italic text</em> — <span class="ks-code">em</span></p>
+        <p class="has-text-grey">Muted text — <span class="ks-code">has-text-grey</span></p>
+        <p class="is-family-monospace">Monospace — form inputs use IBM Plex Mono <span class="ks-code">is-family-monospace</span></p>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         COLORS
+    ════════════════════════════════════════════════════════════ -->
+    <section id="colors" class="ks-section">
+      <h2 class="title is-5 mb-4">Colors — Carbon Design System</h2>
+      <p class="is-size-7 has-text-grey mb-4">Semantic tokens map to Carbon's White theme (light) and Gray 100 theme (dark) via <code>prefers-color-scheme</code>. The palette primitives live in <code>--carbon-*</code> CSS variables on <code>:root</code>.</p>
+
+      <div class="columns is-multiline">
+        <div class="column is-6">
+          <p class="ks-label">Semantic roles — solid</p>
+          <div class="ks-swatch has-background-primary has-text-white">Primary — Blue 60 / Blue 50</div>
+          <div class="ks-swatch has-background-info has-text-white">Info — Cyan 50</div>
+          <div class="ks-swatch has-background-link has-text-white">Link — Blue 70 / Blue 40</div>
+          <div class="ks-swatch has-background-success has-text-white">Success — Green 50 / Green 40</div>
+          <div class="ks-swatch has-background-warning">Warning — Yellow 30</div>
+          <div class="ks-swatch has-background-danger has-text-white">Danger — Red 60 / Red 50</div>
+          <div class="ks-swatch has-background-light">Light — neutral secondary</div>
+        </div>
+        <div class="column is-6">
+          <p class="ks-label">Semantic roles — is-light variant</p>
+          <div class="ks-swatch has-background-primary-light">Primary light</div>
+          <div class="ks-swatch has-background-info-light">Info light</div>
+          <div class="ks-swatch has-background-link-light">Link light</div>
+          <div class="ks-swatch has-background-success-light">Success light</div>
+          <div class="ks-swatch has-background-warning-light">Warning light</div>
+          <div class="ks-swatch has-background-danger-light">Danger light — Delete in footers</div>
+        </div>
+      </div>
+
+      <p class="ks-label mt-4">Carbon neutral scale (surface / text / border)</p>
+      <div style="display: grid; grid-template-columns: repeat(11, 1fr); gap: 2px; margin-bottom: 1rem;">
+        <div style="background: var(--carbon-white); height: 3rem; border: 1px solid var(--bulma-border-weak);"></div>
+        <div style="background: var(--carbon-gray-10); height: 3rem;"></div>
+        <div style="background: var(--carbon-gray-20); height: 3rem;"></div>
+        <div style="background: var(--carbon-gray-30); height: 3rem;"></div>
+        <div style="background: var(--carbon-gray-40); height: 3rem;"></div>
+        <div style="background: var(--carbon-gray-50); height: 3rem;"></div>
+        <div style="background: var(--carbon-gray-60); height: 3rem;"></div>
+        <div style="background: var(--carbon-gray-70); height: 3rem;"></div>
+        <div style="background: var(--carbon-gray-80); height: 3rem;"></div>
+        <div style="background: var(--carbon-gray-90); height: 3rem;"></div>
+        <div style="background: var(--carbon-gray-100); height: 3rem;"></div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(11, 1fr); gap: 2px; font-family: var(--app-font-mono-input); font-size: 0.6rem; text-align: center; color: var(--bulma-text-weak);">
+        <span>W</span><span>10</span><span>20</span><span>30</span><span>40</span><span>50</span><span>60</span><span>70</span><span>80</span><span>90</span><span>100</span>
+      </div>
+
+      <p class="ks-label mt-4">Carbon blue scale (interactive / primary / link)</p>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin-bottom: 0.5rem;">
+        <div style="background: var(--carbon-blue-40); height: 3rem;"></div>
+        <div style="background: var(--carbon-blue-50); height: 3rem;"></div>
+        <div style="background: var(--carbon-blue-60); height: 3rem;"></div>
+        <div style="background: var(--carbon-blue-70); height: 3rem;"></div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; font-family: var(--app-font-mono-input); font-size: 0.6rem; text-align: center; color: var(--bulma-text-weak); margin-bottom: 1rem;">
+        <span>40 Link-dark</span><span>50 Primary-dark</span><span>60 Primary-light</span><span>70 Link-light</span>
+      </div>
+
+      <p class="ks-label">Support palette (red / green / yellow / cyan)</p>
+      <div style="display: flex; gap: 2px; margin-bottom: 0.5rem;">
+        <div style="background: var(--carbon-red-40); height: 2.5rem; flex: 1;" title="Red 40 — Danger dark"></div>
+        <div style="background: var(--carbon-red-50); height: 2.5rem; flex: 1;" title="Red 50 — Danger dark"></div>
+        <div style="background: var(--carbon-red-60); height: 2.5rem; flex: 1;" title="Red 60 — Danger light"></div>
+        <div style="width: 2px;"></div>
+        <div style="background: var(--carbon-green-40); height: 2.5rem; flex: 1;" title="Green 40 — Success dark"></div>
+        <div style="background: var(--carbon-green-50); height: 2.5rem; flex: 1;" title="Green 50 — Success light"></div>
+        <div style="width: 2px;"></div>
+        <div style="background: var(--carbon-yellow-30); height: 2.5rem; flex: 1;" title="Yellow 30 — Warning"></div>
+        <div style="background: var(--carbon-orange-40); height: 2.5rem; flex: 1;" title="Orange 40"></div>
+        <div style="width: 2px;"></div>
+        <div style="background: var(--carbon-cyan-40); height: 2.5rem; flex: 1;" title="Cyan 40"></div>
+        <div style="background: var(--carbon-cyan-50); height: 2.5rem; flex: 1;" title="Cyan 50 — Info"></div>
+        <div style="width: 2px;"></div>
+        <div style="background: var(--carbon-teal-40); height: 2.5rem; flex: 1;" title="Teal 40"></div>
+        <div style="background: var(--carbon-teal-50); height: 2.5rem; flex: 1;" title="Teal 50"></div>
+        <div style="background: var(--carbon-purple-60); height: 2.5rem; flex: 1;" title="Purple 60"></div>
+      </div>
+      <p class="is-size-7 has-text-grey">Hover for color name. Red → Green → Yellow/Orange → Cyan → Teal → Purple.</p>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         BUTTONS
+    ════════════════════════════════════════════════════════════ -->
+    <section id="buttons" class="ks-section">
+      <h2 class="title is-5 mb-4">Buttons — Semantic Actions</h2>
+
+      <p class="ks-label">Primary actions (one per card)</p>
+      <div class="ks-row mb-4">
+        <button class="button is-primary">
+          <span class="icon"><span class="material-icons" aria-hidden="true">save</span></span>
+          <span>Save</span>
+        </button>
+        <button class="button is-primary">
+          <span class="icon"><span class="material-icons" aria-hidden="true">add</span></span>
+          <span>Create</span>
+        </button>
+        <button class="button is-primary">
+          <span class="icon"><span class="material-icons" aria-hidden="true">check</span></span>
+          <span>Apply</span>
+        </button>
+        <button class="button is-primary">
+          <span class="icon"><span class="material-icons" aria-hidden="true">send</span></span>
+          <span>Submit</span>
+        </button>
+      </div>
+
+      <p class="ks-label">Info — navigation/read (is-info is-light)</p>
+      <div class="ks-row mb-4">
+        <a class="button is-info is-light is-small">
+          <span class="icon"><span class="material-icons" aria-hidden="true">edit</span></span>
+          <span>Edit</span>
+        </a>
+        <a class="button is-info is-light is-small">
+          <span class="icon"><span class="material-icons" aria-hidden="true">open_in_new</span></span>
+          <span>View</span>
+        </a>
+      </div>
+
+      <p class="ks-label">Link — side-effect-free (is-link is-light)</p>
+      <div class="ks-row mb-4">
+        <button class="button is-link is-light is-small">
+          <span class="icon"><span class="material-icons" aria-hidden="true">refresh</span></span>
+          <span>Refresh</span>
+        </button>
+        <button class="button is-link is-light is-small">
+          <span class="icon"><span class="material-icons" aria-hidden="true">file_download</span></span>
+          <span>Export</span>
+        </button>
+        <button class="button is-link is-light is-small">
+          <span class="icon"><span class="material-icons" aria-hidden="true">file_upload</span></span>
+          <span>Import</span>
+        </button>
+      </div>
+
+      <p class="ks-label">Success — affirmative state transitions</p>
+      <div class="ks-row mb-4">
+        <button class="button is-success">
+          <span class="icon"><span class="material-icons" aria-hidden="true">check_circle</span></span>
+          <span>Approve</span>
+        </button>
+        <button class="button is-success is-light is-small">
+          <span class="icon"><span class="material-icons" aria-hidden="true">restore</span></span>
+          <span>Restore</span>
+        </button>
+      </div>
+
+      <p class="ks-label">Warning — cautionary / reversible</p>
+      <div class="ks-row mb-4">
+        <button class="button is-warning is-light is-small">
+          <span class="icon"><span class="material-icons" aria-hidden="true">cancel</span></span>
+          <span>Reject</span>
+        </button>
+      </div>
+
+      <p class="ks-label">Danger — destructive (always is-light in footers)</p>
+      <div class="ks-row mb-4">
+        <button class="button is-danger is-light is-small">
+          <span class="icon"><span class="material-icons" aria-hidden="true">delete</span></span>
+          <span>Delete</span>
+        </button>
+        <button class="button is-danger is-light is-small">
+          <span class="icon"><span class="material-icons" aria-hidden="true">remove</span></span>
+          <span>Remove</span>
+        </button>
+      </div>
+
+      <p class="ks-label">Neutral / secondary (is-light)</p>
+      <div class="ks-row mb-4">
+        <a class="button is-small is-light">
+          <span class="icon"><span class="material-icons" aria-hidden="true">close</span></span>
+          <span>Cancel</span>
+        </a>
+        <button type="reset" class="button is-small is-light">
+          <span class="icon"><span class="material-icons" aria-hidden="true">file_copy</span></span>
+          <span>Reset</span>
+        </button>
+        <button class="button is-light">
+          <span class="icon"><span class="material-icons" aria-hidden="true">filter_list</span></span>
+          <span>Filter</span>
+        </button>
+        <button class="button is-light">
+          <span class="icon"><span class="material-icons" aria-hidden="true">sort</span></span>
+          <span>Sort</span>
+        </button>
+        <button class="button is-light">
+          <span class="icon"><span class="material-icons" aria-hidden="true">settings</span></span>
+          <span>Settings</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         ICON-ONLY BUTTONS
+    ════════════════════════════════════════════════════════════ -->
+    <section id="icon-buttons" class="ks-section">
+      <h2 class="title is-5 mb-4">Icon-Only Buttons</h2>
+      <p class="is-size-7 has-text-grey mb-3">Acceptable only for: Close (modal dismiss), Copy (ID/slug), More/Menu, Search trigger, Sort direction.</p>
+
+      <div class="ks-row">
+        <button class="button is-small is-light" aria-label="close">
+          <span class="icon"><span class="material-icons" aria-hidden="true">close</span></span>
+        </button>
+        <button class="button is-small is-light" aria-label="copy value">
+          <span class="icon"><span class="material-icons" aria-hidden="true">content_copy</span></span>
+        </button>
+        <button class="button is-small is-light" aria-label="more actions">
+          <span class="icon"><span class="material-icons" aria-hidden="true">more_vert</span></span>
+        </button>
+        <button class="button is-small is-light" aria-label="sort direction">
+          <span class="icon"><span class="material-icons" aria-hidden="true">sort</span></span>
+        </button>
+      </div>
+
+      <p class="ks-label mt-4">Sizes</p>
+      <div class="ks-row">
+        <button class="button is-primary is-small">
+          <span class="icon"><span class="material-icons" aria-hidden="true">add</span></span>
+          <span>Small</span>
+        </button>
+        <button class="button is-primary">
+          <span class="icon"><span class="material-icons" aria-hidden="true">add</span></span>
+          <span>Normal (default)</span>
+        </button>
+        <button class="button is-primary is-medium">
+          <span class="icon"><span class="material-icons" aria-hidden="true">add</span></span>
+          <span>Medium (hero CTAs)</span>
+        </button>
+        <button class="button is-primary is-large">
+          <span class="icon"><span class="material-icons" aria-hidden="true">add</span></span>
+          <span>Large (empty-state CTAs)</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         FORMS
+    ════════════════════════════════════════════════════════════ -->
+    <section id="forms" class="ks-section">
+      <h2 class="title is-5 mb-4">Forms</h2>
+
+      <div class="columns">
+        <div class="column is-7">
+          <form>
+            <div class="field">
+              <label class="label" for="ks-text">Text input (monospace — IBM Plex Mono)</label>
+              <div class="control">
+                <input id="ks-text" class="input is-family-monospace" type="text" placeholder="asset-codename-001">
+              </div>
+              <p class="help">Monospace ensures clear 0/O/I/1/l distinction in IDs and codenames.</p>
+            </div>
+
+            <div class="field">
+              <label class="label" for="ks-text-danger">Input with validation error</label>
+              <div class="control">
+                <input id="ks-text-danger" class="input is-danger is-family-monospace" type="text" value="bad-val!">
+              </div>
+              <p class="help is-danger">This field contains invalid characters.</p>
+            </div>
+
+            <div class="field">
+              <label class="label" for="ks-text-success">Input with success</label>
+              <div class="control">
+                <input id="ks-text-success" class="input is-success is-family-monospace" type="text" value="asset-gamma-003">
+              </div>
+              <p class="help is-success">Looks good.</p>
+            </div>
+
+            <div class="field">
+              <label class="label" for="ks-textarea">Textarea</label>
+              <div class="control">
+                <textarea id="ks-textarea" class="textarea is-family-monospace" rows="3" placeholder="Description…"></textarea>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="label" for="ks-select">Select</label>
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <select id="ks-select">
+                    <option value="">— choose —</option>
+                    <option>Operations</option>
+                    <option>Finance</option>
+                    <option>HR</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="label">Checkboxes</label>
+              <div class="control">
+                <label class="checkbox"><input type="checkbox" checked> Active</label>
+              </div>
+              <div class="control">
+                <label class="checkbox"><input type="checkbox"> Include archived</label>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="label">Radio buttons</label>
+              <div class="control">
+                <label class="radio"><input type="radio" name="density" value="condensed" checked> Condensed</label>
+                <label class="radio"><input type="radio" name="density" value="medium"> Medium</label>
+                <label class="radio"><input type="radio" name="density" value="large"> Large</label>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="label" for="ks-file">File upload</label>
+              <div class="control">
+                <div class="file has-name">
+                  <label class="file-label">
+                    <input id="ks-file" class="file-input" type="file" name="attachment">
+                    <span class="file-cta">
+                      <span class="file-icon"><span class="material-icons" aria-hidden="true">file_upload</span></span>
+                      <span class="file-label">Choose file…</span>
+                    </span>
+                    <span class="file-name">No file chosen</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="control">
+                <button type="submit" class="button is-primary">
+                  <span class="icon"><span class="material-icons" aria-hidden="true">save</span></span>
+                  <span>Save</span>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         INLINE SINGLE-FIELD FORM
+    ════════════════════════════════════════════════════════════ -->
+    <section id="inline-form" class="ks-section">
+      <h2 class="title is-5 mb-4">Inline Single-Field Form</h2>
+      <p class="is-size-7 has-text-grey mb-3">For renaming, labelling, or editing a single value in place. No Cancel — navigate away to cancel. Graduates to a full card form the moment a second field is needed.</p>
+
+      <div class="ks-demo-box" style="max-width: 780px;">
+        <form>
+          <div class="field has-addons">
+            <div class="control is-expanded">
+              <input class="input is-family-monospace" type="text" name="name" value="operations-domain" required>
+            </div>
+            <div class="control">
+              <button type="submit" class="button is-primary">
+                <span class="icon"><span class="material-icons" aria-hidden="true">save</span></span>
+                <span>Save</span>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         GROUPED ADDONS
+    ════════════════════════════════════════════════════════════ -->
+    <section id="addons" class="ks-section">
+      <h2 class="title is-5 mb-4">Grouped Controls — has-addons</h2>
+      <p class="is-size-7 has-text-grey mb-4">Multiple controls flush against each other with shared borders. Works with inputs, selects, and buttons.</p>
+
+      <!-- Select + Button -->
+      <p class="ks-label">Select with action button</p>
+      <div class="ks-demo-box">
+        <div class="field has-addons" style="max-width: 420px;">
+          <div class="control is-expanded">
+            <div class="select is-fullwidth">
+              <select name="country">
+                <option value="">— choose country —</option>
+                <option value="Argentina">Argentina</option>
+                <option value="Bolivia">Bolivia</option>
+                <option value="Brazil">Brazil</option>
+                <option value="Chile">Chile</option>
+                <option value="Colombia">Colombia</option>
+                <option value="Ecuador">Ecuador</option>
+                <option value="Guyana">Guyana</option>
+                <option value="Paraguay">Paraguay</option>
+                <option value="Peru">Peru</option>
+                <option value="Suriname">Suriname</option>
+                <option value="Uruguay">Uruguay</option>
+                <option value="Venezuela">Venezuela</option>
+              </select>
+            </div>
+          </div>
+          <div class="control">
+            <button type="submit" class="button is-primary">
+              <span class="icon"><span class="material-icons" aria-hidden="true">check</span></span>
+              <span>Choose</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Currency selector + input + button -->
+      <p class="ks-label mt-4">Currency input with symbol selector</p>
+      <div class="ks-demo-box">
+        <div class="field has-addons">
+          <div class="control">
+            <div class="select is-medium">
+              <select name="currency">
+                <option>$</option>
+                <option>£</option>
+                <option>€</option>
+                <option>¥</option>
+              </select>
+            </div>
+          </div>
+          <div class="control is-expanded">
+            <input class="input is-family-monospace is-medium" type="text" placeholder="Amount of money">
+          </div>
+          <div class="control">
+            <button type="submit" class="button is-primary is-medium">
+              <span class="icon"><span class="material-icons" aria-hidden="true">send</span></span>
+              <span>Transfer</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Button group (text formatting) -->
+      <p class="ks-label mt-4">Button groups — text formatting toolbar</p>
+      <div class="ks-demo-box">
+        <div class="field has-addons mb-3">
+          <div class="control">
+            <button class="button" title="Bold" aria-label="Bold">
+              <span class="icon"><span class="material-icons" aria-hidden="true">format_bold</span></span>
+            </button>
+          </div>
+          <div class="control">
+            <button class="button" title="Italic" aria-label="Italic">
+              <span class="icon"><span class="material-icons" aria-hidden="true">format_italic</span></span>
+            </button>
+          </div>
+          <div class="control">
+            <button class="button" title="Underline" aria-label="Underline">
+              <span class="icon"><span class="material-icons" aria-hidden="true">format_underlined</span></span>
+            </button>
+          </div>
+        </div>
+
+        <div class="field has-addons">
+          <div class="control">
+            <button class="button" title="Align left" aria-label="Align left">
+              <span class="icon"><span class="material-icons" aria-hidden="true">format_align_left</span></span>
+            </button>
+          </div>
+          <div class="control">
+            <button class="button" title="Align center" aria-label="Align center">
+              <span class="icon"><span class="material-icons" aria-hidden="true">format_align_center</span></span>
+            </button>
+          </div>
+          <div class="control">
+            <button class="button" title="Align right" aria-label="Align right">
+              <span class="icon"><span class="material-icons" aria-hidden="true">format_align_right</span></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         CARD FOOTER LAYOUTS
+    ════════════════════════════════════════════════════════════ -->
+    <section id="card-footers" class="ks-section">
+      <h2 class="title is-5 mb-4">Card Footer Layouts</h2>
+
+      <!-- Create form footer -->
+      <p class="ks-label">Create form — primary only</p>
+      <div class="card mb-5" style="max-width: 780px;">
+        <div class="card-content">
+          <p class="has-text-grey is-size-7">… form fields …</p>
+        </div>
+        <footer class="card-footer custom-card-footer">
+          <div class="card-footer-secondaries"></div>
+          <button type="submit" class="button is-medium is-primary card-footer-primary">
+            <span class="icon"><span class="material-icons" aria-hidden="true">add</span></span>
+            <span>Create</span>
+          </button>
+        </footer>
+      </div>
+
+      <!-- Edit form footer -->
+      <p class="ks-label">Edit form — Cancel + Reset + Delete / Save</p>
+      <div class="card mb-5" style="max-width: 780px;">
+        <div class="card-content">
+          <p class="has-text-grey is-size-7">… form fields …</p>
+        </div>
+        <footer class="card-footer custom-card-footer">
+          <div class="card-footer-secondaries">
+            <a class="button is-light">
+              <span class="icon"><span class="material-icons" aria-hidden="true">close</span></span>
+              <span>Cancel</span>
+            </a>
+            <button type="reset" class="button is-light">
+              <span class="icon"><span class="material-icons" aria-hidden="true">file_copy</span></span>
+              <span>Reset</span>
+            </button>
+            <button type="submit" class="button is-danger is-light" style="max-width: 6rem;"
+                    onclick="return confirm('Delete this item?');">
+              <span class="icon"><span class="material-icons" aria-hidden="true">delete</span></span>
+              <span>Delete</span>
+            </button>
+          </div>
+          <button type="submit" class="button is-medium is-primary card-footer-primary">
+            <span class="icon"><span class="material-icons" aria-hidden="true">save</span></span>
+            <span>Save</span>
+          </button>
+        </footer>
+      </div>
+
+      <!-- Read-only card: Delete + Edit -->
+      <p class="ks-label">Read-only card — Delete (secondary) / Edit (primary)</p>
+      <div class="card mb-5" style="max-width: 780px;">
+        <div class="card-content">
+          <p class="has-text-grey is-size-7">… read-only content …</p>
+        </div>
+        <footer class="card-footer custom-card-footer">
+          <div class="card-footer-secondaries">
+            <button class="button is-danger is-light" type="button"
+                    onclick="return confirm('Delete this item?');" style="max-width: 6rem;">
+              <span class="icon"><span class="material-icons" aria-hidden="true">delete</span></span>
+              <span>Delete</span>
+            </button>
+          </div>
+          <a class="button is-medium is-info is-light card-footer-primary">
+            <span class="icon"><span class="material-icons" aria-hidden="true">edit</span></span>
+            <span>Edit</span>
+          </a>
+        </footer>
+      </div>
+
+      <!-- Read-only card: Edit only -->
+      <p class="ks-label">Read-only card — Edit only</p>
+      <div class="card mb-5" style="max-width: 780px;">
+        <div class="card-content">
+          <p class="has-text-grey is-size-7">… read-only content …</p>
+        </div>
+        <footer class="card-footer custom-card-footer">
+          <div class="card-footer-secondaries"></div>
+          <a class="button is-medium is-info is-light card-footer-primary">
+            <span class="icon"><span class="material-icons" aria-hidden="true">edit</span></span>
+            <span>Edit</span>
+          </a>
+        </footer>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         SEARCH BARS
+    ════════════════════════════════════════════════════════════ -->
+    <section id="search" class="ks-section">
+      <h2 class="title is-5 mb-4">Search Bars</h2>
+
+      <!-- Pattern 1: search-dropdown (picks one FK value) -->
+      <p class="ks-label">Pattern 1 — &lt;search-dropdown&gt; (single value picker for form fields)</p>
+      <p class="is-size-7 has-text-grey mb-3">Use when the search produces a single picked value that becomes a form field (FK, tag, owner). Results are <code>&lt;li data-value="id"&gt;</code> fragments from the server.</p>
+      <div class="ks-demo-box" style="max-width: 780px;">
+        <form>
+          <div class="field">
+            <label class="label">Pick a permission</label>
+            <div class="control">
+              <search-dropdown
+                id="permission-picker"
+                name="permission_id"
+                placeholder="search permissions…"
+                hx-get="{% url 'kitchen_sink_dummy_search_results' %}"
+                hx-trigger="keyup changed delay:300ms, search">
+              </search-dropdown>
+            </div>
+            <p class="help">Type to load options. Click a result to select it.</p>
+          </div>
+        </form>
+      </div>
+
+      <!-- Pattern 2: plain HTMX input (list filter) -->
+      <p class="ks-label mt-5">Pattern 2 — plain HTMX input (list filter)</p>
+      <p class="is-size-7 has-text-grey mb-3">Use when the search drives a list view. Targets a results region, pushes URL so back-button works (F5 rule).</p>
+      <div class="ks-demo-box">
+        <div class="field">
+          <p class="control has-icons-left">
+            <input class="input is-family-monospace"
+                   type="search"
+                   name="q"
+                   hx-get="{% url 'kitchen_sink_dummy_list_rows' %}"
+                   hx-trigger="keyup changed delay:350ms, search"
+                   hx-target="#ks-list-container"
+                   hx-swap="innerHTML"
+                   hx-push-url="false"
+                   hx-indicator="#ks-list-skeleton"
+                   placeholder="search assets…">
+            <span class="icon is-small is-left">
+              <span class="material-icons" aria-hidden="true">search</span>
+            </span>
+          </p>
+        </div>
+
+        <div id="ks-list-skeleton" class="htmx-indicator mb-2">
+          <div class="skeleton-block" style="width:100%;height:120px;"></div>
+        </div>
+
+        <div id="ks-list-container">
+          <table class="table is-fullwidth is-striped is-hoverable">
+            <thead>
+              <tr>
+                <th>Name</th><th>Status</th><th>Owner</th><th>Domain</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="is-family-monospace">Asset Alpha</td><td><span class="tag is-success is-light">active</span></td><td>alice</td><td>Operations</td></tr>
+              <tr><td class="is-family-monospace">Asset Beta</td><td><span class="tag is-light">inactive</span></td><td>bob</td><td>Finance</td></tr>
+              <tr><td class="is-family-monospace">Asset Gamma</td><td><span class="tag is-success is-light">active</span></td><td>carol</td><td>Operations</td></tr>
+              <tr><td class="is-family-monospace">Asset Delta</td><td><span class="tag is-warning is-light">pending</span></td><td>dave</td><td>HR</td></tr>
+              <tr><td class="is-family-monospace">Widget Prime</td><td><span class="tag is-success is-light">active</span></td><td>eve</td><td>Finance</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         TABLES
+    ════════════════════════════════════════════════════════════ -->
+    <section id="tables" class="ks-section">
+      <h2 class="title is-5 mb-4">Tables — Condensed (default)</h2>
+      <p class="is-size-7 has-text-grey mb-3">
+        <strong>Rule:</strong> Buttons inside table rows are <em>icon-only</em>. The action text moves to <code>title</code> (tooltip) and <code>aria-label</code>. Rows are dense — text labels per row create noise and stretch columns.
+      </p>
+
+      <div class="table-container">
+        <table class="table is-fullwidth is-striped is-hoverable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Status</th>
+              <th>Owner</th>
+              <th>Domain</th>
+              <th class="has-text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="is-family-monospace is-size-7">001</td>
+              <td class="is-family-monospace">asset-alpha</td>
+              <td><span class="tag is-success is-light is-small">active</span></td>
+              <td>alice</td>
+              <td><span class="tag is-light is-small">Operations</span></td>
+              <td class="has-text-right">
+                <div class="buttons are-small is-justify-content-flex-end">
+                  <a class="button is-info is-light is-small" title="Edit asset-alpha" aria-label="Edit asset-alpha">
+                    <span class="icon"><span class="material-icons" aria-hidden="true">edit</span></span>
+                  </a>
+                  <button class="button is-danger is-light is-small" title="Delete asset-alpha" aria-label="Delete asset-alpha">
+                    <span class="icon"><span class="material-icons" aria-hidden="true">delete</span></span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="is-family-monospace is-size-7">002</td>
+              <td class="is-family-monospace">asset-beta</td>
+              <td><span class="tag is-light is-small">inactive</span></td>
+              <td>bob</td>
+              <td><span class="tag is-light is-small">Finance</span></td>
+              <td class="has-text-right">
+                <div class="buttons are-small is-justify-content-flex-end">
+                  <a class="button is-info is-light is-small" title="Edit asset-beta" aria-label="Edit asset-beta">
+                    <span class="icon"><span class="material-icons" aria-hidden="true">edit</span></span>
+                  </a>
+                  <button class="button is-success is-light is-small" title="Restore asset-beta" aria-label="Restore asset-beta">
+                    <span class="icon"><span class="material-icons" aria-hidden="true">restore</span></span>
+                  </button>
+                  <button class="button is-danger is-light is-small" title="Delete asset-beta" aria-label="Delete asset-beta">
+                    <span class="icon"><span class="material-icons" aria-hidden="true">delete</span></span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="is-family-monospace is-size-7">003</td>
+              <td class="is-family-monospace">asset-gamma</td>
+              <td><span class="tag is-warning is-light is-small">pending</span></td>
+              <td>carol</td>
+              <td><span class="tag is-light is-small">Operations</span></td>
+              <td class="has-text-right">
+                <div class="buttons are-small is-justify-content-flex-end">
+                  <button class="button is-success is-small" title="Approve asset-gamma" aria-label="Approve asset-gamma">
+                    <span class="icon"><span class="material-icons" aria-hidden="true">check_circle</span></span>
+                  </button>
+                  <button class="button is-warning is-light is-small" title="Reject asset-gamma" aria-label="Reject asset-gamma">
+                    <span class="icon"><span class="material-icons" aria-hidden="true">cancel</span></span>
+                  </button>
+                  <a class="button is-info is-light is-small" title="Edit asset-gamma" aria-label="Edit asset-gamma">
+                    <span class="icon"><span class="material-icons" aria-hidden="true">edit</span></span>
+                  </a>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         NOTIFICATIONS
+    ════════════════════════════════════════════════════════════ -->
+    <section id="notifications" class="ks-section">
+      <h2 class="title is-5 mb-4">Notifications / Messages</h2>
+
+      <div class="notification is-primary is-light mb-3">
+        <strong>Primary</strong> — general informational message.
+      </div>
+      <div class="notification is-info is-light mb-3">
+        <strong>Info</strong> — system information or status update.
+      </div>
+      <div class="notification is-success is-light mb-3">
+        <strong>Success</strong> — action completed successfully.
+      </div>
+      <div class="notification is-warning is-light mb-3">
+        <strong>Warning</strong> — something requires attention but is not blocking.
+      </div>
+      <div class="notification is-danger is-light mb-3">
+        <strong>Danger</strong> — action failed or something is critically wrong.
+      </div>
+      <div class="notification is-light mb-3">
+        <strong>Light</strong> — neutral context message (e.g. empty state explanation).
+      </div>
+
+      <p class="ks-label mt-4">Solid variants (less common — use for banners, not inline)</p>
+      <div class="notification is-success mb-3">
+        <strong>Success solid</strong> — high-visibility confirmation.
+      </div>
+      <div class="notification is-danger mb-3">
+        <strong>Danger solid</strong> — reserved for dedicated error pages, not footers.
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         TAGS
+    ════════════════════════════════════════════════════════════ -->
+    <section id="tags" class="ks-section">
+      <h2 class="title is-5 mb-4">Tags</h2>
+
+      <p class="ks-label">Semantic status tags</p>
+      <div class="ks-row mb-4">
+        <span class="tag is-success is-light">active</span>
+        <span class="tag is-warning is-light">pending</span>
+        <span class="tag is-danger is-light">error</span>
+        <span class="tag is-info is-light">review</span>
+        <span class="tag is-light">inactive</span>
+        <span class="tag">default</span>
+      </div>
+
+      <p class="ks-label">With delete button</p>
+      <div class="ks-row mb-4">
+        <div class="tags has-addons">
+          <span class="tag is-light">Operations</span>
+          <button class="tag is-delete" aria-label="remove Operations tag"></button>
+        </div>
+        <div class="tags has-addons">
+          <span class="tag is-info is-light">Finance</span>
+          <button class="tag is-delete" aria-label="remove Finance tag"></button>
+        </div>
+      </div>
+
+      <p class="ks-label">Tag groups / label pairs</p>
+      <div class="ks-row">
+        <div class="tags has-addons are-small">
+          <span class="tag is-dark">format</span>
+          <span class="tag is-primary">condensed</span>
+        </div>
+        <div class="tags has-addons">
+          <span class="tag is-dark">format</span>
+          <span class="tag is-info">medium</span>
+        </div>
+        <div class="tags has-addons are-medium">
+          <span class="tag is-dark">format</span>
+          <span class="tag is-link">large</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         DUAL LISTBOX
+    ════════════════════════════════════════════════════════════ -->
+    <section id="dual-listbox" class="ks-section">
+      <h2 class="title is-5 mb-4">Dual Listbox</h2>
+      <p class="is-size-7 has-text-grey mb-4">
+        Used for assign/remove workflows (groups, permissions, domains). Select items in the left panel and
+        use the arrow buttons to move them to the right, or select items in the right panel and move them back.
+      </p>
+
+      <p class="ks-label">Groups assignment</p>
+      <div class="box mb-0">
+        <div class="columns is-variable is-3 is-align-items-center">
+
+          <!-- ── Left: Available ── -->
+          <div class="column">
+            <h4 class="title is-6 mb-1">Available groups</h4>
+            <p class="is-size-7 has-text-grey mb-2">Choose groups by selecting them and then selecting the "Choose" arrow button.</p>
+            <div class="field mb-1">
+              <input type="search" class="input is-small ks-dlb-filter" id="ks-dlb-filter-left"
+                data-ks-dlb-target="ks-dlb-left" placeholder="Filter" autocomplete="off">
+            </div>
+            <div style="display: flex; flex-direction: column;">
+              <select id="ks-dlb-left" multiple aria-label="Available groups"
+                style="width: 100%; height: 12rem; border: 1px solid var(--bulma-border); padding: 0.25rem; background: var(--bulma-scheme-main); color: var(--bulma-text); font-size: 0.875rem; outline: none;">
+                <option value="can_edit_others_comments">can_edit_others_comments</option>
+                <option value="can_view_deleted_comments_events_attachments">can_view_deleted_comments_events_attachments</option>
+                <option value="generic_manager">generic_manager</option>
+                <option value="generic_user">generic_user</option>
+              </select>
+              <button type="button" class="button is-small is-fullwidth" style="border-top: none;"
+                title="Select all available groups for addition"
+                onclick="ksDlbSelectAll('ks-dlb-left')">
+                Select all for addition
+              </button>
+            </div>
+          </div>
+
+          <!-- ── Centre: Arrow controls ── -->
+          <div class="column is-narrow" style="display: flex; flex-direction: column; gap: 0.5rem; align-items: center;">
+            <button type="button" class="button is-small"
+              title="Choose selected groups — move highlighted items from Available to Chosen"
+              aria-label="Choose selected groups"
+              onclick="ksDlbMoveRight()">
+              <span class="icon"><span class="material-icons" aria-hidden="true">arrow_forward</span></span>
+            </button>
+            <button type="button" class="button is-small"
+              title="Remove selected groups — move highlighted items from Chosen back to Available"
+              aria-label="Remove selected groups"
+              onclick="ksDlbMoveLeft()">
+              <span class="icon"><span class="material-icons" aria-hidden="true">arrow_back</span></span>
+            </button>
+          </div>
+
+          <!-- ── Right: Chosen ── -->
+          <div class="column">
+            <h4 class="title is-6 mb-1">Chosen groups</h4>
+            <p class="is-size-7 has-text-grey mb-2">Remove groups by selecting them and then selecting the "Remove" arrow button.</p>
+            <div class="field mb-1">
+              <input type="search" class="input is-small ks-dlb-filter" id="ks-dlb-filter-right"
+                data-ks-dlb-target="ks-dlb-right" placeholder="Filter" autocomplete="off">
+            </div>
+            <div style="display: flex; flex-direction: column;">
+              <select id="ks-dlb-right" multiple aria-label="Chosen groups"
+                style="width: 100%; height: 12rem; border: 1px solid var(--bulma-border); padding: 0.25rem; background: var(--bulma-scheme-main); color: var(--bulma-text); font-size: 0.875rem; outline: none;">
+                <option value="generic_admin">generic_admin</option>
+              </select>
+              <button type="button" class="button is-small is-fullwidth" style="border-top: none;"
+                title="Select all chosen groups for removal"
+                onclick="ksDlbSelectAll('ks-dlb-right')">
+                Select all for removal
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <script>
+      (function () {
+        /* Filter: hide <option> entries that don't match the query. */
+        document.querySelectorAll('.ks-dlb-filter').forEach(function (input) {
+          input.addEventListener('input', function () {
+            var q = input.value.trim().toLowerCase();
+            var sel = document.getElementById(input.getAttribute('data-ks-dlb-target'));
+            if (!sel) return;
+            sel.querySelectorAll('option').forEach(function (opt) {
+              opt.hidden = q ? !opt.value.toLowerCase().includes(q) : false;
+            });
+          });
+        });
+
+        /* Move selected options from left to right, sorted alphabetically. */
+        window.ksDlbMoveRight = function () {
+          var left  = document.getElementById('ks-dlb-left');
+          var right = document.getElementById('ks-dlb-right');
+          Array.from(left.selectedOptions).forEach(function (opt) {
+            left.removeChild(opt);
+            opt.selected = false;
+            opt.hidden   = false;
+            ksDlbInsertSorted(right, opt);
+          });
+        };
+
+        /* Move selected options from right back to left, sorted alphabetically. */
+        window.ksDlbMoveLeft = function () {
+          var left  = document.getElementById('ks-dlb-left');
+          var right = document.getElementById('ks-dlb-right');
+          Array.from(right.selectedOptions).forEach(function (opt) {
+            right.removeChild(opt);
+            opt.selected = false;
+            opt.hidden   = false;
+            ksDlbInsertSorted(left, opt);
+          });
+        };
+
+        /* Insert an <option> into a <select> in alphabetical order by value. */
+        function ksDlbInsertSorted(sel, opt) {
+          var after = Array.from(sel.options).find(function (o) { return o.value > opt.value; });
+          if (after) { sel.insertBefore(opt, after); }
+          else        { sel.appendChild(opt); }
+        }
+
+        /* Select all visible (non-hidden) options in the given select. */
+        window.ksDlbSelectAll = function (selId) {
+          var sel = document.getElementById(selId);
+          if (!sel) return;
+          sel.querySelectorAll('option:not([hidden])').forEach(function (opt) {
+            opt.selected = true;
+          });
+        };
+      })();
+      </script>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         MODALS / DIALOGS
+    ════════════════════════════════════════════════════════════ -->
+    <section id="modals" class="ks-section">
+      <h2 class="title is-5 mb-4">Modals — Native &lt;dialog&gt;</h2>
+      <p class="is-size-7 has-text-grey mb-4">Native <code>&lt;dialog&gt;</code> with Bulma <code>.card</code> inside. Uses <code>commandfor</code> / <code>command</code> declarative attributes. Escape closes automatically.</p>
+
+      <div class="ks-row mb-4">
+        <button class="button is-primary" commandfor="ks-modal-info" command="show-modal">
+          <span class="icon"><span class="material-icons" aria-hidden="true">info</span></span>
+          <span>Open Info Modal</span>
+        </button>
+        <button class="button is-danger is-light" commandfor="ks-modal-confirm" command="show-modal">
+          <span class="icon"><span class="material-icons" aria-hidden="true">delete</span></span>
+          <span>Open Confirm Delete</span>
+        </button>
+        <button class="button is-primary" commandfor="ks-modal-form" command="show-modal">
+          <span class="icon"><span class="material-icons" aria-hidden="true">edit</span></span>
+          <span>Open Form Modal</span>
+        </button>
+      </div>
+
+      <!-- Info modal -->
+      <dialog id="ks-modal-info" class="card" style="padding:0; min-width: 380px; max-width: 520px;">
+        <header class="card-header">
+          <p class="card-header-title">Information</p>
+          <button class="delete is-large" aria-label="close" commandfor="ks-modal-info" command="close"></button>
+        </header>
+        <div class="card-content">
+          <div class="content">
+            <p>This is a read-only info modal. No form inside — just content and a close action.</p>
+            <p class="is-size-7 has-text-grey">Native <code>&lt;dialog&gt;</code> provides focus trapping, Escape key, and backdrop automatically.</p>
+          </div>
+        </div>
+        <footer class="card-footer custom-card-footer">
+          <div class="card-footer-secondaries"></div>
+          <button class="button is-medium is-primary card-footer-primary" commandfor="ks-modal-info" command="close">
+            <span class="icon"><span class="material-icons" aria-hidden="true">check</span></span>
+            <span>OK</span>
+          </button>
+        </footer>
+      </dialog>
+
+      <!-- Confirm delete modal -->
+      <dialog id="ks-modal-confirm" class="card" style="padding:0; min-width: 380px; max-width: 520px;">
+        <header class="card-header">
+          <p class="card-header-title">Confirm Delete</p>
+          <button class="delete is-large" aria-label="close" commandfor="ks-modal-confirm" command="close"></button>
+        </header>
+        <div class="card-content">
+          <div class="content">
+            <p>Are you sure you want to delete <strong>Asset Alpha</strong>? This cannot be undone.</p>
+          </div>
+        </div>
+        <footer class="card-footer custom-card-footer">
+          <div class="card-footer-secondaries">
+            <button class="button is-light" commandfor="ks-modal-confirm" command="close">
+              <span class="icon"><span class="material-icons" aria-hidden="true">close</span></span>
+              <span>Cancel</span>
+            </button>
+          </div>
+          <button class="button is-medium is-danger card-footer-primary">
+            <span class="icon"><span class="material-icons" aria-hidden="true">delete</span></span>
+            <span>Delete</span>
+          </button>
+        </footer>
+      </dialog>
+
+      <!-- Form modal -->
+      <dialog id="ks-modal-form" class="card" style="padding:0; min-width: 420px; max-width: 580px;">
+        <header class="card-header">
+          <p class="card-header-title">Edit Asset Name</p>
+          <button class="delete is-large" aria-label="close" commandfor="ks-modal-form" command="close"></button>
+        </header>
+        <div class="card-content">
+          <div class="content">
+            <div class="field">
+              <label class="label" for="ks-modal-name">Name</label>
+              <div class="control">
+                <input id="ks-modal-name" class="input is-family-monospace" type="text" value="asset-alpha">
+              </div>
+            </div>
+            <div class="field">
+              <label class="label" for="ks-modal-domain">Domain</label>
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <select id="ks-modal-domain">
+                    <option>Operations</option>
+                    <option>Finance</option>
+                    <option>HR</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <footer class="card-footer custom-card-footer">
+          <div class="card-footer-secondaries">
+            <button class="button is-light" commandfor="ks-modal-form" command="close">
+              <span class="icon"><span class="material-icons" aria-hidden="true">close</span></span>
+              <span>Cancel</span>
+            </button>
+            <button type="reset" class="button is-light">
+              <span class="icon"><span class="material-icons" aria-hidden="true">file_copy</span></span>
+              <span>Reset</span>
+            </button>
+          </div>
+          <button class="button is-medium is-primary card-footer-primary">
+            <span class="icon"><span class="material-icons" aria-hidden="true">save</span></span>
+            <span>Save</span>
+          </button>
+        </footer>
+      </dialog>
+
+      <script>
+        /* commandfor / command polyfill for browsers without native support */
+        document.addEventListener('click', (e) => {
+          const btn = e.target.closest('[commandfor]');
+          if (!btn) return;
+          const dialog = document.getElementById(btn.getAttribute('commandfor'));
+          if (!dialog) return;
+          const cmd = btn.getAttribute('command');
+          if (cmd === 'show-modal') dialog.showModal();
+          else if (cmd === 'close') dialog.close();
+        });
+      </script>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         LOADING STATES
+    ════════════════════════════════════════════════════════════ -->
+    <section id="loading" class="ks-section">
+      <h2 class="title is-5 mb-4">Loading States — HTMX Indicators & Skeletons</h2>
+      <p class="is-size-7 has-text-grey mb-4">The <code>.htmx-indicator</code> is hidden by default and shown while an HTMX request is in flight. Pair with Bulma <code>.skeleton-block</code> for layout-preserving loading states.</p>
+
+      <div class="ks-demo-box">
+        <p class="ks-label">Skeleton blocks (simulate loading)</p>
+        <div class="skeleton-block mb-2" style="width:100%;height:2rem;"></div>
+        <div class="skeleton-block mb-2" style="width:75%;height:2rem;"></div>
+        <div class="skeleton-block mb-2" style="width:90%;height:2rem;"></div>
+        <div class="skeleton-block" style="width:50%;height:2rem;"></div>
+      </div>
+
+      <div class="ks-demo-box mt-4">
+        <p class="ks-label">HTMX-triggered fragment load</p>
+        <div class="ks-row mb-3">
+          <button class="button is-link is-light is-small"
+                  hx-get="{% url 'kitchen_sink_dummy_htmx_fragment' %}"
+                  hx-target="#ks-fragment-target"
+                  hx-swap="innerHTML"
+                  hx-indicator="#ks-frag-skeleton">
+            <span class="icon"><span class="material-icons" aria-hidden="true">refresh</span></span>
+            <span>Load Fragment</span>
+          </button>
+        </div>
+        <div id="ks-frag-skeleton" class="htmx-indicator mb-2">
+          <div class="skeleton-block" style="width:100%;height:80px;"></div>
+        </div>
+        <div id="ks-fragment-target">
+          <p class="has-text-grey is-size-7">Click "Load Fragment" above to fetch a server-rendered fragment via HTMX.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         TABS
+    ════════════════════════════════════════════════════════════ -->
+    <section id="tabs" class="ks-section">
+      <h2 class="title is-5 mb-4">Tabs — inside a card</h2>
+      <p class="is-size-7 has-text-grey mb-3">Tabs live <strong>inside</strong> the card, directly below the header. Always <code>is-boxed</code>, always left-justified. Skip when there is only one section.</p>
+
+      <div class="card">
+        <header class="card-header">
+          <p class="card-header-title">Editor Role</p>
+        </header>
+        <div class="card-content" style="padding-top: 0.75rem; padding-bottom: 0;">
+          <div class="tabs is-boxed">
+            <ul>
+              <li class="is-active"><a>Details</a></li>
+              <li><a>Permissions</a></li>
+              <li><a>History</a></li>
+              <li><a>Attachments</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="card-content">
+          <p class="has-text-grey is-size-7">… active-tab panel content …</p>
+        </div>
+        <footer class="card-footer custom-card-footer">
+          <div class="card-footer-secondaries">
+            <a class="button is-light">
+              <span class="icon"><span class="material-icons" aria-hidden="true">close</span></span>
+              <span>Cancel</span>
+            </a>
+          </div>
+          <button class="button is-medium is-primary card-footer-primary">
+            <span class="icon"><span class="material-icons" aria-hidden="true">save</span></span>
+            <span>Save</span>
+          </button>
+        </footer>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         EMPTY STATES
+    ════════════════════════════════════════════════════════════ -->
+    <section id="empty-states" class="ks-section">
+      <h2 class="title is-5 mb-4">Empty States</h2>
+      <p class="is-size-7 has-text-grey mb-3">Explain why there is no data and the next step. The primary CTA lives in the card footer at <strong>full width</strong> (no secondaries column).</p>
+
+      <div class="card" style="max-width: 780px;">
+        <div class="card-content has-text-centered py-6">
+          <span class="material-icons has-text-grey-light" style="font-size: 3rem;" aria-hidden="true">inventory_2</span>
+          <p class="title is-5 mt-3">No assets yet</p>
+          <p class="has-text-grey">You haven't created any assets. Add one to get started.</p>
+        </div>
+        <footer class="card-footer">
+          <button class="button is-primary is-medium" style="width: 100%; border-radius: 0;">
+            <span class="icon"><span class="material-icons" aria-hidden="true">add</span></span>
+            <span>Create Asset</span>
+          </button>
+        </footer>
+      </div>
+
+      <p class="ks-label mt-5">Empty state for a list view (inside an existing card)</p>
+      <div class="card" style="max-width: 720px;">
+        <header class="card-header">
+          <p class="card-header-title">Assets</p>
+        </header>
+        <div class="card-content has-text-centered py-5">
+          <span class="material-icons has-text-grey-light" style="font-size: 2.25rem;" aria-hidden="true">search_off</span>
+          <p class="has-text-grey mt-2">No matching assets.</p>
+        </div>
+        <footer class="card-footer">
+          <button class="button is-medium is-primary" style="width: 100%; border-radius: 0;">
+            <span class="icon"><span class="material-icons" aria-hidden="true">add</span></span>
+            <span>Create your first asset</span>
+          </button>
+        </footer>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         BREADCRUMBS
+    ════════════════════════════════════════════════════════════ -->
+    <section id="breadcrumbs" class="ks-section">
+      <h2 class="title is-5 mb-4">Breadcrumbs</h2>
+      <p class="is-size-7 has-text-grey mb-3">Every page must have breadcrumbs back to the app root. Error pages (403/404/500) too.</p>
+
+      <nav class="breadcrumb" aria-label="breadcrumbs">
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="#">Administration</a></li>
+          <li><a href="#">Roles</a></li>
+          <li class="is-active"><a aria-current="page">Editor Role</a></li>
+        </ul>
+      </nav>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         PAGINATION
+    ════════════════════════════════════════════════════════════ -->
+    <section id="pagination" class="ks-section">
+      <h2 class="title is-5 mb-4">Pagination</h2>
+
+      <nav class="pagination" role="navigation" aria-label="pagination">
+        <a class="pagination-previous">Previous</a>
+        <a class="pagination-next">Next</a>
+        <ul class="pagination-list">
+          <li><a class="pagination-link" aria-label="Go to page 1">1</a></li>
+          <li><span class="pagination-ellipsis">&hellip;</span></li>
+          <li><a class="pagination-link" aria-label="Go to page 4">4</a></li>
+          <li><a class="pagination-link is-current" aria-label="Page 5" aria-current="page">5</a></li>
+          <li><a class="pagination-link" aria-label="Go to page 6">6</a></li>
+          <li><span class="pagination-ellipsis">&hellip;</span></li>
+          <li><a class="pagination-link" aria-label="Go to page 12">12</a></li>
+        </ul>
+      </nav>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         HTMX DEMO
+    ════════════════════════════════════════════════════════════ -->
+    <section id="htmx-demo" class="ks-section">
+      <h2 class="title is-5 mb-4">HTMX Patterns Demo</h2>
+
+      <p class="ks-label">format= density switcher</p>
+      <p class="is-size-7 has-text-grey mb-3">Same canonical URL, different <code>format=</code> query value. Never combine density + <code>htmx-*</code> values.</p>
+      <div class="tags mb-4">
+        <span class="tag has-addons">
+          <span class="tag is-dark">GET</span>
+          <span class="tag is-primary">/assets?format=condensed</span>
+        </span>
+        <span class="tag has-addons">
+          <span class="tag is-dark">GET</span>
+          <span class="tag is-info">/assets?format=medium</span>
+        </span>
+        <span class="tag has-addons">
+          <span class="tag is-dark">GET</span>
+          <span class="tag is-link">/assets?format=large</span>
+        </span>
+      </div>
+
+      <p class="ks-label">HTMX fragment format values</p>
+      <div class="tags mb-4">
+        <span class="tag has-addons">
+          <span class="tag is-dark">GET</span>
+          <span class="tag is-warning">/assets?format=htmx-search-results</span>
+        </span>
+        <span class="tag has-addons">
+          <span class="tag is-dark">GET</span>
+          <span class="tag is-warning">/assets?format=htmx-focused</span>
+        </span>
+      </div>
+
+      <p class="ks-label">OOB success toast pattern</p>
+      <div class="notification is-success is-light is-size-7">
+        <strong>OOB swap pattern:</strong> POST → 303 redirect → HTMX fetches full page → <code>hx-select</code> extracts component → OOB swap injects <code>#toast-container</code> success message.
+      </div>
+
+      <p class="ks-label mt-4">Session draft flow</p>
+      <div class="notification is-info is-light is-size-7">
+        <strong>Multi-step on one URL:</strong> persist draft in <code>request.session['event_draft']</code>. Each sub-component POSTs to update session (no DB commit). Full page at same URL always restores state — F5 rule satisfied.
+      </div>
+    </section>
+
+  </main>
+</div>
+</body>
+</html>

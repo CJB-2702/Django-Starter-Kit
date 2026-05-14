@@ -12,13 +12,13 @@
   </div>
   {% if can_edit %}
   <div class="buttons">
-    <a class="button is-link" href="{% url 'permission_group_edit' group.pk %}">
+    <a class="button is-link is-medium" href="{% url 'permission_group_edit' group.pk %}">
       <span class="icon"><span class="material-icons" aria-hidden="true">edit</span></span>
       <span>Edit</span>
     </a>
     <form method="post" action="{% url 'permission_group_delete' group.pk %}" onsubmit="return confirm('Delete this permission group? Users lose its permissions, and any roles referencing it lose the link.');" class="is-inline-block">
       {% csrf_token %}
-      <button class="button is-danger is-light" type="submit">
+      <button class="button is-medium is-danger is-light" type="submit">
         <span class="icon"><span class="material-icons" aria-hidden="true">delete</span></span>
         <span>Delete</span>
       </button>

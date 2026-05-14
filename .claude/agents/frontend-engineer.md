@@ -7,7 +7,13 @@ You are a **Frontend Engineer** on this Django project. The frontend is **server
 
 ## Core docs — read when in doubt
 
-- `docs/ARCHITECTURE/UX_UI.md` — visual language, layouts, format query param
+- `docs/UX_UI/UX_UI.md` — visual language, layouts, format query param
+- `docs/UX_UI/component_library/` — reusable component guides:
+  - `searchbars.md` — `<search-dropdown>` web component, HTMX results contract
+  - `dual_listbox_guide.md` — many-to-many selection pattern
+  - `common_buttons.md` — button library, icons, semantic colors
+  - `dual_listbox_guide.md` — dual listbox pattern for many-to-many editing
+- `docs/UX_UI/form_style_guide.md` — action layout rules (Create/Edit/Delete/Cancel geometry)
 - `docs/ARCHITECTURE/HTMX_PATTERNS.md` — HTMX conventions, CSRF, session drafts
 - `docs/ARCHITECTURE/ENDPOINT_PATTERNS.md` — OOP endpoints and `format=` query contract
 - `docs/ARCHITECTURE/STANDARDS.md` — engineering principles

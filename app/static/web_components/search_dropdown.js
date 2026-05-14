@@ -17,31 +17,30 @@ class SearchDropdown extends HTMLElement {
           display: block;
           position: relative;
           width: 100%;
-          font-family: BlinkMacSystemFont, -apple-system, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+          font-family: var(--app-font-mono-input, monospace);
         }
         input {
           width: 100%;
           box-sizing: border-box;
-          align-items: center;
-          border: 1px solid #dbdbdb;
-          border-radius: 4px;
+          border: 1px solid var(--bulma-border);
+          border-radius: var(--bulma-radius);
           box-shadow: inset 0 0.0625em 0.125em rgba(10, 10, 10, 0.05);
-          display: inline-flex;
+          display: block;
+          font-family: var(--app-font-mono-input, monospace);
           font-size: 1rem;
           height: 2.5em;
-          justify-content: flex-start;
           line-height: 1.5;
           padding: calc(0.5em - 1px) calc(0.75em - 1px);
-          background-color: #fff;
-          color: #363636;
+          background-color: var(--bulma-scheme-main);
+          color: var(--bulma-text);
         }
-        input:hover { border-color: #b5b5b5; }
+        input:hover { border-color: var(--bulma-border-hover, var(--bulma-text-weak)); }
         input:focus {
-          border-color: #485fc7;
-          box-shadow: 0 0 0 0.125em rgba(72, 95, 199, 0.25);
+          border-color: var(--bulma-primary);
+          box-shadow: 0 0 0 0.125em hsla(var(--bulma-primary-h), var(--bulma-primary-s), var(--bulma-primary-l), 0.25);
           outline: none;
         }
-        input::placeholder { color: rgba(54, 54, 54, 0.3); }
+        input::placeholder { color: var(--bulma-text-weak); opacity: 0.6; }
         .dropdown {
           position: absolute;
           left: 0;
@@ -52,9 +51,10 @@ class SearchDropdown extends HTMLElement {
           list-style: none;
           margin: 0;
           padding: 0.5rem 0;
-          background-color: #fff;
-          border-radius: 4px;
-          box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.02);
+          background-color: var(--bulma-scheme-main);
+          border: 1px solid var(--bulma-border);
+          border-radius: var(--bulma-radius);
+          box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.25), 0 0 0 1px var(--bulma-border-weak);
           max-height: 16rem;
           overflow-y: auto;
         }
@@ -64,19 +64,19 @@ class SearchDropdown extends HTMLElement {
           cursor: pointer;
           font-size: 0.875rem;
           line-height: 1.4;
-          color: #363636;
+          color: var(--bulma-text);
         }
         ::slotted(li):hover,
         ::slotted(li):focus {
-          background-color: #f5f5f5;
+          background-color: var(--bulma-scheme-main-bis);
         }
         ::slotted(li.is-disabled),
         ::slotted(li[aria-disabled="true"]) {
           cursor: default;
-          color: #7a7a7a;
+          color: var(--bulma-text-weak);
         }
         ::slotted(li.is-family-monospace) {
-          font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+          font-family: var(--app-font-mono-input, monospace);
           font-size: 0.8125rem;
         }
       </style>

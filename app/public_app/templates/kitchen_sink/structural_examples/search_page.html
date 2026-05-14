@@ -1,0 +1,216 @@
+{% extends "kitchen_sink/structural_examples/_base.html" %}
+
+{% block title %}Search Page Example{% endblock %}
+{% block active_portal %}inventory{% endblock %}
+{% block active_sublink %}Part Demands{% endblock %}
+
+{% block sidebar %}
+  <p class="sidebar-section-label">Inventory</p>
+  <a href="#" class="sidebar-link">Stock Levels</a>
+  <a href="#" class="sidebar-link">Locations</a>
+  <a href="#" class="sidebar-link">Part Numbers</a>
+  <a href="#" class="sidebar-link">Transfers</a>
+
+  <div class="sidebar-divider"></div>
+
+  <p class="sidebar-section-label">Demand Management</p>
+  <a href="#" class="sidebar-link is-active">Part Demands</a>
+  <a href="#" class="sidebar-link">Approval Queue</a>
+  <a href="#" class="sidebar-link">Open Orders</a>
+  <a href="#" class="sidebar-link">Received Today</a>
+
+  <div class="sidebar-divider"></div>
+
+  <p class="sidebar-section-label">Reference</p>
+  <a href="#" class="sidebar-link">Suppliers</a>
+  <a href="#" class="sidebar-link">Catalog</a>
+{% endblock %}
+
+{% block content %}
+  <!-- ── Page header (full width) ── -->
+  <div class="page-header">
+    <div class="page-header-title-wrap">
+      <div class="page-header-icon">📋</div>
+      <div>
+        <h1 class="page-title">Part Demands</h1>
+        <p class="page-subtitle">View and manage part demands across all types</p>
+      </div>
+    </div>
+    <div class="page-header-actions">
+      <a href="{% url 'kitchen_sink' %}" class="button is-small is-light">← Kitchen Sink</a>
+      <a href="#" class="button is-small is-light">← Back to Inventory Portal</a>
+      <button class="button is-small is-warning">⊕ Create New Demand</button>
+    </div>
+  </div>
+
+  <!-- ── Body: full width (no quick actions rail on search pages) ── -->
+  <div class="body-grid full-width">
+
+    <!-- Filters card -->
+    <div class="pc">
+      <div class="pc-header"><div class="pc-header-title"><span class="icon">⌕</span>Filters</div></div>
+      <div class="pc-body">
+        <div class="columns is-multiline is-variable is-3">
+          <div class="column is-3">
+            <label class="label is-small">Part Number</label>
+            <input class="input is-small" type="text" placeholder="Search part number…">
+          </div>
+          <div class="column is-3">
+            <label class="label is-small">Part Name</label>
+            <input class="input is-small" type="text" placeholder="Search part name…">
+          </div>
+          <div class="column is-3">
+            <label class="label is-small">Demand Type</label>
+            <div class="select is-small is-fullwidth"><select><option>All Types</option><option>Maintenance</option><option>Replenishment</option></select></div>
+          </div>
+          <div class="column is-3">
+            <label class="label is-small">Priority</label>
+            <div class="select is-small is-fullwidth"><select><option>All Priorities</option><option>Low</option><option>Medium</option><option>High</option></select></div>
+          </div>
+
+          <div class="column is-4">
+            <label class="label is-small">Approval Status</label>
+            <div class="select is-small is-fullwidth"><select><option>All Approval Statuses</option><option>Planned</option><option>Approved</option><option>Rejected</option></select></div>
+          </div>
+          <div class="column is-4">
+            <label class="label is-small">Issue Status</label>
+            <div class="select is-small is-fullwidth"><select><option>All Issue Statuses</option><option>Not Issued</option><option>Issued</option></select></div>
+          </div>
+          <div class="column is-4">
+            <label class="label is-small">Order Status</label>
+            <div class="select is-small is-fullwidth"><select><option>All Order Statuses</option><option>Not Ordered</option><option>Ordered</option><option>Received</option></select></div>
+          </div>
+
+          <div class="column is-4">
+            <label class="label is-small">Requested By</label>
+            <div class="select is-small is-fullwidth"><select><option>All Users</option></select></div>
+          </div>
+          <div class="column is-4">
+            <label class="label is-small">Asset</label>
+            <div class="select is-small is-fullwidth"><select><option>All Assets</option></select></div>
+          </div>
+          <div class="column is-4">
+            <label class="label is-small">Search</label>
+            <input class="input is-small" type="text" placeholder="Search notes, part number…">
+          </div>
+
+          <div class="column is-3">
+            <label class="label is-small">Created From</label>
+            <input class="input is-small" type="date">
+          </div>
+          <div class="column is-3">
+            <label class="label is-small">Created To</label>
+            <input class="input is-small" type="date">
+          </div>
+        </div>
+
+        <div class="buttons mt-2">
+          <button class="button is-small is-info">⌕ Apply Filters</button>
+          <button class="button is-small is-light">✕ Clear Filters</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results card (full width) -->
+    <div class="pc">
+      <div class="pc-header">
+        <div class="pc-header-title"><span class="icon">▤</span>Part Demands (4)</div>
+        <div>
+          <span class="has-text-grey is-size-7">Showing 1–4 of 4</span>
+        </div>
+      </div>
+      <div class="pc-body is-flush">
+        <table class="table is-fullwidth is-hoverable is-size-7" style="margin:0;">
+          <thead>
+            <tr>
+              <th>ID</th><th>Part</th><th>Type</th><th>Quantity</th><th>Priority</th>
+              <th>Approval</th><th>Issue Status</th><th>Order Status</th>
+              <th>Origin</th><th>Requested By</th><th>Created</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>#4</td>
+              <td><strong>OIL-001</strong><br><span class="has-text-grey">Engine Oil 5W-30</span></td>
+              <td><span class="tag is-info is-light">Maintenance</span></td>
+              <td>10.0</td>
+              <td><span class="tag is-info">Medium</span></td>
+              <td><span class="tag is-warning">Planned</span></td>
+              <td><span class="tag is-light">Not Issued</span></td>
+              <td><span class="tag is-light">Not Ordered</span></td>
+              <td>Add Engine Oil 5W-30<br><span class="has-text-grey">VTC-002</span></td>
+              <td>—</td>
+              <td>2026-05-14</td>
+              <td>
+                <a href="#" class="button is-small is-info is-light">👁 View</a>
+                <a href="#" class="button is-small is-light">✏ Edit</a>
+              </td>
+            </tr>
+            <tr>
+              <td>#3</td>
+              <td><strong>FIL-001</strong><br><span class="has-text-grey">Oil Filter</span></td>
+              <td><span class="tag is-info is-light">Maintenance</span></td>
+              <td>1.0</td>
+              <td><span class="tag is-info">Medium</span></td>
+              <td><span class="tag is-warning">Planned</span></td>
+              <td><span class="tag is-light">Not Issued</span></td>
+              <td><span class="tag is-light">Not Ordered</span></td>
+              <td>Replace Oil Filter<br><span class="has-text-grey">VTC-002</span></td>
+              <td>—</td>
+              <td>2026-05-14</td>
+              <td>
+                <a href="#" class="button is-small is-info is-light">👁 View</a>
+                <a href="#" class="button is-small is-light">✏ Edit</a>
+              </td>
+            </tr>
+            <tr>
+              <td>#2</td>
+              <td><strong>BRK-003</strong><br><span class="has-text-grey">Brake Pad Set</span></td>
+              <td><span class="tag is-info is-light">Maintenance</span></td>
+              <td>4.0</td>
+              <td><span class="tag is-danger">High</span></td>
+              <td><span class="tag is-success">Approved</span></td>
+              <td><span class="tag is-light">Not Issued</span></td>
+              <td><span class="tag is-info is-light">Ordered</span></td>
+              <td>Brake Inspection<br><span class="has-text-grey">FTK-001</span></td>
+              <td>alice</td>
+              <td>2026-05-12</td>
+              <td>
+                <a href="#" class="button is-small is-info is-light">👁 View</a>
+                <a href="#" class="button is-small is-light">✏ Edit</a>
+              </td>
+            </tr>
+            <tr>
+              <td>#1</td>
+              <td><strong>TIR-007</strong><br><span class="has-text-grey">Tire 245/70R17</span></td>
+              <td><span class="tag is-warning is-light">Replenishment</span></td>
+              <td>8.0</td>
+              <td><span class="tag is-info">Medium</span></td>
+              <td><span class="tag is-success">Approved</span></td>
+              <td><span class="tag is-success is-light">Issued</span></td>
+              <td><span class="tag is-success is-light">Received</span></td>
+              <td>Stock Replenishment<br><span class="has-text-grey">Warehouse-A</span></td>
+              <td>bob</td>
+              <td>2026-05-10</td>
+              <td>
+                <a href="#" class="button is-small is-info is-light">👁 View</a>
+                <a href="#" class="button is-small is-light">✏ Edit</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pc-body" style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--bulma-border-weak);">
+        <span class="has-text-grey is-size-7">4 results</span>
+        <nav class="pagination is-small">
+          <a class="pagination-previous" disabled>← Prev</a>
+          <a class="pagination-next" disabled>Next →</a>
+          <ul class="pagination-list">
+            <li><a class="pagination-link is-current">1</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+  </div>
+{% endblock %}

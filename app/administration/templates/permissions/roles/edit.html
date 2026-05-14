@@ -7,7 +7,7 @@
 {% endblock %}
 {% block content %}
 <div class="mb-4">
-  <a class="button is-light is-small" href="{% url 'role_detail' role.slug %}">
+  <a class="button is-light is-medium" href="{% url 'role_detail' role.slug %}">
     <span class="icon"><span class="material-icons" aria-hidden="true">arrow_back</span></span>
     <span>Back to role</span>
   </a>
@@ -33,7 +33,7 @@
           <textarea class="textarea" id="role-edit-description" name="description" rows="2">{{ role.description }}</textarea>
         </div>
       </div>
-      <button class="button is-link is-small" type="submit">Save details</button>
+      <button class="button is-medium is-link" type="submit">Save details</button>
     </form>
 
     <form method="post" class="mb-4">
@@ -41,13 +41,13 @@
       <input type="hidden" name="action" value="set_active">
       {% if role.is_active %}
       <input type="hidden" name="is_active" value="0">
-      <button class="button is-warning is-light is-small" type="submit">
+      <button class="button is-medium is-warning is-light" type="submit">
         <span class="icon"><span class="material-icons" aria-hidden="true">visibility_off</span></span>
         <span>Deactivate role</span>
       </button>
       {% else %}
       <input type="hidden" name="is_active" value="1">
-      <button class="button is-success is-light is-small" type="submit">
+      <button class="button is-medium is-success is-light" type="submit">
         <span class="icon"><span class="material-icons" aria-hidden="true">visibility</span></span>
         <span>Activate role</span>
       </button>
@@ -71,7 +71,7 @@
           </div>
         </div>
       </div>
-      <button class="button is-link is-small" type="submit">Save parent</button>
+      <button class="button is-medium is-link" type="submit">Save parent</button>
     </form>
     {% else %}
     <p class="is-size-7 has-text-grey-dark mt-3">

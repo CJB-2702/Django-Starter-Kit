@@ -3,3 +3,5 @@ docs/users_and_passwords.md
 *.sqlite3
 *.pyc
 *__pycache__
+
+.claude/projects/*

@@ -1,4 +1,5 @@
 from app.administration.models.auth.allowed_email_domains import AllowedEmailDomain
+from app.administration.models.auth.user import User
 from app.administration.models.data_ownership.divisions import Division
 from app.administration.models.data_ownership.domain_relationships import (
     DivisionOrganisation,
@@ -20,6 +21,7 @@ from app.administration.models.permissions import Role, RoleItem, UserRole
 
 __all__ = [
     "AllowedEmailDomain",
+    "User",
     "Division",
     "DivisionOrganisation",
     "Domain",

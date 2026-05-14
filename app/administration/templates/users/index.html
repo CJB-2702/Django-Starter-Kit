@@ -10,9 +10,14 @@
 <form method="get" class="mb-4">
   <div class="columns is-variable is-2">
     <div class="column is-5">
-      <div class="field">
-        <div class="control">
+      <div class="field has-addons">
+        <div class="control is-expanded">
           <input class="input" type="search" name="q" value="{{ query }}" placeholder="Filter by username" autocomplete="off">
+        </div>
+        <div class="control">
+          <button type="submit" class="button is-medium is-link is-light" title="Search">
+            <span class="icon"><span class="material-icons" aria-hidden="true">search</span></span>
+          </button>
         </div>
       </div>
     </div>
@@ -43,7 +48,10 @@
       </div>
     </div>
     <div class="column is-1">
-      <button type="submit" class="button is-link is-light is-fullwidth">Filter</button>
+      <button type="submit" class="button is-medium is-link is-light is-fullwidth">
+        <span class="icon"><span class="material-icons" aria-hidden="true">filter_list</span></span>
+        <span>Filter</span>
+      </button>
     </div>
   </div>
 </form>
@@ -70,7 +78,7 @@
             <td>{% if u.is_active %}<span class="tag is-success is-light">yes</span>{% else %}<span class="tag is-light">no</span>{% endif %}</td>
             <td>{% if u.is_staff %}<span class="tag is-info is-light">yes</span>{% else %}<span class="tag is-light">no</span>{% endif %}</td>
             <td class="has-text-right">
-              <a class="button is-link is-light is-small" href="{% url 'user_detail' u.pk %}">
+              <a class="button is-link is-light is-medium" href="{% url 'user_detail' u.pk %}">
                 <span class="icon"><span class="material-icons" aria-hidden="true">visibility</span></span>
                 <span>View</span>
               </a>
@@ -84,7 +92,7 @@
     </div>
 
     {% if max_page > 1 %}
-    <nav class="pagination is-small" role="navigation" aria-label="pagination">
+    <nav class="pagination" role="navigation" aria-label="pagination">
       {% if page > 1 %}
       <a class="pagination-previous" href="?q={{ query }}&active={{ active_filter }}&staff={{ staff_filter }}&page={{ page|add:'-1' }}">Previous</a>
       {% else %}

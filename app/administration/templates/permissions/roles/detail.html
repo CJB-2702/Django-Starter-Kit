@@ -16,13 +16,13 @@
   </div>
   {% if can_edit %}
   <div class="buttons">
-    <a class="button is-link" href="{% url 'role_edit' role.slug %}">
+    <a class="button is-link is-medium" href="{% url 'role_edit' role.slug %}">
       <span class="icon"><span class="material-icons" aria-hidden="true">edit</span></span>
       <span>Edit</span>
     </a>
     <form method="post" action="{% url 'role_delete' role.slug %}" onsubmit="return confirm('Delete this role? Child roles will cascade-delete and all users lose this role.');" class="is-inline-block">
       {% csrf_token %}
-      <button class="button is-danger is-light" type="submit">
+      <button class="button is-medium is-danger is-light" type="submit">
         <span class="icon"><span class="material-icons" aria-hidden="true">delete</span></span>
         <span>Delete</span>
       </button>

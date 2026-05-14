@@ -1,0 +1,116 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Events{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/bulma.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  <script src="{% static 'js/htmx.min.js' %}" defer></script>
+  <style>
+    .ev-sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      background-color: var(--bulma-scheme-main-bis);
+      border-right: 1px solid var(--bulma-border);
+    }
+    .ev-sidebar .menu-label {
+      font-size: 0.65rem;
+      color: var(--bulma-text-weak);
+    }
+    .ev-sidebar .menu-list a {
+      font-size: 0.82rem;
+      padding: 0.2em 0.5em;
+      color: var(--bulma-text);
+    }
+    .ev-sidebar .menu-list a:hover,
+    .ev-sidebar .menu-list a.is-active {
+      background-color: var(--bulma-background);
+      color: var(--bulma-text-strong);
+    }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<script>
+  document.body.addEventListener('htmx:configRequest', function(event) {
+    event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+  });
+</script>
+
+<section class="hero is-dark">
+  <div class="hero-body py-4">
+    <div class="container is-fluid">
+      <div class="is-flex is-justify-content-space-between is-align-items-center">
+        <div>
+          <p class="title is-5 mb-1">
+            <a href="{% url 'event_index' %}" class="has-text-white">Events</a>
+          </p>
+          <p class="subtitle is-7 has-text-grey-light">{% block subtitle %}Event management{% endblock %}</p>
+        </div>
+        <div class="is-flex is-align-items-center">
+          <p class="is-size-7 has-text-grey-light mr-4">
+            Welcome, <strong class="has-text-white">{{ request.user.username }}</strong>
+          </p>
+          <form method="post" action="{% url 'logout' %}" class="is-inline-block">
+            {% csrf_token %}
+            <button class="button is-medium is-light" type="submit" aria-label="Log out">
+              <span class="icon"><span class="material-icons" aria-hidden="true">logout</span></span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section py-4">
+  <div class="container is-fluid">
+    <div class="columns" style="margin: 0;">
+
+      <aside class="column is-3-tablet is-2-desktop ev-sidebar" style="padding: 0;">
+        <nav
+          class="menu p-4"
+          hx-boost="true"
+          hx-target="#ev-main-content"
+          hx-select="#ev-main-content"
+          hx-push-url="true"
+        >
+          <p class="menu-label mt-2">Events</p>
+          <ul class="menu-list">
+            <li><a href="{% url 'event_index' %}">All Events</a></li>
+            <li><a href="{% url 'event_create' %}">New Event</a></li>
+          </ul>
+
+          <p class="menu-label">Other Portals</p>
+          <ul class="menu-list">
+            <li><a href="{% url 'administration_index' %}">Administration</a></li>
+          </ul>
+        </nav>
+      </aside>
+
+      <main id="ev-main-content" class="column" style="padding: 1.5rem;">
+
+        {% if messages %}
+        <div class="mb-4">
+          {% for message in messages %}
+          <div class="notification {% if message.tags == 'error' %}is-danger{% elif message.tags == 'warning' %}is-warning{% elif message.tags == 'success' %}is-success{% else %}is-info{% endif %} is-light py-2 px-4">
+            {{ message }}
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+      </main>
+
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

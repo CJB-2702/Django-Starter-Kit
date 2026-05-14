@@ -12,6 +12,6 @@ Preparatory design and specification for the Django + Bulma + HTMX asset managem
 | [ARCHITECTURE.md](ARCHITECTURE.md) | Apps, layers, request flow |
 | [DJANGO_BUILTINS.md](DJANGO_BUILTINS.md) | Django built-in module usage map |
 | [HTMX_PATTERNS.md](HTMX_PATTERNS.md) | HTMX conventions and partial responses |
-| [UX_UI.md](UX_UI.md) | Bulma and accessibility baseline |
+| [UX_UI/](UX_UI/readme.md) | Bulma visual language, accessibility baseline, and component library |
 | [SECURITY_AND_AUDIT.md](SECURITY_AND_AUDIT.md) | Threat sketch, sessions, audit events |
 | [DECISIONS/](DECISIONS/) | Architecture decision records |

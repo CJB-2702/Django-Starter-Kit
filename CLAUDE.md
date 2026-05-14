@@ -26,6 +26,9 @@ python dev_tools/generate_env.py
 ```
 app/
   administration/       ← admin sub-app (RBAC, ownership groups, user assignments)
+  events/               ← event tracking sub application for event standardization and file managment
+  <applications>/       ← various core applications see domain folder for descriptions
+  media/                ← built in django file storage location
   config/               ← settings, root urls
   public_app/           ← unauthenticated routes only (login, signup, etc.)
   static/
@@ -52,17 +55,33 @@ Each sub-app under `app/` follows the layered structure:
 
 Read these when in doubt — they are authoritative:
 
+### Architecture
+
 - [docs/ARCHITECTURE/ARCHITECTURE.md](docs/ARCHITECTURE/ARCHITECTURE.md) — folder layout and layer responsibilities
 - [docs/ARCHITECTURE/LAYER_RULES.md](docs/ARCHITECTURE/LAYER_RULES.md) — reads vs writes
 - [docs/ARCHITECTURE/OOP_CONTROL_PATTERNS.md](docs/ARCHITECTURE/OOP_CONTROL_PATTERNS.md) — class suffix vocabulary
 - [docs/ARCHITECTURE/MODEL_PATTERNS.md](docs/ARCHITECTURE/MODEL_PATTERNS.md) — model rules
 - [docs/ARCHITECTURE/ENDPOINT_PATTERNS.md](docs/ARCHITECTURE/ENDPOINT_PATTERNS.md) — OOP endpoint design
 - [docs/ARCHITECTURE/HTMX_PATTERNS.md](docs/ARCHITECTURE/HTMX_PATTERNS.md) — HTMX conventions
-- [docs/ARCHITECTURE/UX_UI.md](docs/ARCHITECTURE/UX_UI.md) — visual language, density (`format=`)
 - [docs/ARCHITECTURE/STANDARDS.md](docs/ARCHITECTURE/STANDARDS.md) — engineering principles
-- [docs/DOMAIN/admin/RBAC.md](docs/DOMAIN/admin/RBAC.md) — Django permission system, group templates
-- [docs/DOMAIN/admin/DATA_OWNERSHIP.md](docs/DOMAIN/admin/DATA_OWNERSHIP.md) — Division → Organization → Ownership Group
-- [docs/DOMAIN/core/CORE_MODELS.md](docs/DOMAIN/core/CORE_MODELS.md) — core entity dependency graph
+- [docs/ARCHITECTURE/COMMON_UI_COMPONENTS.md](docs/ARCHITECTURE/COMMON_UI_COMPONENTS.md) — shared UI component patterns
+- [docs/ARCHITECTURE/SEEDING.md](docs/ARCHITECTURE/SEEDING.md) — dev seed strategy
+- [docs/ARCHITECTURE/TESTS.md](docs/ARCHITECTURE/TESTS.md) — testing conventions
+
+### UX / UI
+
+- [docs/UX_UI/UX_UI.md](docs/UX_UI/UX_UI.md) — visual language, density (`format=`)
+- [docs/UX_UI/form_style_guide.md](docs/UX_UI/form_style_guide.md) — action layout rules for forms and cards
+- [docs/UX_UI/component_library/](docs/UX_UI/component_library/) — component guides: `common_buttons`, `dual_listbox_guide`, `image carosel`, `modals_dialogs_usage`, `searchbars`
+
+### Domain
+
+- [docs/DOMAIN/admin/](docs/DOMAIN/admin/) — RBAC, data ownership, users, roles, domain templates, password policy
+  - [docs/DOMAIN/admin/RBAC.md](docs/DOMAIN/admin/RBAC.md) — Django permission system, group templates
+- [docs/DOMAIN/core/](docs/DOMAIN/core/) — core entity dependency graph
+- [docs/DOMAIN/events/](docs/DOMAIN/events/) — events domain
+- [docs/DOMAIN/orgchart/](docs/DOMAIN/orgchart/) — divisions, org hierarchy
+- [docs/DOMAIN/tech_debt/](docs/DOMAIN/tech_debt/) — known tech debt notes
 
 ## Personas (slash commands)
 
@@ -136,7 +155,7 @@ Before acting on a path:
 Common mistakes:
 - `docs/DOMAIN/ARCHITECTURE` → `docs/ARCHITECTURE/`
 - `docs/admin/RBAC` → `docs/DOMAIN/admin/RBAC.md`
-- `ARCHITECTURE/UX` → `docs/ARCHITECTURE/UX_UI.md`
+- `ARCHITECTURE/UX` → `docs/UX_UI/UX_UI.md`
 - `skills/backend` → `.claude/agents/backend-engineer.md`
 
 ---

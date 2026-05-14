@@ -1,0 +1,60 @@
+{% extends "events/ev_base.html" %}
+
+{% block title %}Add Comment{% endblock %}
+
+{% block content %}
+<nav class="breadcrumb is-size-7 mb-3" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="{% url 'event_index' %}">Events</a></li>
+    <li><a href="{% url 'event_detail' hash=event_hash %}">{{ event.title }}</a></li>
+    <li class="is-active"><a href="#" aria-current="page">Add Comment</a></li>
+  </ul>
+</nav>
+
+<h1 class="title is-5 mb-4">Add Comment</h1>
+
+<form method="post" enctype="multipart/form-data" style="max-width: 560px;">
+  {% csrf_token %}
+  <div class="card">
+    <div class="card-content">
+
+      <div class="field">
+        <label class="label">Comment</label>
+        <div class="control">
+          <textarea class="textarea" name="content" rows="4" placeholder="Write a comment…"></textarea>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Attachment (optional)</label>
+        <div class="file has-name">
+          <label class="file-label">
+            <input class="file-input" type="file" name="file" id="file-add"
+                   onchange="document.getElementById('file-add-name').textContent = this.files[0]?.name || 'No file chosen'">
+            <span class="file-cta">
+              <span class="file-icon"><span class="material-icons is-size-7" aria-hidden="true">attach_file</span></span>
+              <span class="file-label">Choose file…</span>
+            </span>
+            <span class="file-name" id="file-add-name">No file chosen</span>
+          </label>
+        </div>
+      </div>
+
+    </div>
+
+    <footer class="card-footer custom-card-footer">
+      <div class="card-footer-secondaries">
+        <a href="{% url 'event_detail' hash=event_hash %}" class="button is-medium is-light">
+          <span class="icon"><span class="material-icons" aria-hidden="true">close</span></span>
+          <span>Cancel</span>
+        </a>
+      </div>
+      <button class="button is-medium is-primary card-footer-primary" type="submit">
+        <span class="icon"><span class="material-icons" aria-hidden="true">send</span></span>
+        <span>Submit</span>
+      </button>
+    </footer>
+
+  </div>
+</form>
+{% endblock %}

@@ -10,7 +10,7 @@
     <p class="subtitle is-6 has-text-grey">The row-level access primitive. Every scoped row carries exactly one domain.</p>
   </div>
   {% if can_edit %}
-  <a class="button is-link" href="{% url 'domain_create' %}">
+  <a class="button is-link is-medium" href="{% url 'domain_create' %}">
     <span class="icon"><span class="material-icons" aria-hidden="true">add</span></span>
     <span>New Domain</span>
   </a>
@@ -22,8 +22,11 @@
     <div class="control is-expanded">
       <input class="input" type="search" name="q" value="{{ q }}" placeholder="Filter by name" autocomplete="off">
     </div>
-    <div class="control"><button type="submit" class="button is-link is-light">Filter</button></div>
-    {% if q %}<div class="control"><a class="button is-light" href="{% url 'domain_index' %}">Clear</a></div>{% endif %}
+    <div class="control"><button type="submit" class="button is-medium is-link is-light">
+      <span class="icon"><span class="material-icons" aria-hidden="true">filter_list</span></span>
+      <span>Filter</span>
+    </button></div>
+    {% if q %}<div class="control"><a class="button is-light is-medium" href="{% url 'domain_index' %}">Clear</a></div>{% endif %}
   </div>
 </form>
 
@@ -53,7 +56,7 @@
               {% if d.organizations.count > 3 %}<span class="tag is-light">+{{ d.organizations.count|add:"-3" }}</span>{% endif %}
             </td>
             <td class="has-text-right">
-              <a class="button is-link is-light is-small" href="{% url 'domain_detail' d.pk %}">
+              <a class="button is-link is-light is-medium" href="{% url 'domain_detail' d.pk %}">
                 <span class="icon"><span class="material-icons" aria-hidden="true">visibility</span></span>
                 <span>View</span>
               </a>
