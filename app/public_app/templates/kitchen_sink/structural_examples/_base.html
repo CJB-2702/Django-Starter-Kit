@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="{% static 'css/bulma.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
   <script defer src="{% static 'js/htmx.min.js' %}"></script>
+  <script src="{% static 'web_components/collapsable_side_bar.js' %}"></script>
   <style>
     /* ── Reset & base ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -42,37 +43,34 @@
       font-weight: 700;
       font-size: 1rem;
       letter-spacing: 0.05em;
-      border-right: 1px solid rgba(255,255,255,0.12);
       height: 100%;
       white-space: nowrap;
+      border-right: 1px solid rgba(255,255,255,0.12);
     }
-    .app-topnav-hamburger {
-      display: flex; align-items: center;
-      padding: 0 0.75rem; height: 100%;
-      cursor: pointer; opacity: 0.7;
-      border: none; background: none; color: inherit;
-    }
-    .app-topnav-hamburger:hover { opacity: 1; }
-
-    .app-portals { display: flex; height: 100%; flex: 1; }
-    .portal-tab {
+    /* ── Portal tabs ── */
+    .app-portals.tabs { flex: 1; height: 100%; margin-bottom: 0; border-bottom: none; overflow: visible; }
+    .app-portals.tabs ul { height: 100%; border-bottom: none; flex-wrap: nowrap; }
+    .app-portals.tabs li { height: 100%; position: relative; }
+    .app-portals.tabs li button.portal-tab-btn {
       display: flex; align-items: center; gap: 0.35rem;
-      padding: 0 1rem; height: 100%;
+      height: 100%; padding: 0 1rem;
       font-size: 0.8rem; font-weight: 500;
-      background: none; border: none;
-      border-bottom: 3px solid transparent;
+      border: none; border-bottom: 3px solid transparent;
       color: rgba(255,255,255,0.65);
-      cursor: pointer; white-space: nowrap;
+      white-space: nowrap; cursor: pointer; background: none;
       transition: color 0.12s, border-color 0.12s, background 0.12s;
     }
-    .portal-tab:hover { color: #fff; background: rgba(255,255,255,0.06); }
-    .portal-tab.is-active {
+    .app-portals.tabs li button.portal-tab-btn:hover {
+      color: #fff; background: rgba(255,255,255,0.06);
+    }
+    /* Active tab: when the popover inside a <li> is open, highlight the button */
+    .app-portals.tabs li:has(.portal-dropdown:popover-open) button.portal-tab-btn {
       color: #fff;
       border-bottom-color: var(--bulma-primary);
       background: rgba(255,255,255,0.04);
     }
-    .portal-tab .tab-icon { font-size: 0.9rem; opacity: 0.8; }
-    .portal-tab .chevron { font-size: 0.65rem; opacity: 0.5; margin-left: 0.1rem; }
+    .portal-tab-icon { font-size: 0.9rem; opacity: 0.8; }
+    .portal-tab-chevron { font-size: 0.65rem; opacity: 0.5; margin-left: 0.1rem; }
 
     .app-topnav-right {
       display: flex; align-items: center;
@@ -113,24 +111,28 @@
       font-size: 0.7rem; font-weight: 700; color: #fff;
     }
 
-    /* ── Portal dropdown ── */
+    /* ── Portal dropdown — shared visual style for popover ── */
     .portal-dropdown {
-      display: none;
+      /* reset UA defaults for popover */
+      border: none;
+      outline: none;
+      /* positioning — fixed layout */
+      position: fixed;
+      top: 3rem; left: 0; right: 0;
+      width: 100%; max-width: 100%;
+      margin: 0;
+      padding: 0.75rem 1.25rem;
+      /* visual */
       background: var(--bulma-scheme-invert);
       border-bottom: 2px solid var(--bulma-primary);
-      flex-shrink: 0;
-      padding: 0.75rem 1.25rem;
       z-index: 30;
     }
-    .portal-dropdown.is-open { display: block; }
     .portal-dropdown-inner { display: flex; gap: 0.25rem; flex-wrap: wrap; }
     .portal-sublink {
       display: flex; align-items: center; gap: 0.35rem;
-      padding: 0.4rem 0.85rem;
-      font-size: 0.78rem;
+      padding: 0.4rem 0.85rem; font-size: 0.78rem;
       color: rgba(255,255,255,0.7);
-      border: 1px solid rgba(255,255,255,0.1);
-      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.1); cursor: pointer;
     }
     .portal-sublink:hover { background: rgba(255,255,255,0.1); color: #fff; }
     .portal-sublink.is-active { border-color: var(--bulma-primary); color: var(--bulma-primary); }
@@ -155,82 +157,16 @@
     .app-shell .app-inpage-nav { display: none; }
     .app-shell.has-inpage-nav .app-inpage-nav { display: block; }
 
-    .app-topnav-hamburger.is-active {
-      opacity: 1;
-      background: rgba(255,255,255,0.08);
-    }
-
-    /* ── Sidebar nav toggle (||| Navigation bar) ── */
-    .sidebar-nav-toggle {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.4rem 0.75rem;
-      width: 100%;
-      border: none;
-      background: none;
-      border-bottom: 1px solid var(--bulma-border-weak);
-      color: var(--bulma-text-weak);
-      font-size: 0.68rem;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      cursor: pointer;
-      user-select: none;
-      text-align: left;
-    }
-    .sidebar-nav-toggle:hover { background: var(--bulma-background); color: var(--bulma-text); }
-    .sidebar-toggle-bars { font-size: 0.9rem; opacity: 0.65; display: inline-block; transform: rotate(90deg); }
-    .sidebar-nav-toggle .nav-expanded { display: flex; align-items: center; gap: 0.5rem; }
-    .sidebar-nav-toggle .nav-collapsed { display: none; flex-direction: column; align-items: center; width: 100%; padding-top: 0.2rem; gap: 0.15rem; }
-    .nav-collapsed-chevron { font-size: 0.85rem; font-weight: 700; line-height: 1; }
-    .nav-collapsed-label {
-      writing-mode: vertical-lr;
-      text-orientation: upright;
-      font-size: 0.55rem;
-      font-weight: 700;
-      letter-spacing: -0.05em;
-      text-transform: uppercase;
-      color: var(--bulma-text-weak);
-      opacity: 0.55;
-      margin-top: 0.2rem;
-    }
-
-    /* Collapsed sidebar — column shrinks to narrow width */
-    .app-shell.is-sidebar-collapsed {
+    /* Collapsed sidebar — grid reacts to the web component's [collapsed] attribute */
+    .app-shell:has(collapsable-side-bar[collapsed]) {
       grid-template-columns: 40px 1fr;
     }
-    .app-shell.is-sidebar-collapsed.has-inpage-nav {
+    .app-shell:has(collapsable-side-bar[collapsed]).has-inpage-nav {
       grid-template-columns: 40px 180px 1fr;
     }
-    .app-shell.is-sidebar-collapsed .app-sidebar {
-      overflow: hidden;
-      padding: 0;
-      cursor: pointer;
-    }
-    .app-shell.is-sidebar-collapsed .app-sidebar > *:not(.sidebar-nav-toggle) {
-      display: none !important;
-    }
-    .app-shell.is-sidebar-collapsed .sidebar-nav-toggle {
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      height: 100%;
-      padding: 0.5rem 0 0;
-      border-bottom: none;
-      gap: 0;
-    }
-    .app-shell.is-sidebar-collapsed .sidebar-nav-toggle .nav-expanded { display: none; }
-    .app-shell.is-sidebar-collapsed .sidebar-nav-toggle .nav-collapsed { display: flex; }
 
-    /* Left sidebar — fixed, independently scrollable, static while body scrolls */
-    .app-sidebar {
-      background: var(--bulma-scheme-main-bis);
-      border-right: 1px solid var(--bulma-border);
-      overflow-y: auto;
-      padding: 1rem 0;
-      min-width: 0;          /* allow grid cell to shrink to 0 cleanly */
-    }
+    /* collapsable-side-bar host sizing (visual styles live in shadow DOM) */
+    collapsable-side-bar { min-width: 0; }
 
     /* Second left sidebar — in-page nav for work portals */
     .app-inpage-nav {
@@ -445,18 +381,107 @@
 
 <!-- ─── TOP NAV ─── -->
 <nav class="app-topnav" role="navigation">
-  <button class="app-topnav-hamburger" id="topnav-toggle" aria-label="Toggle top bar" onclick="toggleTopbar()">
-    <span style="font-size:1.2rem;">☰</span>
-  </button>
   <div class="app-topnav-brand">EBAMS</div>
 
-  <div class="app-portals" role="tablist">
-    <button class="portal-tab" data-portal="events"         onclick="activatePortal('events',this)">         <span class="tab-icon">↯</span> Events <span class="chevron">▾</span></button>
-    <button class="portal-tab" data-portal="administration" onclick="activatePortal('administration',this)"> <span class="tab-icon">⚙</span> Administration <span class="chevron">▾</span></button>
-    <button class="portal-tab" data-portal="assets"         onclick="activatePortal('assets',this)">         <span class="tab-icon">◈</span> Assets <span class="chevron">▾</span></button>
-    <button class="portal-tab" data-portal="maintenance"    onclick="activatePortal('maintenance',this)">    <span class="tab-icon">⚒</span> Maintenance <span class="chevron">▾</span></button>
-    <button class="portal-tab" data-portal="inventory"      onclick="activatePortal('inventory',this)">      <span class="tab-icon">▦</span> Inventory <span class="chevron">▾</span></button>
-    <button class="portal-tab" data-portal="core"           onclick="activatePortal('core',this)">           <span class="tab-icon">⬡</span> Core <span class="chevron">▾</span></button>
+  <div class="tabs app-portals" role="tablist">
+    <ul>
+
+      <li role="tab">
+        <button class="portal-tab-btn" commandfor="portal-events" command="toggle-popover">
+          <span class="portal-tab-icon">↯</span> Events <span class="portal-tab-chevron">▾</span>
+        </button>
+        <div id="portal-events" popover="auto" class="portal-dropdown">
+          <p class="portal-dropdown-label">Events</p>
+          <div class="portal-dropdown-inner">
+            <a href="#" class="portal-sublink"><span class="icon">↯</span> All Events</a>
+            <a href="#" class="portal-sublink"><span class="icon">⚒</span> Maintenance Events</a>
+            <a href="#" class="portal-sublink"><span class="icon">✔</span> Inspection Events</a>
+            <a href="#" class="portal-sublink"><span class="icon">⚖</span> Calibration</a>
+            <a href="#" class="portal-sublink"><span class="icon">▣</span> Event Templates</a>
+            <a href="#" class="portal-sublink"><span class="icon">⊞</span> Reports</a>
+          </div>
+        </div>
+      </li>
+
+      <li role="tab">
+        <button class="portal-tab-btn" commandfor="portal-administration" command="toggle-popover">
+          <span class="portal-tab-icon">⚙</span> Administration <span class="portal-tab-chevron">▾</span>
+        </button>
+        <div id="portal-administration" popover="auto" class="portal-dropdown">
+          <p class="portal-dropdown-label">Administration</p>
+          <div class="portal-dropdown-inner">
+            <a href="#" class="portal-sublink"><span class="icon">👤</span> Users</a>
+            <a href="#" class="portal-sublink"><span class="icon">🔑</span> Roles</a>
+            <a href="#" class="portal-sublink"><span class="icon">⊡</span> Domain Templates</a>
+            <a href="#" class="portal-sublink"><span class="icon">◈</span> Domains</a>
+            <a href="#" class="portal-sublink"><span class="icon">📋</span> Audit Log</a>
+            <a href="#" class="portal-sublink"><span class="icon">🔒</span> Password Policy</a>
+          </div>
+        </div>
+      </li>
+
+      <li role="tab">
+        <button class="portal-tab-btn" commandfor="portal-assets" command="toggle-popover">
+          <span class="portal-tab-icon">◈</span> Assets <span class="portal-tab-chevron">▾</span>
+        </button>
+        <div id="portal-assets" popover="auto" class="portal-dropdown">
+          <p class="portal-dropdown-label">Assets</p>
+          <div class="portal-dropdown-inner">
+            <a href="#" class="portal-sublink"><span class="icon">◈</span> All Assets</a>
+            <a href="#" class="portal-sublink"><span class="icon">▦</span> Asset Groups</a>
+            <a href="#" class="portal-sublink"><span class="icon">⊞</span> Categories</a>
+            <a href="#" class="portal-sublink"><span class="icon">⇅</span> Import/Export</a>
+          </div>
+        </div>
+      </li>
+
+      <li role="tab">
+        <button class="portal-tab-btn" commandfor="portal-maintenance" command="toggle-popover">
+          <span class="portal-tab-icon">⚒</span> Maintenance <span class="portal-tab-chevron">▾</span>
+        </button>
+        <div id="portal-maintenance" popover="auto" class="portal-dropdown">
+          <p class="portal-dropdown-label">Maintenance</p>
+          <div class="portal-dropdown-inner">
+            <a href="#" class="portal-sublink"><span class="icon">⚒</span> Work Orders</a>
+            <a href="#" class="portal-sublink"><span class="icon">📅</span> Scheduled</a>
+            <a href="#" class="portal-sublink"><span class="icon">📋</span> Procedures</a>
+            <a href="#" class="portal-sublink"><span class="icon">⬡</span> Parts Requests</a>
+            <a href="#" class="portal-sublink"><span class="icon">👷</span> Technicians</a>
+          </div>
+        </div>
+      </li>
+
+      <li role="tab">
+        <button class="portal-tab-btn" commandfor="portal-inventory" command="toggle-popover">
+          <span class="portal-tab-icon">▦</span> Inventory <span class="portal-tab-chevron">▾</span>
+        </button>
+        <div id="portal-inventory" popover="auto" class="portal-dropdown">
+          <p class="portal-dropdown-label">Inventory</p>
+          <div class="portal-dropdown-inner">
+            <a href="#" class="portal-sublink"><span class="icon">▦</span> Stock Levels</a>
+            <a href="#" class="portal-sublink"><span class="icon">📍</span> Locations</a>
+            <a href="#" class="portal-sublink"><span class="icon">⊡</span> Part Numbers</a>
+            <a href="#" class="portal-sublink"><span class="icon">⇄</span> Transfers</a>
+            <a href="#" class="portal-sublink"><span class="icon">⊟</span> Part Demands</a>
+          </div>
+        </div>
+      </li>
+
+      <li role="tab">
+        <button class="portal-tab-btn" commandfor="portal-core" command="toggle-popover">
+          <span class="portal-tab-icon">⬡</span> Core <span class="portal-tab-chevron">▾</span>
+        </button>
+        <div id="portal-core" popover="auto" class="portal-dropdown">
+          <p class="portal-dropdown-label">Core</p>
+          <div class="portal-dropdown-inner">
+            <a href="#" class="portal-sublink"><span class="icon">⬡</span> Org Chart</a>
+            <a href="#" class="portal-sublink"><span class="icon">◈</span> Divisions</a>
+            <a href="#" class="portal-sublink"><span class="icon">ℹ</span> System Info</a>
+          </div>
+        </div>
+      </li>
+
+    </ul>
   </div>
 
   <div class="app-topnav-right">
@@ -472,27 +497,11 @@
   </div>
 </nav>
 
-<!-- ─── PORTAL DROPDOWN ─── -->
-<div class="portal-dropdown" id="portal-dropdown">
-  <p class="portal-dropdown-label" id="portal-dropdown-label"></p>
-  <div class="portal-dropdown-inner" id="portal-dropdown-links"></div>
-</div>
-
 <!-- ─── SHELL ─── -->
 <div class="app-shell {% block shell_class %}{% endblock %}">
-  <aside class="app-sidebar" aria-label="Section navigation">
-    <button class="sidebar-nav-toggle" onclick="toggleSidebar(event)">
-      <span class="nav-expanded">
-        <span class="sidebar-toggle-bars">|||</span>
-        <span>Navigation</span>
-      </span>
-      <span class="nav-collapsed">
-        <span class="nav-collapsed-chevron">›</span>
-        <span class="nav-collapsed-label">Navigation</span>
-      </span>
-    </button>
+  <collapsable-side-bar aria-label="Section navigation">
     {% block sidebar %}{% endblock %}
-  </aside>
+  </collapsable-side-bar>
 
   <aside class="app-inpage-nav" aria-label="In-page navigation">
     {% block inpage_nav %}{% endblock %}
@@ -505,133 +514,9 @@
   </div>
 </div>
 
-<!-- ─── PORTAL JS ─── -->
+<!-- ─── IN-PAGE NAV SCROLL HANDLER ─── -->
 <script>
-  const PORTAL_DATA = {
-    events: { label: 'Events', links: [
-      { label: 'All Events', icon: '↯' },
-      { label: 'Maintenance Events', icon: '⚒' },
-      { label: 'Inspection Events', icon: '✔' },
-      { label: 'Calibration', icon: '⚖' },
-      { label: 'Event Templates', icon: '▣' },
-      { label: 'Reports', icon: '⊞' },
-    ]},
-    administration: { label: 'Administration', links: [
-      { label: 'Users', icon: '👤' },
-      { label: 'Roles', icon: '🔑' },
-      { label: 'Domain Templates', icon: '⊡' },
-      { label: 'Domains', icon: '◈' },
-      { label: 'Audit Log', icon: '📋' },
-      { label: 'Password Policy', icon: '🔒' },
-    ]},
-    assets: { label: 'Assets', links: [
-      { label: 'All Assets', icon: '◈' },
-      { label: 'Asset Groups', icon: '▦' },
-      { label: 'Categories', icon: '⊞' },
-      { label: 'Import/Export', icon: '⇅' },
-    ]},
-    maintenance: { label: 'Maintenance', links: [
-      { label: 'Work Orders', icon: '⚒' },
-      { label: 'Scheduled', icon: '📅' },
-      { label: 'Procedures', icon: '📋' },
-      { label: 'Parts Requests', icon: '⬡' },
-      { label: 'Technicians', icon: '👷' },
-    ]},
-    inventory: { label: 'Inventory', links: [
-      { label: 'Stock Levels', icon: '▦' },
-      { label: 'Locations', icon: '📍' },
-      { label: 'Part Numbers', icon: '⊡' },
-      { label: 'Transfers', icon: '⇄' },
-      { label: 'Part Demands', icon: '⊟', active: true },
-    ]},
-    core: { label: 'Core', links: [
-      { label: 'Org Chart', icon: '⬡' },
-      { label: 'Divisions', icon: '◈' },
-      { label: 'System Info', icon: 'ℹ' },
-    ]},
-  };
-
-  const INITIAL_PORTAL = "{% block active_portal %}administration{% endblock %}";
-  const INITIAL_SUBLINK = "{% block active_sublink %}{% endblock %}";
-  let _activePortal = null;
-  let _lastPortal   = null;
-
-  function renderDropdown(key) {
-    const portal = PORTAL_DATA[key];
-    document.getElementById('portal-dropdown-label').textContent = portal.label;
-    document.getElementById('portal-dropdown-links').innerHTML = portal.links.map(l => `
-      <a class="portal-sublink${(INITIAL_SUBLINK && INITIAL_SUBLINK === l.label) ? ' is-active' : ''}" href="#">
-        <span class="icon">${l.icon}</span>${l.label}
-      </a>
-    `).join('');
-  }
-
-  function activatePortal(key, tabEl) {
-    const dd  = document.getElementById('portal-dropdown');
-    const btn = document.getElementById('topnav-toggle');
-    if (_activePortal === key && dd.classList.contains('is-open')) {
-      _lastPortal = key;
-      dd.classList.remove('is-open');
-      tabEl.classList.remove('is-active');
-      _activePortal = null;
-      btn.classList.remove('is-active');
-      return;
-    }
-    document.querySelectorAll('.portal-tab').forEach(t => t.classList.remove('is-active'));
-    tabEl.classList.add('is-active');
-    _lastPortal = _activePortal = key;
-    renderDropdown(key);
-    dd.classList.add('is-open');
-    btn.classList.add('is-active');
-  }
-
-  // Hamburger — second path to toggle the portal dropdown open/closed.
-  // Remembers the last open portal so double-click reopens it.
-  function toggleTopbar() {
-    const dd  = document.getElementById('portal-dropdown');
-    const btn = document.getElementById('topnav-toggle');
-    if (dd.classList.contains('is-open')) {
-      _lastPortal = _activePortal;
-      dd.classList.remove('is-open');
-      document.querySelectorAll('.portal-tab').forEach(t => t.classList.remove('is-active'));
-      _activePortal = null;
-      btn.classList.remove('is-active');
-    } else if (_lastPortal) {
-      _activePortal = _lastPortal;
-      renderDropdown(_activePortal);
-      dd.classList.add('is-open');
-      document.querySelector(`.portal-tab[data-portal="${_activePortal}"]`)?.classList.add('is-active');
-      btn.classList.add('is-active');
-    }
-  }
-
-  // Sidebar ||| Navigation bar — collapses/expands the sidebar
-  function toggleSidebar(e) {
-    if (e) e.stopPropagation();
-    const shell = document.querySelector('.app-shell');
-    shell.classList.toggle('is-sidebar-collapsed');
-  }
-
-  // Initial state
   window.addEventListener('DOMContentLoaded', () => {
-    const shell   = document.querySelector('.app-shell');
-    const sidebar = document.querySelector('.app-sidebar');
-
-    // Click anywhere on collapsed sidebar to expand it (excluding the toggle button itself)
-    sidebar.addEventListener('click', (e) => {
-      if (shell.classList.contains('is-sidebar-collapsed') && !e.target.closest('.sidebar-nav-toggle')) {
-        shell.classList.remove('is-sidebar-collapsed');
-      }
-    });
-
-    const initialTab = document.querySelector(`.portal-tab[data-portal="${INITIAL_PORTAL}"]`);
-    if (initialTab) {
-      initialTab.classList.add('is-active');
-      _activePortal = INITIAL_PORTAL;
-      renderDropdown(INITIAL_PORTAL);
-      document.getElementById('portal-dropdown').classList.add('is-open');
-    }
-
     // In-page nav: hijack hash clicks so they scroll the scrollarea, not the window
     const scrollarea = document.querySelector('.app-scrollarea');
     document.querySelectorAll('.inpage-nav-link[href^="#"]').forEach(link => {

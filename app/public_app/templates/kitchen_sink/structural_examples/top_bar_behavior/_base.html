@@ -1,0 +1,244 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Top Bar Behavior{% endblock %} — Kitchen Sink</title>
+  <link rel="stylesheet" href="{% static 'css/bulma.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  <script defer src="{% static 'js/htmx.min.js' %}"></script>
+  <script src="{% static 'web_components/collapsable_side_bar.js' %}"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      display: flex; flex-direction: column;
+      background: var(--bulma-scheme-main-bis);
+      color: var(--bulma-text);
+      font-family: var(--bulma-family-sans-serif);
+      font-size: 0.875rem;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* ── Top nav ── */
+    .app-topnav {
+      display: flex; align-items: center;
+      height: 3rem;
+      background: var(--bulma-scheme-invert);
+      color: var(--bulma-scheme-main);
+      flex-shrink: 0;
+      border-bottom: 1px solid var(--bulma-border);
+      position: relative; z-index: 40;
+    }
+    .app-topnav-brand {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0 1rem; font-weight: 700; font-size: 1rem;
+      letter-spacing: 0.05em; height: 100%; white-space: nowrap;
+      border-right: 1px solid rgba(255,255,255,0.12);
+    }
+
+    /* ── Portal tabs ── */
+    .app-portals.tabs { flex: 1; height: 100%; margin-bottom: 0; border-bottom: none; overflow: visible; }
+    .app-portals.tabs ul { height: 100%; border-bottom: none; flex-wrap: nowrap; }
+    .app-portals.tabs li { height: 100%; position: relative; }
+    .app-portals.tabs li a,
+    .app-portals.tabs li button.portal-tab-btn {
+      display: flex; align-items: center; gap: 0.35rem;
+      height: 100%; padding: 0 1rem;
+      font-size: 0.8rem; font-weight: 500;
+      border: none; border-bottom: 3px solid transparent;
+      color: rgba(255,255,255,0.65);
+      white-space: nowrap; cursor: pointer; background: none;
+      transition: color 0.12s, border-color 0.12s, background 0.12s;
+    }
+    .app-portals.tabs li a:hover,
+    .app-portals.tabs li button.portal-tab-btn:hover {
+      color: #fff; background: rgba(255,255,255,0.06);
+    }
+    .app-portals.tabs li.is-active a,
+    .app-portals.tabs li.is-active button.portal-tab-btn {
+      color: #fff; border-bottom-color: var(--bulma-primary);
+      background: rgba(255,255,255,0.04);
+    }
+    .portal-tab-icon { font-size: 0.9rem; opacity: 0.8; }
+    .portal-tab-chevron { font-size: 0.65rem; opacity: 0.5; margin-left: 0.1rem; }
+
+    /* ── Top nav right ── */
+    .app-topnav-right {
+      display: flex; align-items: center;
+      height: 100%; padding-right: 0.5rem;
+      border-left: 1px solid rgba(255,255,255,0.12);
+    }
+    .app-search-wrap input[type="text"] {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.18); border-right: none;
+      color: #fff; padding: 0.35rem 0.75rem; font-size: 0.8rem;
+      width: 14rem; outline: none;
+    }
+    .app-search-wrap input[type="text"]::placeholder { color: rgba(255,255,255,0.45); }
+    .app-search-btn {
+      background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.18);
+      color: rgba(255,255,255,0.8); padding: 0.35rem 0.6rem; cursor: pointer; font-size: 0.85rem;
+    }
+    .app-search-btn:hover { background: rgba(255,255,255,0.22); }
+    .app-user-btn {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0 0.85rem; height: 100%;
+      background: none; border: none;
+      border-left: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.85); cursor: pointer; font-size: 0.8rem;
+    }
+    .app-user-btn:hover { background: rgba(255,255,255,0.06); }
+    .app-user-avatar {
+      width: 1.75rem; height: 1.75rem; border-radius: 50%;
+      background: var(--bulma-primary);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem; font-weight: 700; color: #fff;
+    }
+
+    /* ── Portal dropdown — shared visual style across all three variants ── */
+    .portal-dropdown {
+      /* reset UA defaults for popover / dialog */
+      border: none;
+      outline: none;
+      /* positioning — works for both top-layer (popover) and fixed (dialog.show) */
+      position: fixed;
+      top: 3rem; left: 0; right: 0;
+      width: 100%; max-width: 100%;
+      margin: 0;
+      padding: 0.75rem 1.25rem;
+      /* visual */
+      background: var(--bulma-scheme-invert);
+      border-bottom: 2px solid var(--bulma-primary);
+      z-index: 30;
+    }
+    .portal-dropdown-inner { display: flex; gap: 0.25rem; flex-wrap: wrap; }
+    .portal-sublink {
+      display: flex; align-items: center; gap: 0.35rem;
+      padding: 0.4rem 0.85rem; font-size: 0.78rem;
+      color: rgba(255,255,255,0.7);
+      border: 1px solid rgba(255,255,255,0.1); cursor: pointer;
+    }
+    .portal-sublink:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .portal-sublink.is-active { border-color: var(--bulma-primary); color: var(--bulma-primary); }
+    .portal-sublink .icon { font-size: 0.85rem; opacity: 0.7; }
+    .portal-dropdown-label {
+      font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(255,255,255,0.35); margin-bottom: 0.5rem;
+    }
+
+    /* ── App shell ── */
+    .app-shell {
+      display: grid; grid-template-columns: 220px 1fr;
+      flex: 1; min-height: 0; overflow: hidden;
+      transition: grid-template-columns 0.18s ease;
+    }
+    .app-shell:has(collapsable-side-bar[collapsed]) { grid-template-columns: 40px 1fr; }
+    collapsable-side-bar { min-width: 0; }
+    .app-scrollarea { overflow-y: auto; background: var(--bulma-scheme-main-bis); }
+    .app-container { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1.5rem 3rem; }
+
+    /* ── Sidebar ── */
+    .sidebar-section-label {
+      font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--bulma-text-weak); padding: 0.6rem 1rem 0.3rem; font-weight: 600;
+    }
+    .sidebar-link {
+      display: block; padding: 0.3rem 1rem 0.3rem 1.25rem;
+      font-size: 0.8rem; color: var(--bulma-text); border-left: 3px solid transparent;
+    }
+    .sidebar-link:hover { background: var(--bulma-background); color: var(--bulma-text-strong); }
+    .sidebar-link.is-active {
+      border-left-color: var(--bulma-primary); color: var(--bulma-link);
+      background: var(--bulma-background); font-weight: 600;
+    }
+    .sidebar-divider { height: 1px; background: var(--bulma-border-weak); margin: 0.75rem 1rem; }
+
+    /* ── Page hero ── */
+    .page-hero {
+      background: var(--bulma-scheme-main);
+      border: 1px solid var(--bulma-border-weak);
+      border-left: 4px solid var(--bulma-primary);
+      padding: 1.5rem 1.75rem; margin-bottom: 1.5rem;
+    }
+    .page-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+    .page-header-title-wrap { display: flex; align-items: center; gap: 0.65rem; }
+    .page-header-icon { width: 2.4rem; height: 2.4rem; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+    .page-title { font-size: 1.4rem; font-weight: 700; color: var(--bulma-text-strong); margin: 0; line-height: 1.1; }
+    .page-subtitle { font-size: 0.82rem; color: var(--bulma-text-weak); margin-top: 0.2rem; }
+    .page-header-actions { display: flex; gap: 0.5rem; flex-shrink: 0; align-items: flex-start; }
+
+    /* ── Cards ── */
+    .pc { background: var(--bulma-scheme-main); border: 1px solid var(--bulma-border-weak); margin-bottom: 1rem; }
+    .pc-header {
+      padding: 0.7rem 1rem; border-bottom: 1px solid var(--bulma-border-weak);
+      display: flex; align-items: center; justify-content: space-between;
+      font-weight: 600; font-size: 0.88rem;
+    }
+    .pc-header-title { display: flex; align-items: center; gap: 0.45rem; }
+    .pc-body { padding: 1rem; }
+
+    /* ── Code block ── */
+    .ks-code {
+      font-family: monospace; font-size: 0.78rem;
+      background: var(--bulma-scheme-main-ter);
+      border: 1px solid var(--bulma-border-weak);
+      padding: 0.75rem 1rem; margin: 0.75rem 0;
+      white-space: pre; overflow-x: auto;
+      color: var(--bulma-text); line-height: 1.55;
+    }
+
+    .button { border-radius: 0; }
+    .tag    { border-radius: 0; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-thumb { background: var(--bulma-border); }
+
+    {% block extra_css %}{% endblock %}
+  </style>
+</head>
+<body>
+
+{% block topnav_section %}{% endblock %}
+
+<div class="app-shell">
+  <collapsable-side-bar aria-label="Section navigation">
+    <p class="sidebar-section-label">Navigation</p>
+    <a href="#" class="sidebar-link is-active">Dashboard</a>
+    <a href="#" class="sidebar-link">Analytics</a>
+    <a href="#" class="sidebar-link">Reports</a>
+    <div class="sidebar-divider"></div>
+    <p class="sidebar-section-label">Settings</p>
+    <a href="#" class="sidebar-link">Preferences</a>
+    <a href="#" class="sidebar-link">Profile</a>
+  </collapsable-side-bar>
+
+  <div class="app-scrollarea">
+    <div class="app-container">
+
+      <div class="page-hero">
+        <div class="page-header">
+          <div class="page-header-title-wrap">
+            <div class="page-header-icon">{% block page_icon %}⬡{% endblock %}</div>
+            <div>
+              <h1 class="page-title">{% block page_title %}Top Bar Behavior{% endblock %}</h1>
+              <p class="page-subtitle">{% block page_subtitle %}Kitchen Sink — Top Bar Experiments{% endblock %}</p>
+            </div>
+          </div>
+          <div class="page-header-actions">
+            <a href="{% url 'kitchen_sink_topbar_popovers' %}" class="button is-small {% block popovers_active %}is-light{% endblock %}">Popovers</a>
+            <a href="{% url 'kitchen_sink_sidebar_behavior_example' %}" class="button is-small is-light">← Sidebar</a>
+            <a href="{% url 'kitchen_sink' %}" class="button is-small is-light">← Kitchen Sink</a>
+          </div>
+        </div>
+      </div>
+
+      {% block content %}{% endblock %}
+
+    </div>
+  </div>
+</div>
+
+{% block page_scripts %}{% endblock %}
+</body>
+</html>

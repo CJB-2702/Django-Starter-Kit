@@ -1,3 +1,5 @@
+@import url("carbon_colors.css");
+
 /* Project theme — Carbon Design System color palette, sharp controls, IBM Plex Mono.
    Loads after Bulma; these rules win at identical specificity because they come later. */
 
@@ -66,52 +68,10 @@
   margin-left: 0.35em;
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   Carbon Design System — primitive palette
-   Source: https://carbondesignsystem.com/elements/color/usage/
-   These are the raw swatches. Semantic tokens are in the @media blocks below.
-   ──────────────────────────────────────────────────────────────────────────── */
 :root {
   color-scheme: light dark;
 
-  /* Neutrals */
-  --carbon-white:    #ffffff;
-  --carbon-gray-10:  #f4f4f4;
-  --carbon-gray-20:  #e0e0e0;
-  --carbon-gray-30:  #c6c6c6;
-  --carbon-gray-40:  #a8a8a8;
-  --carbon-gray-50:  #8d8d8d;
-  --carbon-gray-60:  #6f6f6f;
-  --carbon-gray-70:  #525252;
-  --carbon-gray-80:  #393939;
-  --carbon-gray-90:  #262626;
   --carbon-gray-100: #161616;
-
-  /* Blue */
-  --carbon-blue-40:  #78a9ff;
-  --carbon-blue-50:  #4589ff;
-  --carbon-blue-60:  #0f62fe;
-  --carbon-blue-70:  #0043ce;
-
-  /* Red */
-  --carbon-red-40:   #ff8389;
-  --carbon-red-50:   #fa4d56;
-  --carbon-red-60:   #da1e28;
-
-  /* Green */
-  --carbon-green-40: #42be65;
-  --carbon-green-50: #24a148;
-
-  /* Yellow / Orange */
-  --carbon-yellow-30: #f1c21b;
-  --carbon-orange-40: #ff832b;
-
-  /* Cyan / Teal / Purple */
-  --carbon-cyan-40:   #33b1ff;
-  --carbon-cyan-50:   #1192e8;
-  --carbon-teal-40:   #3ddbd9;
-  --carbon-teal-50:   #009d9a;
-  --carbon-purple-60: #8a3ffc;
 
   /* ── Shape / spacing overrides (unchanged) ── */
   --bulma-radius-small: 0;
@@ -134,7 +94,8 @@
   /* ── Carbon White theme defaults (light mode) ──────────────────────────────
      Applied unconditionally so the palette works even when the OS/browser does
      not report a prefers-color-scheme preference (common on Linux).
-     The dark-mode @media block below flips these for dark environments.     */
+     The dark-mode @media block below flips these for dark environments.
+     is-light variants: muted grey/steel tints (~85% lightness, ~35% saturation)  */
   --bulma-scheme-brightness: light;
   --bulma-scheme-main-l:     95.7%; /* Carbon gray-10         #f4f4f4 — page bg */
   --bulma-scheme-main-bis-l:  91%;  /* ~#e8e8e8               card/sidebar step */
@@ -153,28 +114,41 @@
 
   /* Primary — Carbon Blue 60  (#0f62fe  H219 S99% L53%) */
   --bulma-primary-h: 219; --bulma-primary-s: 99%; --bulma-primary-l: 53%;
+  --bulma-primary-light-h: 219; --bulma-primary-light-s: 35%; --bulma-primary-light-l: 85%;
+  --bulma-primary-light-invert-l: 20%;
 
   /* Link — Carbon Blue 70  (#0043ce  H221 S100% L40%) */
   --bulma-link-h: 221; --bulma-link-s: 100%; --bulma-link-l: 40%;
+  --bulma-link-light-h: 221; --bulma-link-light-s: 35%; --bulma-link-light-l: 85%;
+  --bulma-link-light-invert-l: 20%;
 
   /* Info — Carbon Cyan 50  (#1192e8  H206 S86% L49%) */
   --bulma-info-h: 206; --bulma-info-s: 86%; --bulma-info-l: 49%;
+  --bulma-info-light-h: 206; --bulma-info-light-s: 35%; --bulma-info-light-l: 85%;
+  --bulma-info-light-invert-l: 20%;
 
   /* Success — Carbon Green 50  (#24a148  H137 S63% L38%) */
   --bulma-success-h: 137; --bulma-success-s: 63%; --bulma-success-l: 38%;
+  --bulma-success-light-h: 137; --bulma-success-light-s: 35%; --bulma-success-light-l: 85%;
+  --bulma-success-light-invert-l: 20%;
 
   /* Warning — Carbon Yellow 30  (#f1c21b  H47 S88% L53%) */
   --bulma-warning-h: 47; --bulma-warning-s: 88%; --bulma-warning-l: 53%;
+  --bulma-warning-light-h: 47; --bulma-warning-light-s: 35%; --bulma-warning-light-l: 85%;
+  --bulma-warning-light-invert-l: 20%;
   --bulma-warning-invert-l: 8.6%; /* yellow is always light — force black text */
 
   /* Danger — Carbon Red 60  (#da1e28  H357 S76% L49%) */
   --bulma-danger-h: 357; --bulma-danger-s: 76%; --bulma-danger-l: 49%;
+  --bulma-danger-light-h: 357; --bulma-danger-light-s: 35%; --bulma-danger-light-l: 85%;
+  --bulma-danger-light-invert-l: 20%;
 }
 
 /* ── Retain an explicit light-mode block so Bulma's own light @media override
    (which sets its defaults inside a media query) doesn't win on systems that
    DO report prefers-color-scheme: light.  Specificity is equal; cascade order
-   (app.css loads after bulma.min.css) guarantees these take precedence.      */
+   (app.css loads after bulma.min.css) guarantees these take precedence.
+   is-light variants: muted grey/steel tints (~85% lightness, ~35% saturation)    */
 @media (prefers-color-scheme: light) {
   :root {
     --bulma-scheme-h: 0; --bulma-scheme-s: 0%;
@@ -184,12 +158,24 @@
     --bulma-text-strong-l: 8.6%; --bulma-text-weak-l: 43.1%;
     --bulma-light-l: 90%; --bulma-dark-l: 20%; --bulma-soft-l: 90%; --bulma-bold-l: 20%;
     --bulma-soft-invert-l: 20%; --bulma-bold-invert-l: 90%;
-    --bulma-primary-h: 219; --bulma-primary-s: 99%; --bulma-primary-l: 53%;
+    --bulma-primary-h: 219; --bulma-primary-s: 90%; --bulma-primary-l: 70%;
+    --bulma-primary-light-h: 219; --bulma-primary-light-s: 50%; --bulma-primary-light-l: 70%;
+    --bulma-primary-light-invert-l: 20%;
     --bulma-link-h: 221; --bulma-link-s: 100%; --bulma-link-l: 40%;
+    --bulma-link-light-h: 221; --bulma-link-light-s: 35%; --bulma-link-light-l: 85%;
+    --bulma-link-light-invert-l: 100%;
     --bulma-info-h: 206; --bulma-info-s: 86%; --bulma-info-l: 49%;
+    --bulma-info-light-h: 206; --bulma-info-light-s: 35%; --bulma-info-light-l: 70%;
+    --bulma-info-light-invert-l: 20%;
     --bulma-success-h: 137; --bulma-success-s: 63%; --bulma-success-l: 38%;
+    --bulma-success-light-h: 137; --bulma-success-light-s: 35%; --bulma-success-light-l: 85%;
+    --bulma-success-light-invert-l: 20%;
     --bulma-warning-h: 47; --bulma-warning-s: 88%; --bulma-warning-l: 53%;
+    --bulma-warning-light-h: 47; --bulma-warning-light-s: 35%; --bulma-warning-light-l: 85%;
+    --bulma-warning-light-invert-l: 20%;
     --bulma-danger-h: 357; --bulma-danger-s: 76%; --bulma-danger-l: 49%;
+    --bulma-danger-light-h: 357; --bulma-danger-light-s: 35%; --bulma-danger-light-l: 85%;
+    --bulma-danger-light-invert-l: 20%;
   }
 }
 
@@ -199,6 +185,8 @@
    Text:       gray-10 (primary) → gray-30 (secondary) → gray-40 (helper)
    Interactive: blue-50 primary (lighter on dark), cyan-50 info,
                 green-40 success, yellow-30 warning, red-50 danger, blue-40 link
+   is-light variants: brightened to ~60-65% lightness, reduced saturation (–30%),
+                      white text on grey/muted backgrounds
    ──────────────────────────────────────────────────────────────────────────── */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -225,29 +213,30 @@
     --bulma-bold-invert-l:     14.9%;
 
     /* Primary — Carbon Blue 50  (#4589ff  H219 S100% L63%) — lighter for dark bg */
-    --bulma-primary-h: 219; --bulma-primary-s: 100%; --bulma-primary-l: 63%;
-    --bulma-primary-light-l: 13%; --bulma-primary-light-invert-l: 78%;
+    --bulma-primary-h: 219; --bulma-primary-s: 70%; --bulma-primary-l: 63%;
+    --bulma-primary-light-l: 30%; --bulma-primary-light-invert-l: 95.7%;
 
     /* Link — Carbon Blue 40  (#78a9ff  H218 S100% L74%) */
-    --bulma-link-h: 218; --bulma-link-s: 100%; --bulma-link-l: 74%;
-    --bulma-link-light-l: 13%; --bulma-link-light-invert-l: 78%;
+    --bulma-link-h: 218; --bulma-link-s: 70%; --bulma-link-l: 74%;
+    --bulma-link-light-l: 30%; --bulma-link-light-invert-l: 95.7%;
 
-    /* Info — Carbon Cyan 50  (#1192e8  H206 S86% L49%) — same both themes */
-    --bulma-info-h: 206; --bulma-info-s: 86%; --bulma-info-l: 49%;
-    --bulma-info-light-l: 10%; --bulma-info-light-invert-l: 75%;
+    /* Info — Carbon Cyan 50  (#1192e8  H206 S86% L49%) */
+    --bulma-info-h: 206; --bulma-info-s: 56%; --bulma-info-l: 49%;
+    --bulma-info-light-l: 430%; --bulma-info-light-invert-l: 95.7%;
 
     /* Success — Carbon Green 40  (#42be65  H137 S49% L50%) — lighter for dark bg */
-    --bulma-success-h: 137; --bulma-success-s: 49%; --bulma-success-l: 50%;
-    --bulma-success-light-l: 10%; --bulma-success-light-invert-l: 70%;
+    --bulma-success-h: 137; --bulma-success-s: 19%; --bulma-success-l: 50%;
+    --bulma-success-light-l: 30%; --bulma-success-light-invert-l: 95.7%;
 
-    /* Warning — Carbon Yellow 30  (#f1c21b  H47 S88% L53%) — same both themes */
-    --bulma-warning-h: 47; --bulma-warning-s: 88%; --bulma-warning-l: 53%;
+    /* Warning — Carbon Yellow 30  (#f1c21b  H47 S88% L53%) */
+    --bulma-warning-h: 47; --bulma-warning-s: 58%; --bulma-warning-l: 53%;
     --bulma-warning-invert-l: 8.6%;
-    --bulma-warning-light-l: 15%; --bulma-warning-light-invert-l: 70%;
+    --bulma-warning-light-l: 30%; --bulma-warning-light-invert-l: 95.7%;
 
     /* Danger — Carbon Red 50  (#fa4d56  H358 S95% L64%) — lighter for dark bg */
-    --bulma-danger-h: 358; --bulma-danger-s: 95%; --bulma-danger-l: 64%;
-    --bulma-danger-light-l: 13%; --bulma-danger-light-invert-l: 78%;
+    --bulma-danger-h: 358; --bulma-danger-s: 65%; --bulma-danger-l: 64%;
+    --bulma-danger-light-h: 357; --bulma-danger-light-s: 76%; --bulma-danger-light-l: 49%;
+    --bulma-danger-light-invert-l: 95.7%;
   }
 }
 
@@ -270,18 +259,19 @@
   --bulma-dark-l:            40%;   --bulma-dark-invert-l:  95.7%;
   --bulma-soft-l:            22.4%; --bulma-bold-l:         95.7%;
   --bulma-soft-invert-l:     95.7%; --bulma-bold-invert-l:  14.9%;
-  --bulma-primary-h: 219; --bulma-primary-s: 100%; --bulma-primary-l: 63%;
-  --bulma-primary-light-l: 13%; --bulma-primary-light-invert-l: 78%;
-  --bulma-link-h: 218; --bulma-link-s: 100%; --bulma-link-l: 74%;
-  --bulma-link-light-l: 13%; --bulma-link-light-invert-l: 78%;
-  --bulma-info-h: 206; --bulma-info-s: 86%; --bulma-info-l: 49%;
-  --bulma-info-light-l: 10%; --bulma-info-light-invert-l: 75%;
-  --bulma-success-h: 137; --bulma-success-s: 49%; --bulma-success-l: 50%;
-  --bulma-success-light-l: 10%; --bulma-success-light-invert-l: 70%;
-  --bulma-warning-h: 47; --bulma-warning-s: 88%; --bulma-warning-l: 53%;
-  --bulma-warning-light-l: 15%; --bulma-warning-light-invert-l: 70%;
-  --bulma-danger-h: 358; --bulma-danger-s: 95%; --bulma-danger-l: 64%;
-  --bulma-danger-light-l: 13%; --bulma-danger-light-invert-l: 78%;
+  --bulma-primary-h: 219; --bulma-primary-s: 70%; --bulma-primary-l: 63%;
+  --bulma-primary-light-l: 30%; --bulma-primary-light-invert-l: 95.7%;
+  --bulma-link-h: 218; --bulma-link-s: 70%; --bulma-link-l: 74%;
+  --bulma-link-light-l: 30%; --bulma-link-light-invert-l: 95.7%;
+  --bulma-info-h: 206; --bulma-info-s: 56%; --bulma-info-l: 49%;
+  --bulma-info-light-l: 30%; --bulma-info-light-invert-l: 95.7%;
+  --bulma-success-h: 137; --bulma-success-s: 19%; --bulma-success-l: 50%;
+  --bulma-success-light-l: 40%; --bulma-success-light-invert-l: 95.7%;
+  --bulma-warning-h: 47; --bulma-warning-s: 58%; --bulma-warning-l: 53%;
+  --bulma-warning-light-l: 30%; --bulma-warning-light-invert-l: 95.7%;
+  --bulma-danger-h: 358; --bulma-danger-s: 65%; --bulma-danger-l: 64%;
+  --bulma-danger-light-h: 357; --bulma-danger-light-s: 76%; --bulma-danger-light-l: 49%;
+  --bulma-danger-light-invert-l: 95.7%;
 }
 
 /* Card must clip its corners regardless of footer geometry. */

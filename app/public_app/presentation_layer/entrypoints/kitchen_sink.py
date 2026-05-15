@@ -68,3 +68,8 @@ def kitchen_sink_index_example(request: HttpRequest) -> HttpResponse:
 @login_not_required
 def kitchen_sink_sidebar_behavior_example(request: HttpRequest) -> HttpResponse:
     return render(request, "kitchen_sink/structural_examples/sidebar_behavior.html")
+
+
+@login_not_required
+def kitchen_sink_topbar_popovers(request: HttpRequest) -> HttpResponse:
+    return render(request, "kitchen_sink/structural_examples/top_bar_behavior/popovers.html")

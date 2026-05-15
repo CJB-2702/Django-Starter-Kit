@@ -1,0 +1,197 @@
+{% extends "kitchen_sink/structural_examples/top_bar_behavior/_base.html" %}
+
+{% block title %}Top Bar — Popovers{% endblock %}
+{% block page_icon %}◈{% endblock %}
+{% block page_title %}Top Bar: HTML Popover API{% endblock %}
+{% block page_subtitle %}Zero JavaScript — popover="auto" + commandfor / command="toggle-popover"{% endblock %}
+{% block popovers_active %}is-primary{% endblock %}
+
+{% block extra_css %}
+/*
+  Active tab: when the popover inside a <li> is open, highlight the button.
+  Works because each popover is a child of its <li>, so :has() can see it.
+*/
+.app-portals.tabs li:has(.portal-dropdown:popover-open) button.portal-tab-btn {
+  color: #fff;
+  border-bottom-color: var(--bulma-primary);
+  background: rgba(255,255,255,0.04);
+}
+{% endblock %}
+
+{% block topnav_section %}
+<nav class="app-topnav" role="navigation">
+  <div class="app-topnav-brand">EBAMS</div>
+
+  <div class="tabs app-portals" role="tablist">
+    <ul>
+
+      <li role="tab">
+        <button class="portal-tab-btn" commandfor="portal-events" command="toggle-popover">
+          <span class="portal-tab-icon">↯</span> Events <span class="portal-tab-chevron">▾</span>
+        </button>
+        <div id="portal-events" popover="auto" class="portal-dropdown">
+          <p class="portal-dropdown-label">Events</p>
+          <div class="portal-dropdown-inner">
+            <a href="#" class="portal-sublink"><span class="icon">↯</span> All Events</a>
+            <a href="#" class="portal-sublink"><span class="icon">⚒</span> Maintenance Events</a>
+            <a href="#" class="portal-sublink"><span class="icon">✔</span> Inspection Events</a>
+            <a href="#" class="portal-sublink"><span class="icon">⚖</span> Calibration</a>
+            <a href="#" class="portal-sublink"><span class="icon">▣</span> Event Templates</a>
+            <a href="#" class="portal-sublink"><span class="icon">⊞</span> Reports</a>
+          </div>
+        </div>
+      </li>
+
+      <li role="tab">
+        <button class="portal-tab-btn" commandfor="portal-administration" command="toggle-popover">
+          <span class="portal-tab-icon">⚙</span> Administration <span class="portal-tab-chevron">▾</span>
+        </button>
+        <div id="portal-administration" popover="auto" class="portal-dropdown">
+          <p class="portal-dropdown-label">Administration</p>
+          <div class="portal-dropdown-inner">
+            <a href="#" class="portal-sublink"><span class="icon">👤</span> Users</a>
+            <a href="#" class="portal-sublink"><span class="icon">🔑</span> Roles</a>
+            <a href="#" class="portal-sublink"><span class="icon">⊡</span> Domain Templates</a>
+            <a href="#" class="portal-sublink"><span class="icon">◈</span> Domains</a>
+            <a href="#" class="portal-sublink"><span class="icon">📋</span> Audit Log</a>
+            <a href="#" class="portal-sublink"><span class="icon">🔒</span> Password Policy</a>
+          </div>
+        </div>
+      </li>
+
+      <li role="tab">
+        <button class="portal-tab-btn" commandfor="portal-assets" command="toggle-popover">
+          <span class="portal-tab-icon">◈</span> Assets <span class="portal-tab-chevron">▾</span>
+        </button>
+        <div id="portal-assets" popover="auto" class="portal-dropdown">
+          <p class="portal-dropdown-label">Assets</p>
+          <div class="portal-dropdown-inner">
+            <a href="#" class="portal-sublink"><span class="icon">◈</span> All Assets</a>
+            <a href="#" class="portal-sublink"><span class="icon">▦</span> Asset Groups</a>
+            <a href="#" class="portal-sublink"><span class="icon">⊞</span> Categories</a>
+            <a href="#" class="portal-sublink"><span class="icon">⇅</span> Import/Export</a>
+          </div>
+        </div>
+      </li>
+
+      <li role="tab">
+        <button class="portal-tab-btn" commandfor="portal-maintenance" command="toggle-popover">
+          <span class="portal-tab-icon">⚒</span> Maintenance <span class="portal-tab-chevron">▾</span>
+        </button>
+        <div id="portal-maintenance" popover="auto" class="portal-dropdown">
+          <p class="portal-dropdown-label">Maintenance</p>
+          <div class="portal-dropdown-inner">
+            <a href="#" class="portal-sublink"><span class="icon">⚒</span> Work Orders</a>
+            <a href="#" class="portal-sublink"><span class="icon">📅</span> Scheduled</a>
+            <a href="#" class="portal-sublink"><span class="icon">📋</span> Procedures</a>
+            <a href="#" class="portal-sublink"><span class="icon">⬡</span> Parts Requests</a>
+            <a href="#" class="portal-sublink"><span class="icon">👷</span> Technicians</a>
+          </div>
+        </div>
+      </li>
+
+      <li role="tab">
+        <button class="portal-tab-btn" commandfor="portal-inventory" command="toggle-popover">
+          <span class="portal-tab-icon">▦</span> Inventory <span class="portal-tab-chevron">▾</span>
+        </button>
+        <div id="portal-inventory" popover="auto" class="portal-dropdown">
+          <p class="portal-dropdown-label">Inventory</p>
+          <div class="portal-dropdown-inner">
+            <a href="#" class="portal-sublink"><span class="icon">▦</span> Stock Levels</a>
+            <a href="#" class="portal-sublink"><span class="icon">📍</span> Locations</a>
+            <a href="#" class="portal-sublink"><span class="icon">⊡</span> Part Numbers</a>
+            <a href="#" class="portal-sublink"><span class="icon">⇄</span> Transfers</a>
+            <a href="#" class="portal-sublink"><span class="icon">⊟</span> Part Demands</a>
+          </div>
+        </div>
+      </li>
+
+      <li role="tab">
+        <button class="portal-tab-btn" commandfor="portal-core" command="toggle-popover">
+          <span class="portal-tab-icon">⬡</span> Core <span class="portal-tab-chevron">▾</span>
+        </button>
+        <div id="portal-core" popover="auto" class="portal-dropdown">
+          <p class="portal-dropdown-label">Core</p>
+          <div class="portal-dropdown-inner">
+            <a href="#" class="portal-sublink"><span class="icon">⬡</span> Org Chart</a>
+            <a href="#" class="portal-sublink"><span class="icon">◈</span> Divisions</a>
+            <a href="#" class="portal-sublink"><span class="icon">ℹ</span> System Info</a>
+          </div>
+        </div>
+      </li>
+
+    </ul>
+  </div>
+
+  <div class="app-topnav-right">
+    <div class="app-search-wrap">
+      <input type="text" placeholder="Search…">
+      <button class="app-search-btn">⌕</button>
+    </div>
+    <button class="app-user-btn">
+      <div class="app-user-avatar">GU</div>
+      <span>Generic_User</span>
+      <span style="font-size:0.65rem; opacity:0.5;">▾</span>
+    </button>
+  </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="pc">
+  <div class="pc-header"><div class="pc-header-title"><span>◈</span> How It Works</div></div>
+  <div class="pc-body">
+    <p style="margin-bottom:0.75rem; line-height:1.6;">
+      Zero JavaScript. Three HTML/CSS primitives handle everything:
+    </p>
+
+    <p style="margin-bottom:0.4rem; line-height:1.6;">
+      <strong>1. <code>popover="auto"</code></strong> — mutual exclusivity for free.
+      When one auto-popover opens, all others close. Light-dismiss (click outside) also works natively.
+    </p>
+    <p style="margin-bottom:0.4rem; line-height:1.6;">
+      <strong>2. <code>commandfor</code> / <code>command="toggle-popover"</code></strong> — the HTML Invoker Commands API
+      (<a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLButtonElement/command" style="color:var(--bulma-link);" target="_blank">MDN</a>).
+      A button wired to <code>commandfor="portal-X"</code> toggles that popover on click with no script.
+    </p>
+    <p style="margin-bottom:0.75rem; line-height:1.6;">
+      <strong>3. CSS <code>:has(.portal-dropdown:popover-open)</code></strong> — the parent <code>&lt;li&gt;</code>
+      gets the active highlight via <code>:has()</code> whenever its child popover is in the
+      <code>:popover-open</code> state. No JS class toggling needed.
+    </p>
+
+    <div class="ks-code">&lt;!-- Each tab li owns both its button AND its popover --&gt;
+&lt;li role="tab"&gt;
+  &lt;button class="portal-tab-btn"
+          commandfor="portal-events"
+          command="toggle-popover"&gt;
+    ↯ Events ▾
+  &lt;/button&gt;
+
+  &lt;!-- popover="auto" gives mutual exclusivity + light-dismiss --&gt;
+  &lt;div id="portal-events" popover="auto" class="portal-dropdown"&gt;
+    &lt;p class="portal-dropdown-label"&gt;Events&lt;/p&gt;
+    &lt;div class="portal-dropdown-inner"&gt;
+      &lt;a href="#" class="portal-sublink"&gt;All Events&lt;/a&gt;
+      ...
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/li&gt;
+
+/* Active tab highlight — pure CSS, no JS */
+li:has(.portal-dropdown:popover-open) button.portal-tab-btn {
+  color: #fff;
+  border-bottom-color: var(--bulma-primary);
+}</div>
+
+    <p style="margin-top:0.75rem; line-height:1.6; color: var(--bulma-text-weak); font-size:0.82rem;">
+      <strong>Browser support:</strong> <code>commandfor</code>/<code>command</code> requires Chrome 135+, Firefox 135+.
+      Check caniuse before shipping — no graceful degradation without a small JS polyfill.
+    </p>
+    <p style="margin-top:0.5rem; line-height:1.6; color: var(--bulma-text-weak); font-size:0.82rem;">
+      <strong>Tradeoff:</strong> Links must be server-rendered into the HTML — no runtime data injection.
+      The upside is the links are fully SSR'd, indexable, and accessible without script.
+    </p>
+  </div>
+</div>
+{% endblock %}
